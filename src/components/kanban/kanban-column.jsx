@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import  React from "react"
 import { useState } from "react"
 import KanbanCard from "./kanban-card"
 import CreateTaskDialog from "./create-task-dialog"
@@ -8,30 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 
-interface KanbanColumnProps {
-  title: string
-  columnId: string
-  items: Array<{
-    id: string
-    title: string
-    content: string
-    description: string
-    comments: Array<{
-      id: string
-      user: {
-        name: string
-        avatar: string
-      }
-      content: string
-      createdAt: string
-    }>
-  }>
-  onDragStart: (e: React.DragEvent, itemId: string, sourceColumn: string) => void
-  onDragOver: (e: React.DragEvent) => void
-  onDrop: (e: React.DragEvent) => void
-  onAddComment: (columnId: string, taskId: string, comment: string) => void
-  onCreateTask: (columnId: string, task: { title: string; description: string }) => void
-}
+
 
 export default function KanbanColumn({
   title,
@@ -42,7 +19,7 @@ export default function KanbanColumn({
   onDrop,
   onAddComment,
   onCreateTask,
-}: KanbanColumnProps) {
+}) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
   return (

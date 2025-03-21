@@ -1,27 +1,13 @@
 "use client"
 
-import type React from "react"
+import  React from "react"
 import { useState } from "react"
 import KanbanColumn from "./kanban-column"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-interface Comment {
-  id: string
-  user: {
-    name: string
-    avatar: string
-  }
-  content: string
-  createdAt: string
-}
 
-interface Task {
-  id: string
-  title: string
-  content: string
-  description: string
-  comments: Comment[]
-}
+
+
 
 const initialData = {
   todo: [
@@ -82,7 +68,7 @@ const currentUser = {
 export default function KanbanBoard() {
   const [columns, setColumns] = useState(initialData)
 
-  const addComment = (columnId: string, taskId: string, commentContent: string) => {
+  const addComment = (columnId, taskId, commentContent) => {
     setColumns((prev) => {
       const newColumns = { ...prev }
       const column = newColumns[columnId]
@@ -106,15 +92,15 @@ export default function KanbanBoard() {
     })
   }
 
-  const onDragStart = (e: React.DragEvent, itemId: string, sourceColumn: string) => {
+  const onDragStart = (e, itemId, sourceColumn) => {
     e.dataTransfer.setData("text/plain", JSON.stringify({ itemId, sourceColumn }))
   }
 
-  const onDragOver = (e: React.DragEvent) => {
+  const onDragOver = (e) => {
     e.preventDefault()
   }
 
-  const onDrop = (e: React.DragEvent, targetColumn: string) => {
+  const onDrop = (e, targetColumn) => {
     e.preventDefault()
     const { itemId, sourceColumn } = JSON.parse(e.dataTransfer.getData("text"))
 
@@ -124,12 +110,12 @@ export default function KanbanBoard() {
       const newColumns = { ...prev }
       const item = newColumns[sourceColumn].find((item) => item.id === itemId)
       newColumns[sourceColumn] = newColumns[sourceColumn].filter((item) => item.id !== itemId)
-      newColumns[targetColumn].push(item!)
+      newColumns[targetColumn].push(item)
       return newColumns
     })
   }
 
-  const createTask = (columnId: string, task: { title: string; description: string }) => {
+  const createTask = (columnId, task) => {
     setColumns((prev) => {
       const newColumns = { ...prev }
       const newTask = {

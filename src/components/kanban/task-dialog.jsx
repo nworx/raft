@@ -12,29 +12,11 @@ import { Separator } from "@/components/ui/separator"
 import { formatDistanceToNow } from "date-fns"
 import { useToast } from "@/components/ui/use-toast"
 
-interface Comment {
-  id: string
-  user: {
-    name: string
-    avatar: string
-  }
-  content: string
-  createdAt: string
-}
 
-interface TaskDialogProps {
-  task: {
-    id: string
-    title: string
-    description: string
-    comments: Comment[]
-  }
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onAddComment: (comment: string) => void
-}
 
-export default function TaskDialog({ task, open, onOpenChange, onAddComment }: TaskDialogProps) {
+
+
+export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
   const [newComment, setNewComment] = useState("")
   const { toast } = useToast()
 

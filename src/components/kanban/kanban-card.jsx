@@ -1,33 +1,13 @@
 "use client"
 
-import type React from "react"
+import  React from "react"
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import TaskDialog from "./task-dialog"
 
-interface KanbanCardProps {
-  id: string
-  columnId: string
-  task: {
-    id: string
-    title: string
-    content: string
-    description: string
-    comments: Array<{
-      id: string
-      user: {
-        name: string
-        avatar: string
-      }
-      content: string
-      createdAt: string
-    }>
-  }
-  onDragStart: (e: React.DragEvent) => void
-  onAddComment: (columnId: string, taskId: string, comment: string) => void
-}
 
-export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment }: KanbanCardProps) {
+
+export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   return (

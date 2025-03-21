@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import  React from "react"
 
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -10,19 +10,14 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 
-interface CreateTaskDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onCreateTask: (task: { title: string; description: string }) => void
-}
 
-export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }: CreateTaskDialogProps) {
+export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const { toast } = useToast()
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
 
     if (!title.trim()) {
