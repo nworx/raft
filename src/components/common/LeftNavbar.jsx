@@ -21,39 +21,26 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { Tab_Type } from "@/constants/tab_type";
+// import { Tab_Type } from "@/constants/tab_type";
 import AllProjectsMain from "../projectList/AllProjectsMain";
+import { useRouter } from "next/navigation";
+import { Tab_Type } from "@/constant/tabTypes";
 
 const LeftNavbar = ({children}) => {
   //const [isCollapsed, setIsCollapsed] = useState(false);
     const [tabType,setTabType] = useState(Tab_Type.ALL_PROJECTS||"");
 
-    const renderComponent = () => {
-      switch (tabType) {
-        case Tab_Type.ALL_PROJECTS:{
-          console.log("rajjjjjj")
-          return <AllProjectsMain/>;
-        }
-        case "tab2":
-          return <TabTwoComponent />;
-          break;
-        default:
-          return <DefaultComponent />; // Fallback component
-      }
-    };
+    
 
   
 
   return (
     <SidebarProvider>
-      <AppSidebar setTabType={setTabType} />
+      <AppSidebar  />
       <main style={{width:"100%"}}>
         <SidebarTrigger />
         {
-          children?
           children
-          :
-          renderComponent()
         }
         
       </main>

@@ -10,8 +10,9 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
   } from "@/components/ui/sidebar"
-import { Router, useRouter } from "next/router"
-import { Tab_Type } from "@/constants/tab_type"
+import { Tab_Type } from "@/constant/tabTypes"
+import { useRouter } from "next/navigation";
+// import { Tab_Type } from "@/constants/tab_type"
 
 
 
@@ -23,6 +24,8 @@ import { Tab_Type } from "@/constants/tab_type"
 
 
 export function AppSidebar({setTabType}) {
+
+  const router=useRouter();
 
   const setTabTypeFunc=(tabType)=>{
     setTabType(tabType);
@@ -62,6 +65,20 @@ export function AppSidebar({setTabType}) {
 
   } 
 
+  const renderComponent = (tabType) => {
+    switch (tabType) {
+      case Tab_Type.ALL_PROJECTS:{
+        router.push("/projects")
+        return ;
+      }
+      case "tab2":
+        return <TabTwoComponent />;
+        break;
+      default:
+        return <DefaultComponent />; // Fallback component
+    }
+  };
+
   return (
     <Sidebar>
       <SidebarContent>
@@ -70,7 +87,7 @@ export function AppSidebar({setTabType}) {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item,index) => (
-                <SidebarMenuItem key={item.title} onClick={()=>setTabTypeFunc(item?.state)}>
+                <SidebarMenuItem key={item.title} onClick={()=>renderComponent(item?.state)}>
                   <SidebarMenuButton asChild>
                     {/* <a href={item.url}> */}
                     <div>
