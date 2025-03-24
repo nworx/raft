@@ -82,14 +82,14 @@
 // }
 
 import React from 'react'
-import KanbanBoard from "@/components/KanbanBoard/KanbanBoard";
-import SideNavbarLayout from '@/components/Layouts/SideNavbarLayout';
+import KanbanBoard from '@/components/kanban/KanbanBoard';
+import LeftNavbar from '@/components/common/LeftNavbar';
 
 const page = () => {
   return (
-    <SideNavbarLayout>
+    <LeftNavbar>
     <KanbanBoard/>
-    </SideNavbarLayout>
+    </LeftNavbar>
   )
 }
 
