@@ -39,7 +39,7 @@ const LeftNavbar = ({children}) => {
       <AppSidebar  />
       <main style={{width:"100%"}}>
         <SidebarTrigger style={{position:"absolute",}}/>
-        <div style={{marginTop:"13px"}}>
+        <div style={{marginTop:"13px",zIndex:"4"}}>
         {
           children
         }
