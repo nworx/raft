@@ -1,4 +1,4 @@
-import { Calendar, Home, IceCreamCone, IceCreamConeIcon, Inbox, Search, Settings, SprayCanIcon, SquareActivityIcon } from "lucide-react"
+import { Calendar, Home, IceCreamCone, IceCreamConeIcon, Inbox, Search, Settings, SprayCanIcon, SquareActivityIcon, User2Icon } from "lucide-react"
 import {useState} from "react"
 import {
     Sidebar,
@@ -58,6 +58,12 @@ export function AppSidebar({setTabType}) {
       url: "#",
       icon: Settings,
     },
+    {
+      title: "Profile",
+      url: "/profile",
+      icon: User2Icon,
+      state: Tab_Type.PROFILE
+    },
   ]
 
 
@@ -71,9 +77,10 @@ export function AppSidebar({setTabType}) {
         router.push("/projects")
         return ;
       }
-      case "tab2":
-        return <TabTwoComponent />;
-        break;
+      case Tab_Type.PROFILE:{
+        router.push("/profile")
+        break ;
+      }
       default:
         return <DefaultComponent />; // Fallback component
     }
@@ -83,9 +90,9 @@ export function AppSidebar({setTabType}) {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Didimos</SidebarGroupLabel>
+          <SidebarGroupLabel>Raft</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="cursor-pointer">
               {items.map((item,index) => (
                 <SidebarMenuItem key={item.title} onClick={()=>renderComponent(item?.state)}>
                   <SidebarMenuButton asChild>
