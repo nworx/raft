@@ -36,7 +36,7 @@ const columns = [
     accessorKey: "priority",
     header: "Priority",
     cell: (info) => (
-      <span className="bg-gray-700 px-2 py-1 rounded">{info.getValue()}</span>
+      <span className="bg-gray-700 px-2 py-1 rounded text-white">{info.getValue()}</span>
     ),
   },
   { accessorKey: "status", header: "Status", cell: (info) => info.getValue() },
@@ -154,7 +154,7 @@ export default function AllProjectsMain() {
               placeholder="Search projects..."
               value={globalFilter}
               onChange={(e) => setGlobalFilter(e.target.value)}
-              className="p-2 rounded bg-gray-800 w-[50%] border border-gray-600 gap-5 text-[0.875rem]"
+              className="p-2 rounded bg-gray-800 w-[50%] border border-gray-600 gap-5 text-[0.875rem] text-white"
             />
             {/* <select
               value={priorityFilter}
@@ -170,10 +170,10 @@ export default function AllProjectsMain() {
             <Select value={priorityFilter} onValueChange={setPriorityFilter}
             
             >
-              <SelectTrigger className="p-2 rounded bg-gray-800 border border-gray-600 w-[40%]">
+              <SelectTrigger className="p-2 rounded bg-gray-800 border border-gray-600 w-[40%] text-white">
                 {priorityFilter || "All Priorities"}
               </SelectTrigger>
-              <SelectContent className="bg-gray-800 border border-gray-600">
+              <SelectContent className="bg-gray-800 border border-gray-600 text-white">
                 <SelectItem value="All Priorities">All Priorities</SelectItem>
                 <SelectItem value="High">High</SelectItem>
                 <SelectItem value="Medium">Medium</SelectItem>
