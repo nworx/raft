@@ -1,5 +1,5 @@
 import { Calendar, Home, IceCreamCone, IceCreamConeIcon, Inbox, Search, Settings, SprayCanIcon, SquareActivityIcon, User2Icon } from "lucide-react"
-import {useState} from "react"
+import {useState,useEffect} from "react"
 import {
     Sidebar,
     SidebarContent,
@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 export function AppSidebar({setTabType}) {
 
   const router=useRouter();
+  const [currentUrl,setCurrentUrl]=useState("");
 
   const setTabTypeFunc=(tabType)=>{
     setTabType(tabType);
@@ -40,8 +41,9 @@ export function AppSidebar({setTabType}) {
     },
     {
       title: "My tasks",
-      url: "#signIn",
+      url: "/dashboard",
       icon: SprayCanIcon,
+      state: Tab_Type.MY_TASK
     },
     {
       title: "Inbox",
@@ -53,11 +55,11 @@ export function AppSidebar({setTabType}) {
       url: "#",
       icon: Search,
     },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings,
-    },
+    // {
+    //   title: "Settings",
+    //   url: "#",
+    //   icon: Settings,
+    // },
     {
       title: "Profile",
       url: "/profile",
@@ -71,20 +73,32 @@ export function AppSidebar({setTabType}) {
 
   } 
 
-  const renderComponent = (tabType) => {
-    switch (tabType) {
-      case Tab_Type.ALL_PROJECTS:{
-        router.push("/projects")
-        return ;
-      }
-      case Tab_Type.PROFILE:{
-        router.push("/profile")
-        break ;
-      }
-      default:
-        return <DefaultComponent />; // Fallback component
-    }
+  const renderComponent = (item) => {
+    if(item?.url)router.push(item?.url);
+    
+    // switch (tabType) {
+    //   case Tab_Type.ALL_PROJECTS:{
+    //     router.push("/projects")
+    //     return ;
+    //   }
+    //   case Tab_Type.PROFILE:{
+    //     router.push("/profile")
+    //     break ;
+    //   }
+    //   case Tab_Type.MY_TASK:{
+    //     router.push("/dashboard")
+    //     break ;
+    //   }
+    //   default:
+    //     router.push("/dashboard")
+    //     break ;
+        
+    // }
   };
+
+  useEffect(()=>{
+    setCurrentUrl(window.location.pathname||""); 
+  },[])
 
   return (
     <Sidebar>
@@ -94,7 +108,10 @@ export function AppSidebar({setTabType}) {
           <SidebarGroupContent>
             <SidebarMenu className="cursor-pointer">
               {items.map((item,index) => (
-                <SidebarMenuItem key={item.title} onClick={()=>renderComponent(item?.state)}>
+                <SidebarMenuItem key={item.title} style={{
+                  color:currentUrl== item?.url?"white":"black",
+                  backgroundColor:currentUrl== item?.url?"black":"white"
+                  }} onClick={()=>renderComponent(item)}>
                   <SidebarMenuButton asChild>
                     {/* <a href={item.url}> */}
                     <div>

@@ -1,4 +1,6 @@
 export const Tab_Type={
     ALL_PROJECTS:"ALL_PROJECTS",
-    PROFILE:"PROFILE"
+    PROFILE:"PROFILE",
+    MY_TASK:"MY_TASK",
+    TEAM_TASK:"TEAM_TASK"
 }

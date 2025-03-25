@@ -1,6 +1,6 @@
 "use client"
 
-import  React from "react"
+import  React,{useEffect} from "react"
 
 import { useState } from "react"
 import { CalendarIcon } from "lucide-react"
@@ -42,15 +42,16 @@ import { Calendar } from "@/components/ui/calendar"
 //   onCreateProject: (project: Project) => void
 // }
 
-export function CreateProjectDialog({ open, onOpenChange, onCreateProject }) {
+export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projectData }) {
+  console.log(projectData?.name,"rajj")
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    priority: "Medium",
+    priority: "",
     tasks: 0,
     owner: "",
-    team: "Engineering",
-    status: "Active",
+    team: "",
+    status: "",
   })
 
   const [errors, setErrors] = useState({})
@@ -131,6 +132,11 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject }) {
     }
   }
 
+
+   useEffect(()=>{
+    if(projectData?.name)setFormData(projectData);
+   },[])
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
@@ -189,7 +195,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject }) {
                 </Select>
               </div>
 
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2">
                 <Label htmlFor="tasks" className="flex items-center">
                   Number of Tasks *
                 </Label>
@@ -200,25 +206,8 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject }) {
                   min="0"
                   value={formData.tasks}
                   onChange={handleNumberChange}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="owner" className="flex items-center">
-                  Owner *
-                </Label>
-                <Input
-                  id="owner"
-                  name="owner"
-                  value={formData.owner}
-                  onChange={handleChange}
-                  className={errors.owner ? "border-red-500" : ""}
-                />
-                {errors.owner && <p className="text-red-500 text-sm">{errors.owner}</p>}
-              </div>
-
+                /> 
+              </div> */}
               <div className="grid gap-2">
                 <Label htmlFor="team" className="flex items-center">
                   Team *
@@ -239,9 +228,25 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject }) {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
+              {/* <div className="grid gap-2">
+                <Label htmlFor="owner" className="flex items-center">
+                  Owner *
+                </Label>
+                <Input
+                  id="owner"
+                  name="owner"
+                  value={formData.owner}
+                  onChange={handleChange}
+                  className={errors.owner ? "border-red-500" : ""}
+                />
+                {errors.owner && <p className="text-red-500 text-sm">{errors.owner}</p>}
+              </div> */}   
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label htmlFor="status" className="flex items-center">
-                  Status
+                  Status *
                 </Label>
                 <Select value={formData.status} onValueChange={(value) => handleSelectChange("status", value )}>
                   <SelectTrigger>

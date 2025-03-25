@@ -10,6 +10,35 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 
 
 const initialData = {
+  on_hold:[
+    {
+      id: "o1",
+      title: "Create a Kanban board",
+      content: "Create a Kanban board",
+      description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
+      comments: [
+        {
+          id: "o1",
+          user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
+          content: "This looks great! Let's add more features.",
+          createdAt: "2024-03-01T10:00:00Z",
+        },
+        {
+          id: "o2",
+          user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
+          content: "I can help with the styling.",
+          createdAt: "2024-03-01T11:30:00Z",
+        },
+      ],
+    },
+    {
+      id: "o21",
+      title: "Add drag and drop functionality",
+      content: "Add drag and drop functionality",
+      description: "Implement drag and drop functionality for cards between columns.",
+      comments: [],
+    },
+  ],
   todo: [
     {
       id: "t1",
@@ -134,6 +163,16 @@ export default function KanbanBoard() {
   return (
     <ScrollArea className="h-screen">
       <div className="flex gap-4 p-4 bg-background min-h-screen">
+      <KanbanColumn
+          title="On Hold"
+          columnId="on_hold"
+          items={columns["on_hold"]}
+          onDragStart={onDragStart}
+          onDragOver={onDragOver}
+          onDrop={(e) => onDrop(e, "on_hold")}
+          onAddComment={addComment}
+          onCreateTask={createTask}
+        />
         <KanbanColumn
           title="To Do"
           columnId="todo"

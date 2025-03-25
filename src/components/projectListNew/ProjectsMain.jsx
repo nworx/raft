@@ -28,6 +28,14 @@ export default function ProjectsMain() {
   // State for projects
   const [projects, setProjects] = useState([])
   const [filteredProjects, setFilteredProjects] = useState([])
+  const [projectData,setProjectData]=useState(
+    { name: "",
+    description: "",
+    priority: "",
+    tasks: 0,
+    owner: "",
+    team: "",
+    status: "",});
 
   // State for filters and sorting
   const [searchQuery, setSearchQuery] = useState("")
@@ -142,7 +150,7 @@ export default function ProjectsMain() {
   }
 
   return (
-    <div className="container py-8">
+    <div className="container py-8 px-8">
       <div className="flex flex-col space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Projects</h1>
@@ -224,10 +232,10 @@ export default function ProjectsMain() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           {filteredProjects.length > 0 ? (
-            filteredProjects.map((project) => <ProjectCard key={project.id} project={project} />)
+            filteredProjects.map((project) => <ProjectCard key={project.id} project={project} setProjectData={setProjectData} setIsDialogOpen={setIsDialogOpen}/>)
           ) : (
-            <Card className="col-span-full">
-              <CardContent className="flex flex-col items-center justify-center p-6">
+            <Card className="col-span-full min-h-[70vh]">
+              <CardContent className="flex flex-col items-center justify-center  p-6">
                 <p className="text-muted-foreground mb-4">No projects found matching your criteria</p>
                 <Button
                   variant="outline"
@@ -244,7 +252,7 @@ export default function ProjectsMain() {
         </div>
       </div>
 
-      <CreateProjectDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onCreateProject={handleCreateProject} />
+      <CreateProjectDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onCreateProject={handleCreateProject} projectData={projectData} />
     </div>
   )
 }

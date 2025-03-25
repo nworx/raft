@@ -24,7 +24,7 @@ const statusColors= {
 
 
 
-export function ProjectCard({ project }) {
+export function ProjectCard({ project ,setProjectData,setIsDialogOpen}) {
   // Format date to readable string
   const formatDate = (date) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -32,6 +32,12 @@ export function ProjectCard({ project }) {
       day: "numeric",
       year: "numeric",
     }).format(date)
+  }
+
+  const handleViewUpdateProject=()=>{
+    console.log(project,"rakkk")
+    setProjectData(project);
+    setIsDialogOpen(true);
   }
 
   return (
@@ -68,9 +74,9 @@ export function ProjectCard({ project }) {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between pt-2 border-t">
-        <div className="text-sm text-muted-foreground">Owner: {project.owner}</div>
-        <Button variant="ghost" size="sm">
-          View Details
+        <div className="text-sm text-muted-foreground">Created By: {project.owner}</div>
+        <Button variant="ghost" size="sm" onClick={handleViewUpdateProject}>
+          View/Update Details
         </Button>
       </CardFooter>
     </Card>

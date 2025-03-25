@@ -1,58 +1,71 @@
-"use client"
+"use client";
+import React, { useEffect } from "react";
 
-import  React from "react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { MoonIcon, SunIcon, LogOutIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { MoonIcon, SunIcon, LogOutIcon } from "lucide-react"
-import { useTheme } from "next-themes"
-
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { toast } from "@/components/ui/use-toast"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/use-toast";
 
 export default function ProfilePage() {
-  const router = useRouter()
-  const { theme, setTheme } = useTheme()
+  const router = useRouter();
+  const { theme, setTheme } = useTheme();
 
   const [formData, setFormData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    team: "Engineering",
-    designation: "Software Engineer",
-    avatar: "/placeholder.svg?height=100&width=100",
-  })
+    name: "",
+    email: "",
+    team: "",
+    designation: "",
+    avatar: "",
+  });
 
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSelectChange = (name, value) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     // Here you would typically send the data to your API
     toast({
       title: "Profile Updated",
       description: "Your profile has been updated successfully.",
-    })
-  }
+    });
+  };
 
   const handleLogout = () => {
     // Implement your logout logic here
     toast({
       title: "Logged Out",
       description: "You have been logged out successfully.",
-    })
-    router.push("/login")
-  }
+    });
+    router.push("/auth");
+  };
+
+  useEffect(() => {}, []);
 
   return (
     <div className="container max-w-4xl py-10 m-auto">
@@ -65,7 +78,11 @@ export default function ProfilePage() {
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+            {theme === "dark" ? (
+              <SunIcon className="h-5 w-5" />
+            ) : (
+              <MoonIcon className="h-5 w-5" />
+            )}
           </Button>
           <Button variant="destructive" onClick={handleLogout}>
             <LogOutIcon className="mr-2 h-4 w-4" />
@@ -77,7 +94,9 @@ export default function ProfilePage() {
       <Card>
         <CardHeader>
           <CardTitle>Profile Information</CardTitle>
-          <CardDescription>Update your personal information and preferences.</CardDescription>
+          <CardDescription>
+            Update your personal information and preferences.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -85,17 +104,35 @@ export default function ProfilePage() {
               <div className="flex-1 space-y-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name *</Label>
-                  <Input id="name" name="name" value={formData.name} onChange={handleChange} required />
+                  <Input
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="email">Email *</Label>
-                  <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="team">Team *</Label>
-                  <Select value={formData.team} onValueChange={(value) => handleSelectChange("team", value)}>
+                  <Select
+                    id="team"
+                    value={formData?.team}
+                    onValueChange={(value) => handleSelectChange("team", value)}
+                    required
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select a team" />
                     </SelectTrigger>
@@ -110,7 +147,7 @@ export default function ProfilePage() {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="designation">Designation *</Label>
                   <Select
                     value={formData.designation}
@@ -128,7 +165,7 @@ export default function ProfilePage() {
                       <SelectItem value="Project Manager">Project Manager</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
 
               <div className="flex-1 space-y-4">
@@ -137,7 +174,7 @@ export default function ProfilePage() {
                   <div className="flex flex-col items-center justify-center gap-4">
                     <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-muted">
                       <img
-                        src={formData.avatar || "/placeholder.svg"}
+                        src={formData.avatar || "https://github.com/shadcn.png"}
                         alt="Profile"
                         className="object-cover w-full h-full"
                       />
@@ -148,7 +185,7 @@ export default function ProfilePage() {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="timezone">Timezone</Label>
                   <Select defaultValue="UTC">
                     <SelectTrigger>
@@ -161,9 +198,9 @@ export default function ProfilePage() {
                       <SelectItem value="IST">IST (GMT+5:30)</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="language">Preferred Language</Label>
                   <Select defaultValue="en">
                     <SelectTrigger>
@@ -176,7 +213,7 @@ export default function ProfilePage() {
                       <SelectItem value="de">German</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -198,6 +235,5 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
-
