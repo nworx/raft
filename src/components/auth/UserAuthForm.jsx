@@ -1,6 +1,6 @@
 "use client"
 
-import * as React from "react"
+import React,{useState} from "react"
 
 import { cn } from "@/lib/utils"
 import { Label } from "../ui/label"
@@ -8,13 +8,16 @@ import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
+
 // import { Label } from "@/registry/new-york/ui/label"
 
 // interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }) {
   const router =useRouter();
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [formData,setFormData]=useState({});
 
   async function onSubmit(event) {
     event.preventDefault()
@@ -23,6 +26,10 @@ export function UserAuthForm({ className, ...props }) {
     setTimeout(() => {
       setIsLoading(false)
     }, 3000)
+  }
+
+  const handleChangeForm=()=>{
+
   }
 
   return (
@@ -40,15 +47,35 @@ export function UserAuthForm({ className, ...props }) {
               autoCapitalize="none"
               autoComplete="email"
               autoCorrect="off"
+              value={formData?.email}
               disabled={isLoading}
             />
           </div>
+          <div className="grid gap-1">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                {/* <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+                  Forgot password?
+                </Link> */}
+              </div>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="••••••"
+                value={formData?.password}
+                onChange={handleChangeForm}
+                required
+              />
+            </div>
           <Button disabled={isLoading}>
             {isLoading && (
                 <></>
             //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Sign In with Email
+            {props?.currentState==="login"? "Sign In with Email":props?.currentState==="signUp"?" Create your account":""}
+
+           
           </Button>
         </div>
       </form>
