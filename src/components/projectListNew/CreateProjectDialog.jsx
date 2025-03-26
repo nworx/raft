@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
+import { toast } from "../ui/use-toast"
 
 // Project type definition
 // const Priority = "Low" | "Medium" | "High" | "Critical"
@@ -42,8 +43,8 @@ import { Calendar } from "@/components/ui/calendar"
 //   onCreateProject: (project: Project) => void
 // }
 
-export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projectData }) {
-  console.log(projectData?.name,"rajj")
+export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projectData,process }) {
+  console.log(projectData,"rajj",process,open)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -104,15 +105,16 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
       newErrors.description = "Description is required"
     }
 
-    if (!formData.owner.trim()) {
-      newErrors.owner = "Owner name is required"
-    }
+    // if (!formData.owner.trim()) {
+    //   newErrors.owner = "Owner name is required"
+    // }
 
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = (e) => {
+    console.log("handleSubmit called")
     e.preventDefault()
 
     if (validateForm()) {
@@ -130,19 +132,27 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
       })
       setErrors({})
     }
+    else{
+      console.log("Please fill form properly ")
+    }
   }
 
+  useEffect(()=>{console.log("raj")})
 
-   useEffect(()=>{
-    if(projectData?.name)setFormData(projectData);
-   },[])
+  useEffect(()=>{
+    console.log(process,projectData,"useEEffect")
+    if(process==="UPDATE"){
+      
+      setFormData(projectData);
+    }
+   },[open])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Create New Project</DialogTitle>
+            <DialogTitle>{process==="UPDATE"?"Update":"Create New"} Project</DialogTitle>
             <DialogDescription>
               Fill in the details to create a new project. Fields marked with * are required.
             </DialogDescription>
@@ -285,7 +295,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">Create Project</Button>
+            <Button type="submit">{process === "UPDATE"?"Update ":"Create " }Project</Button>
           </DialogFooter>
         </form>
       </DialogContent>

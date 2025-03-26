@@ -24,7 +24,7 @@ const statusColors= {
 
 
 
-export function ProjectCard({ project ,setProjectData,setIsDialogOpen}) {
+export function ProjectCard({ project ,handleUpdateProject }) {
   // Format date to readable string
   const formatDate = (date) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -36,8 +36,9 @@ export function ProjectCard({ project ,setProjectData,setIsDialogOpen}) {
 
   const handleViewUpdateProject=()=>{
     console.log(project,"rakkk")
-    setProjectData(project);
-    setIsDialogOpen(true);
+    
+    handleUpdateProject(project);
+    // setIsDialogOpen(true);
   }
 
   return (

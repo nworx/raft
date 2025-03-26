@@ -28,6 +28,7 @@ export default function ProjectsMain() {
   // State for projects
   const [projects, setProjects] = useState([])
   const [filteredProjects, setFilteredProjects] = useState([])
+  const [process,setProcess]=useState("");
   const [projectData,setProjectData]=useState(
     { name: "",
     description: "",
@@ -44,7 +45,13 @@ export default function ProjectsMain() {
   const [sortDirection, setSortDirection] = useState("desc")
 
   // State for create project dialog
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleUpdateProject=(project)=>{
+   setProcess("UPDATE");
+   setIsDialogOpen(true);
+   setProjectData(project);
+  }
 
   // Mock data for initial projects
   useEffect(() => {
@@ -139,6 +146,7 @@ export default function ProjectsMain() {
 
   // Handle creating a new project
   const handleCreateProject = (newProject) => {
+    setProcess("");
     const project = {
       ...newProject,
       id: Date.now().toString(),
@@ -232,7 +240,7 @@ export default function ProjectsMain() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           {filteredProjects.length > 0 ? (
-            filteredProjects.map((project) => <ProjectCard key={project.id} project={project} setProjectData={setProjectData} setIsDialogOpen={setIsDialogOpen}/>)
+            filteredProjects.map((project) => <ProjectCard key={project.id} project={project}  handleUpdateProject={handleUpdateProject} />)
           ) : (
             <Card className="col-span-full min-h-[70vh]">
               <CardContent className="flex flex-col items-center justify-center  p-6">
@@ -252,7 +260,7 @@ export default function ProjectsMain() {
         </div>
       </div>
 
-      <CreateProjectDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onCreateProject={handleCreateProject} projectData={projectData} />
+      <CreateProjectDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onCreateProject={handleCreateProject} projectData={projectData} process={process} />
     </div>
   )
 }
