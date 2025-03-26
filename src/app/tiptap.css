@@ -1,0 +1,211 @@
+.tiptap {
+    width: 645px;
+    height: 270px;
+    overflow-y: scroll;
+}
+
+.tiptap-editor blockquote {
+    border-left: 4px solid #aaa;
+    padding-left: 1rem;
+    margin: 0.5rem 1rem;
+    color: #ddd;
+    font-style: italic;
+}
+
+.tiptap p {
+    padding: 1em;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
+
+.tiptap .mention {
+    background-color: violet;
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    color: violet;
+    padding: 0.1rem 0.3rem;
+}
+
+.tiptap .mention::after {
+    content: "\200B";
+}
+
+.tiptap-editor code {
+    background-color: #2d2d2d;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    color: #ffcc66;
+}
+
+.tiptap-editor a {
+    color: #7A88FF;
+    cursor: pointer;
+}
+
+.tiptap-editor a:hover {
+    color: #2563eb;
+}
+
+.tiptap-editor:focus {
+    outline: none;
+}
+
+.tiptap-editor p {
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+}
+
+.ProseMirror {
+    color: #fff;
+}
+
+.ProseMirror ul {
+    list-style-type: disc;
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.ProseMirror li {
+    margin: 0.05rem 0;
+}
+
+.ProseMirror h1,
+.ProseMirror h2,
+.ProseMirror h3 {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    font-weight: bold;
+}
+
+.ProseMirror h1 {
+    font-size: 1.5rem;
+}
+
+.ProseMirror h2 {
+    font-size: 1.2rem;
+}
+
+.ProseMirror h3 {
+    font-size: 1rem;
+}
+
+.ProseMirror ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+}
+
+.taskItem input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}
+
+
+.slash-menu div:hover {
+    background: #f0f0f0;
+}
+
+.custom-code-block {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    padding: 1rem;
+    border-radius: 6px;
+    margin: 0.5rem 1rem;
+    overflow-x: auto;
+}
+
+.hljs-keyword {
+    color: #ff7b72;
+}
+
+.hljs-string {
+    color: #a5d6ff;
+}
+
+.hljs-comment {
+    color: #8c8c8c;
+    font-style: italic;
+}
+
+.hljs-built_in {
+    color: #d19a66;
+}
+
+.hljs-function {
+    color: #61afef;
+}
+
+.hljs-title {
+    color: #f97583;
+}
+
+.hljs-number {
+    color: #dcdcaa;
+}
+
+.btn {
+    padding: 4px 14px;
+    color: #fff;
+    border-radius: 5px;
+    min-width: 28px;
+    font-size: .75rem;
+    font-weight: 500;
+}
+
+.primary {
+    background-color: #5D6AD1;
+    border: 0.5px splid #6D78E6;
+}
+
+.secondary {
+    background-color: #292C34;
+    border: 0.5px splid #383B41;
+}
+
+.bubble-btn:hover {
+    background-color: #2e2d2d;
+}
+
+.dropdown-menu {
+    background: #1D1D1F;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.7rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    overflow: auto;
+    padding: 0.7rem;
+    position: relative;
+}
+
+.dropdown-menu button {
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 0.3rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.dropdown-menu button:hover,
+.dropdown-menu button:hover.is-selected {
+    background-color: #26292E;
+}
+
+.dropdown-menu button.is-selected {
+    background-color: #26292E;
+}
