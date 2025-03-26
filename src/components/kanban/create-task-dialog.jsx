@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
+import Tiptap from "../common/text-editor/TipTap"
 
 
 export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
@@ -59,7 +60,7 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="min-w-[50vw]">
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
@@ -76,13 +77,14 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Textarea
+            <Tiptap/>
+            {/* <Textarea
               id="description"
               placeholder="Add a more detailed description..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="min-h-[100px]"
-            />
+            /> */}
           </div>
           <div className="flex justify-end gap-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

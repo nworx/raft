@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { formatDistanceToNow } from "date-fns"
 import { useToast } from "@/components/ui/use-toast"
+import Tiptap from "../common/text-editor/TipTap"
 
 
 
@@ -40,26 +41,36 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl h-[80vh] flex flex-col">
-        <DialogHeader>
-          <DialogTitle>
+    <Dialog open={open} onOpenChange={onOpenChange} >
+        {/* //  max-w-2xl  */}
+      <DialogContent className="
+      min-w-[50vw]
+      h-[80vh]
+      flex flex-col 
+      ">
+        <DialogHeader
+       
+        >
+          <DialogTitle
+           className="mt-[18px]"
+          >
             <Input
               className="text-lg font-semibold h-auto px-1 py-1 border-transparent hover:border-input focus:border-input transition-colors"
               defaultValue={task.title}
             />
           </DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col flex-grow overflow-hidden">
+        <div className="flex flex-col flex-grow overflow-scroll">
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+            <Tiptap/>
+              {/* <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
                 className="min-h-[100px] resize-none"
                 placeholder="Add a more detailed description..."
                 defaultValue={task.description}
-              />
+              /> */}
             </div>
           </div>
 
@@ -91,7 +102,8 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
           </div>
 
           <div className="mt-4 space-y-4">
-            <Textarea
+          <Tiptap/>
+            {/* <Textarea
               placeholder="Add a comment..."
               className="resize-none"
               value={newComment}
@@ -101,7 +113,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
                   handleAddComment()
                 }
               }}
-            />
+            /> */}
             <div className="flex items-center gap-2">
               <Button onClick={handleAddComment} disabled={!newComment.trim()}>
                 Add Comment
