@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 const SlashCommandListItem = ({ item, onRunCommand }) => {
   const [isHovered, setIsHovered] = useState(false);
-
   return (
     <div
       className={`flex items-center px-2 py-1 gap-2 rounded cursor-pointer transition-all duration-200 ${

@@ -41,13 +41,14 @@ import {
 } from 'react-icons/pi';
 
 
-export default function Tiptap() {
+export default function Tiptap({ text, setText, label }) {
   const [showTextDropdown, setShowTextDropdown] = useState(false);
   const [showListDropdown, setShowListDropdown] = useState(false);
   const [isLinkInputVisible, setIsLinkInputVisible] = useState(false);
   const [linkValue, setLinkValue] = useState('');
 
   const editor = useEditor({
+    content: text && Object.keys(text).length > 0 ? text : '', 
     extensions: [
       StarterKit.configure({ typography: false }),
       Image,
@@ -92,7 +93,7 @@ export default function Tiptap() {
       }),
       BubbleMenuExtension,
       Placeholder.configure({
-        placeholder: 'Write a description, a project brief or collect ideas...',
+        placeholder: 'Write here...',
       }),
       Mention.configure({
         HTMLAttributes: {
@@ -126,8 +127,13 @@ export default function Tiptap() {
 
   if (!editor) return null;
 
-  const handleCancel = () => editor.commands.clearContent();
-  const handleSave = () => editor.getHTML();
+  const handleCancel = () => {
+    editor.commands.clearContent();
+  }
+
+  const handleSave = () => {
+    setText(editor.getJSON());
+  }
 
   const toggleTextDropdown = () => {
     setShowTextDropdown(prev => !prev);
@@ -257,7 +263,7 @@ export default function Tiptap() {
 
   return (
     <>
-      <div className="w-[680px] h-[300px] bg-zinc-800 text-white rounded-lg p-4 overflow-y-auto">
+      <div className="bg-zinc-800 text-white rounded-lg p-4 overflow-y-auto">
         <BubbleMenu
           editor={editor}
           shouldShow={shouldShowBubbleMenu}
@@ -275,8 +281,8 @@ export default function Tiptap() {
         <EditorContent editor={editor} />
       </div>
       <div className="flex gap-4 mt-4">
-        <button className="btn secondary cursor-pointer" onClick={handleCancel}>Cancel</button>
-        <button className="btn primary cursor-pointer" onClick={handleSave}>Save text</button>
+        <button className="btn secondary cursor-pointer" onClick={handleCancel}>Clear</button>
+        <button className="btn primary cursor-pointer" onClick={handleSave}>Save {label}</button>
       </div>
     </>
   );

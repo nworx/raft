@@ -1,7 +1,7 @@
 "use client"
 
 import  React from "react"
-
+import dynamic from 'next/dynamic';
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
@@ -9,8 +9,10 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
-import Tiptap from "../common/text-editor/TipTap"
 
+const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
+  ssr: false,
+});
 
 export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
   const [title, setTitle] = useState("")
@@ -60,7 +62,7 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="min-w-[50vw]">
+      <DialogContent className="min-w-[55vw] z-[100]" forceMount>
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
         </DialogHeader>
@@ -77,7 +79,7 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Description</Label>
-            <Tiptap/>
+            <Tiptap text={description} setText={setDescription} label="Description"/>
             {/* <Textarea
               id="description"
               placeholder="Add a more detailed description..."

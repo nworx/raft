@@ -1,15 +1,25 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import SlashCommandListItem from "./SlashCommandListItem";
+import { createPortal } from "react-dom";
 
 export default function SlashCommandList({ items, onRunCommand, position }) {
-  if (!position) return null;
+  const [mounted, setMounted] = useState(false);
 
-  return (
+  useEffect(() => {
+    setMounted(true); // Ensures we're on the client and `document.body` is ready
+  }, []);
+
+  if (!position || !mounted) return null;
+
+  const dropdown = (
     <div
-      className="absolute w-[170px] p-2 text-white rounded-md bg-[#1D1D1F] shadow-md z-10"
+      className="absolute w-[170px] p-2 text-white rounded-md bg-[#1D1D1F] shadow-md"
       style={{
-        top: position.top,
-        left: position.left,
+        top: position.top ?? 0,
+        left: position.left ?? 0,
+        zIndex: 10000,
         position: 'absolute',
       }}
     >
@@ -32,4 +42,6 @@ export default function SlashCommandList({ items, onRunCommand, position }) {
       })}
     </div>
   );
+
+  return createPortal(dropdown, document.body);
 }
