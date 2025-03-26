@@ -25,7 +25,8 @@ const CreateProjectModel = ({
   setAllProjects,
   allProjects,
 }) => {
-  if (!isOpen) return null;
+
+
   const { toast } = useToast();
 
   const [newProject, setNewProject] = useState({
@@ -35,6 +36,8 @@ const CreateProjectModel = ({
     priority: "",
     status: "pending",
   });
+
+  if (!isOpen) return null;
 
   const handleCreateProject = () => {
     setAllProjects([newProject, ...allProjects]);

@@ -23,7 +23,7 @@ devDeploy:
 	cp firebase.json firebase.copy.json
 	cp firebase.dev.json firebase.json
 	npm run build
-	firebase deploy --only hosting:n-raft-dev
+	firebase deploy --only hosting --project n-raft-dev
 	cp firebase.copy.json firebase.json
 	git checkout -
 
