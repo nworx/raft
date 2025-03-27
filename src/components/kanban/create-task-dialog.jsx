@@ -1,104 +1,115 @@
-"use client"
-
-import  React from "react"
-import dynamic from 'next/dynamic';
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { useToast } from "@/components/ui/use-toast"
+import React, { useState } from "react";
+import dynamic from "next/dynamic";
+import { useToast } from "@/components/ui/use-toast";
 
 const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   ssr: false,
+  loading: () => <div className="shimmer-loader"></div>,
 });
 
 export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const { toast } = useToast()
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const handleSubmit = (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!title.trim()) {
       toast({
         title: "Error",
         description: "Title is required",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
 
     try {
       onCreateTask({
         title: title.trim(),
         description: description.trim(),
-      })
+      });
 
       // Reset form
-      setTitle("")
-      setDescription("")
-      onOpenChange(false)
+      setTitle("");
+      setDescription("");
+      onOpenChange(false);
 
       toast({
         title: "Success",
         description: "Task created successfully",
-      })
+      });
     } catch (error) {
       toast({
         title: "Error",
         description: "Failed to create task",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="min-w-[55vw] z-[100]" forceMount>
-        <DialogHeader>
-          <DialogTitle>Create New Task</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              placeholder="Enter task title..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              autoFocus
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Tiptap text={description} setText={setDescription} label="Description"/>
-            {/* <Textarea
-              id="description"
-              placeholder="Add a more detailed description..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="min-h-[100px]"
-            /> */}
-          </div>
-          <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting || !title.trim()}>
-              Create Task
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-  )
-}
+    <>
+      {open && (
+        <div className="fixed inset-0 z-50 opacity-50" onClick={() => onOpenChange(false)} />
+      )}
 
+      {open && (
+        <div className="fixed inset-0 z-50 flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-lg w-[55vw] p-6">
+            <div className="mb-4">
+              <h2 className="text-xl font-semibold">Create New Task</h2>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label htmlFor="title" className="block font-medium">
+                  Title
+                </label>
+                <input
+                  id="title"
+                  placeholder="Enter task title..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full border border-gray-300 p-2 rounded"
+                  autoFocus
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label htmlFor="description" className="block font-medium">
+                  Description
+                </label>
+                <Tiptap text={description} setText={setDescription} label="Description" />
+              </div>
+
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 border border-gray-300 rounded text-gray-700 hover:bg-gray-100"
+                  onClick={() => onOpenChange(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting || !title.trim()}
+                  className={`px-4 py-2 rounded ${
+                    isSubmitting || !title.trim() ? "bg-gray-400" : "bg-blue-500"
+                  } text-white`}
+                >
+                  Create Task
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
