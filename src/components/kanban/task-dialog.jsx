@@ -59,7 +59,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
             <div className="flex flex-col flex-grow overflow-scroll py-4">
               <div className="grid gap-4">
                 <div className="space-y-2">
-                  <Tiptap text={newComment} setText={setNewComment} label="Comment" />
+                  <Tiptap text={newComment} setText={setNewComment} height='200px'/>
                 </div>
               </div>
 
@@ -93,9 +93,9 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
               </div>
 
               <div className="mt-4 space-y-4">
-                <Tiptap text={newComment} setText={setNewComment} label="Comment" />
+                <Tiptap text={newComment} setText={setNewComment} height='150px'/>
                 <div className="flex items-center gap-2">
-                  <Button onClick={handleAddComment} disabled={!newComment.trim()}>
+                  <Button onClick={handleAddComment} disabled={!newComment}>
                     Add Comment
                   </Button>
                   <p className="text-sm text-muted-foreground">

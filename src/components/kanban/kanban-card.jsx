@@ -27,13 +27,14 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
           )}
         </CardContent>
       </Card>
-
-      <TaskDialog
-        task={task}
-        open={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onAddComment={(comment) => onAddComment(columnId, task.id, comment)}
-      />
+      <div className="space-y-0">
+        <TaskDialog
+          task={task}
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          onAddComment={(comment) => onAddComment(columnId, task.id, comment)}
+        />
+      </div>
     </>
   )
 }

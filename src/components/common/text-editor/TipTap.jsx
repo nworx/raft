@@ -41,12 +41,12 @@ import {
 } from 'react-icons/pi';
 
 
-export default function Tiptap({ text, setText, label }) {
+export default function Tiptap({ text, setText, height='100px' }) {
   const [showTextDropdown, setShowTextDropdown] = useState(false);
   const [showListDropdown, setShowListDropdown] = useState(false);
   const [isLinkInputVisible, setIsLinkInputVisible] = useState(false);
   const [linkValue, setLinkValue] = useState('');
-
+  
   const editor = useEditor({
     content: text && Object.keys(text).length > 0 ? text : '', 
     extensions: [
@@ -111,9 +111,10 @@ export default function Tiptap({ text, setText, label }) {
     ],
     editorProps: {
       attributes: {
-        class: 'tiptap-editor relative min-h-[150px] text-white',
+        class: 'tiptap-editor relative text-white',
+        style: `height: ${height}; overflow-y: auto;`,
       },
-    },
+    },    
     onSelectionUpdate: () => {
       setShowTextDropdown(false);
       setShowListDropdown(false);
@@ -123,17 +124,12 @@ export default function Tiptap({ text, setText, label }) {
         setLinkValue(isLink && selectedLink?.href ? selectedLink.href : '');
       }
     },
+    onUpdate: () => {
+      setText(editor.getJSON());
+    }
   });
 
   if (!editor) return null;
-
-  const handleCancel = () => {
-    editor.commands.clearContent();
-  }
-
-  const handleSave = () => {
-    setText(editor.getJSON());
-  }
 
   const toggleTextDropdown = () => {
     setShowTextDropdown(prev => !prev);
@@ -260,10 +256,9 @@ export default function Tiptap({ text, setText, label }) {
     </div>
   );
 
-
   return (
     <>
-      <div className="bg-zinc-800 text-white rounded-lg p-4 overflow-y-auto">
+      <div className="bg-zinc-800 text-white rounded-lg p-4">
         <BubbleMenu
           editor={editor}
           shouldShow={shouldShowBubbleMenu}
@@ -279,10 +274,6 @@ export default function Tiptap({ text, setText, label }) {
           {isLinkInputVisible ? linkBubbleContent : mainBubbleContent}
         </BubbleMenu>
         <EditorContent editor={editor} />
-      </div>
-      <div className="flex gap-4 mt-4">
-        <button className="btn secondary cursor-pointer" onClick={handleCancel}>Clear</button>
-        <button className="btn primary cursor-pointer" onClick={handleSave}>Save {label}</button>
       </div>
     </>
   );

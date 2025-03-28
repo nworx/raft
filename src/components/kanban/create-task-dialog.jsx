@@ -56,7 +56,7 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
   return (
     <>
       {open && (
-        <div className="fixed inset-0 z-50 opacity-50" onClick={() => onOpenChange(false)} />
+        <div className="fixed inset-0 z-50 bg-black opacity-50" onClick={() => onOpenChange(false)} />
       )}
 
       {open && (
@@ -85,7 +85,7 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
                 <label htmlFor="description" className="block font-medium">
                   Description
                 </label>
-                <Tiptap text={description} setText={setDescription} label="Description" />
+                <Tiptap text={description} setText={setDescription} height='100px'/>
               </div>
 
               <div className="flex justify-end gap-2 mt-4">
