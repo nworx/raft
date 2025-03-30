@@ -11,6 +11,7 @@ import TaskItem from '@tiptap/extension-task-item';
 import Blockquote from '@tiptap/extension-blockquote';
 import CodeBlock from '@tiptap/extension-code-block';
 import Image from '@tiptap/extension-image';
+import { CustomImage } from '@/extensions/tiptap/CustomImage';
 
 import { SlashCommand } from "./SlashCommand";
 import suggestion from './mention/Suggestion';

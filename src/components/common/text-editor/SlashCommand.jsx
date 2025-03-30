@@ -75,10 +75,31 @@ export const SlashCommand = Extension.create({
               label: 'Insert Media',
               icon: <GoFileMedia size={16} color="#fff" />,
               execute: async (editor, range) => {
-                const content = await editor.extensionManager.extensions.find(e => e.name === 'slash-command')?.options.uploadHandlers.onImageInsert();
-                editor.chain().focus().deleteRange(range).insertContent(content).run();
+                const file = await editor.extensionManager.extensions.find(e => e.name === 'slash-command')?.options.uploadHandlers.onImageInsert();
+                
+                const reader = new FileReader();
+            
+                reader.onload = () => {
+                  const uploadImageHandler = (imgSrc, imgType) => async () => {
+                    const { Image, PreSignedURL } = await getPreSignedUrl(imgType);
+                    await uploadImage({ url: PreSignedURL, image: imgSrc });
+                    return Image;
+                  };
+            
+                  editor.chain()
+                    .focus()
+                    .deleteRange(range)
+                    .setNode('customImage', {
+                      src: reader.result,
+                      caption: '',
+                      uploadImageHandler: uploadImageHandler(reader.result, file.type),
+                    })
+                    .run();
+                };
+            
+                reader.readAsDataURL(file);
               },
-            },
+            },            
             {
               label: 'Insert GIF',
               icon: <HiOutlineGif size={16} color="#fff" />,
