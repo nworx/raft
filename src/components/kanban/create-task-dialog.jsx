@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { useToast } from "@/components/ui/use-toast";
+import createTask from "@/services/task/createTask";
 
 const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   ssr: false,
@@ -24,6 +25,8 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
       });
       return;
     }
+
+    createTask({name:title,description:description})
 
     setIsSubmitting(true);
 
