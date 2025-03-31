@@ -15,17 +15,17 @@ const openLocalFilePicker = (accept) => {
 };
 
 export const handleImageInsert = async () => {
-    const file = await openLocalFilePicker('image/*');
-    const objectURL = URL.createObjectURL(file);
-
-    return {
-        type: 'image',
-        attrs: {
-            src: objectURL,
-            alt: file.name,
-        },
-    };
-};
+    return new Promise((resolve) => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.onchange = () => {
+        const file = input.files?.[0];
+        resolve(file);
+      };
+      input.click();
+    });
+};  
 
 export const handleGIFInsert = async () => {
     const file = await openLocalFilePicker('image/gif');

@@ -12,7 +12,6 @@ import Blockquote from '@tiptap/extension-blockquote';
 import CodeBlock from '@tiptap/extension-code-block';
 import Image from '@tiptap/extension-image';
 import { CustomImage } from '@/extensions/tiptap/CustomImage';
-
 import { SlashCommand } from "./SlashCommand";
 import suggestion from './mention/Suggestion';
 import { DropdownItem } from './DropdownItem';
@@ -52,7 +51,7 @@ export default function Tiptap({ text, setText, height='100px' }) {
     content: text && Object.keys(text).length > 0 ? text : '', 
     extensions: [
       StarterKit.configure({ typography: false }),
-      Image,
+      CustomImage,
       Link.configure({
         openOnClick: false,
         autolink: true,
