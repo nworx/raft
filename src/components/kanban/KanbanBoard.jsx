@@ -1,9 +1,10 @@
 "use client"
 
-import  React from "react"
+import  React,{useEffect} from "react"
 import { useState } from "react"
 import KanbanColumn from "./kanban-column"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import fetchTasksByProjectId from "@/services/task/fetchTasksByProjectId"
 
 
 
@@ -159,6 +160,21 @@ export default function KanbanBoard() {
       return newColumns
     })
   }
+
+
+  useEffect(()=>{
+    const fetchTaskByProjectIdFunc=async()=>{
+      try{
+      const response= await fetchTasksByProjectId({projectId:1});
+      console.log(response,"response fetchTaskByProjectId")
+      }
+      catch(e){
+        console.log(e<"error fetchTaskByProjectId");
+      }
+    }
+    fetchTaskByProjectIdFunc();
+  
+  },[])
 
   return (
     <ScrollArea className="h-screen">

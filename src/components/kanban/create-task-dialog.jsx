@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useToast } from "@/components/ui/use-toast";
 import createTask from "@/services/task/createTask";
@@ -11,6 +11,9 @@ const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
 export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  useEffect(()=>{
+    console.log(description,"description")
+  },[description])
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -88,7 +91,7 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
                 <label htmlFor="description" className="block font-medium">
                   Description
                 </label>
-                <Tiptap text={description} setText={setDescription} height='100px'/>
+                <Tiptap text={description} setText={setDescription} height='300px'/>
               </div>
 
               <div className="flex justify-end gap-2 mt-4">
