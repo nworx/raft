@@ -10,6 +10,10 @@ import { Input } from "../ui/input"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 
+import { toast } from "../ui/use-toast"
+import signIn from "@/services/auth/signIn"
+import signUp from "@/services/auth/signUp"
+
 // import { Label } from "@/registry/new-york/ui/label"
 
 // interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
@@ -22,14 +26,33 @@ export function UserAuthForm({ className, ...props }) {
   async function onSubmit(event) {
     event.preventDefault()
     setIsLoading(true)
-    router.push("/dashboard")
-    setTimeout(() => {
+    let response;
+    if(props?.currentState==="login"){
+      response=await signIn(formData);
+      console.log("looks like",response);
+      if(response){
+          
+        
+      }
+    }
+    else{
+      response= await signUp(formData);
+    }
+    // router.push("/dashboard")
       setIsLoading(false)
-    }, 3000)
+    
   }
 
-  const handleChangeForm=()=>{
+  const handleChangeForm=(event)=>{
+    const {name,value}=event.target;
+    setFormData((previousValue)=>({
+      ...previousValue,
+      [name]:value
+    }))
+  }
 
+  const handleCreateUser=async()=>{
+  
   }
 
   return (
@@ -42,6 +65,7 @@ export function UserAuthForm({ className, ...props }) {
             </Label>
             <Input
               id="email"
+              name="email"
               placeholder="name@example.com"
               type="email"
               autoCapitalize="none"
@@ -49,6 +73,7 @@ export function UserAuthForm({ className, ...props }) {
               autoCorrect="off"
               value={formData?.email}
               disabled={isLoading}
+              onChange={handleChangeForm}
             />
           </div>
           <div className="grid gap-1">

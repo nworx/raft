@@ -1,0 +1,1 @@
+export const BASE_URL = process.env.NEXT_PUBLIC_NWORX_BASE_URL!;
