@@ -11,7 +11,10 @@ const signIn = async({ email, password }) => {
       email,
       password,
     });
-    return response
+    if(response.status === 200){
+      return response
+    }
+    
    
   } catch (errorMessage) {
     console.log(errorMessage,"signIn");
