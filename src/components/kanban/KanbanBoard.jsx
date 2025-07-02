@@ -177,8 +177,8 @@ export default function KanbanBoard() {
   },[])
 
   return (
-    <ScrollArea className="h-screen">
-      <div className="flex gap-4 p-4 bg-background min-h-screen">
+    <ScrollArea className="container py-8 px-8 mt-6">
+      <div className="flex max-w-5xl gap-4 h-[80vh]">
       <KanbanColumn
           title="On Hold"
           columnId="on_hold"

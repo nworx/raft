@@ -53,6 +53,11 @@ export default function ProjectsMain() {
    setProjectData(project);
   }
 
+  const handleCreateNewProject = () => {
+    setIsDialogOpen(true);
+    setProjectData(null);
+  }
+
   // Mock data for initial projects
   useEffect(() => {
     const mockProjects = [
@@ -162,7 +167,7 @@ export default function ProjectsMain() {
       <div className="flex flex-col space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Projects</h1>
-          <Button onClick={() => setIsDialogOpen(true)}>
+          <Button onClick={ handleCreateNewProject}>
             <PlusIcon className="mr-2 h-4 w-4" />
             New Project
           </Button>

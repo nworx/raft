@@ -165,7 +165,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
               <Input
                 id="name"
                 name="name"
-                value={formData.name}
+                value={formData?.name}
                 onChange={handleChange}
                 className={errors.name ? "border-red-500" : ""}
               />
@@ -179,7 +179,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
               <Textarea
                 id="description"
                 name="description"
-                value={formData.description}
+                value={formData?.description}
                 onChange={handleChange}
                 rows={3}
                 className={errors.description ? "border-red-500" : ""}
@@ -192,7 +192,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
                 <Label htmlFor="priority" className="flex items-center">
                   Priority *
                 </Label>
-                <Select value={formData.priority} onValueChange={(value) => handleSelectChange("priority", value)}>
+                <Select value={formData?.priority} onValueChange={(value) => handleSelectChange("priority", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
@@ -222,7 +222,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
                 <Label htmlFor="team" className="flex items-center">
                   Team *
                 </Label>
-                <Select value={formData.team} onValueChange={(value) => handleSelectChange("team", value)}>
+                <Select value={formData?.team} onValueChange={(value) => handleSelectChange("team", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select team" />
                   </SelectTrigger>
@@ -258,7 +258,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
                 <Label htmlFor="status" className="flex items-center">
                   Status *
                 </Label>
-                <Select value={formData.status} onValueChange={(value) => handleSelectChange("status", value )}>
+                <Select value={formData?.status} onValueChange={(value) => handleSelectChange("status", value )}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
@@ -277,15 +277,15 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
                     <Button
                       variant="outline"
                       className={`w-full justify-start text-left font-normal ${
-                        !formData.dueDate && "text-muted-foreground"
+                        !formData?.dueDate && "text-muted-foreground"
                       }`}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData.dueDate ? format(formData.dueDate, "PPP") : <span>Pick a date</span>}
+                      {formData?.dueDate ? format(formData?.dueDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={formData.dueDate} onSelect={handleDateChange} initialFocus />
+                    <Calendar mode="single" selected={formData?.dueDate} onSelect={handleDateChange} initialFocus />
                   </PopoverContent>
                 </Popover>
               </div>

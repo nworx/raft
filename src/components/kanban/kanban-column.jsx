@@ -24,11 +24,11 @@ export default function KanbanColumn({
 
   return (
     <>
-      <Card className="w-80 flex flex-col" onDragOver={onDragOver} onDrop={onDrop}>
+      <Card className="flex flex-col min-w-24 flex-1 " onDragOver={onDragOver} onDrop={onDrop}>
         <CardHeader>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 space-y-2">
+        <CardContent className="flex-1 overflow-auto space-y-2">
           {items.map((item) => (
             <KanbanCard
               key={item.id}
@@ -43,7 +43,7 @@ export default function KanbanColumn({
         <CardFooter className="pt-2">
           <Button
             variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-foreground"
+            className="w-full justify-start text-muted-foreground border-2 border-gray-100 hover:text-foreground"
             onClick={() => setIsCreateDialogOpen(true)}
           >
             <Plus className="h-4 w-4 mr-2" />

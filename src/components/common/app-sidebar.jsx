@@ -35,13 +35,13 @@ export function AppSidebar({setTabType}) {
   const items = [
     {
       title: "Projects",
-      url: "/projects",
+      url: "/raft/projects",
       icon: SquareActivityIcon,
       state: Tab_Type.ALL_PROJECTS
     },
     {
       title: "My tasks",
-      url: "/dashboard",
+      url: "/raft/dashboard",
       icon: SprayCanIcon,
       state: Tab_Type.MY_TASK
     },
@@ -62,7 +62,7 @@ export function AppSidebar({setTabType}) {
     // },
     {
       title: "Profile",
-      url: "/profile",
+      url: "/raft/profile",
       icon: User2Icon,
       state: Tab_Type.PROFILE
     },
