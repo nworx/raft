@@ -31,8 +31,7 @@ export function UserAuthForm({ className, ...props }) {
       response=await signIn(formData);
       console.log("looks like",response);
       if(response){
-          
-        
+        router.push("/raft/dashboard")
       }
     }
     else{

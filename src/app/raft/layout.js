@@ -13,7 +13,7 @@ export default function DashboardLayout({ children }) {
     const cookies = document.cookie;
     
     console.log(cookies,"cookiescookiescookies")
-    const hasJWT = cookies.includes('jwt=');
+    const hasJWT = cookies.includes('jwt');
 
     if (!hasJWT) {
       router.push('/');
