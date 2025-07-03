@@ -68,8 +68,8 @@ export default function ProfilePage() {
   useEffect(() => {}, []);
 
   return (
-    <div className="container max-w-4xl py-10 m-auto">
-      <div className="flex justify-between items-center mb-6">
+    <div className="container max-w-6xl pt-6 m-auto">
+      <div className="flex justify-between items-center mb-3">
         <h1 className="text-3xl font-bold">My Profile</h1>
         <div className="flex items-center gap-4">
           <Button
@@ -99,8 +99,8 @@ export default function ProfilePage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="flex flex-col sm:flex-row gap-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex flex-col sm:flex-row gap-8">
               <div className="flex-1 space-y-2">
                 <div className="space-y-2">
                   <Label htmlFor="name">Name *</Label>

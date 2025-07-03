@@ -5,6 +5,7 @@ import { useState } from "react"
 import KanbanColumn from "./kanban-column"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import fetchTasksByProjectId from "@/services/task/fetchTasksByProjectId"
+import { Button } from "../ui/button"
 
 
 
@@ -95,7 +96,7 @@ const currentUser = {
   avatar: "/placeholder.svg?height=40&width=40",
 }
 
-export default function KanbanBoard() {
+export default function KanbanBoard({projectName}) {
   const [columns, setColumns] = useState(initialData)
 
   const addComment = (columnId, taskId, commentContent) => {
@@ -177,8 +178,12 @@ export default function KanbanBoard() {
   },[])
 
   return (
-    <ScrollArea className="container py-8 px-8 mt-6">
-      <div className="flex max-w-5xl gap-4 h-[80vh]">
+    <ScrollArea className="container max-w-6xl py-2 m-auto mt-6">
+      <div className="flex justify-center items-center">
+          <h1 className="text-3xl font-bold">{projectName}</h1>
+      </div>
+
+      <div className="flex max-w-6xl gap-4 h-[80vh] mt-4 m-auto">
       <KanbanColumn
           title="On Hold"
           columnId="on_hold"

@@ -163,7 +163,7 @@ export default function ProjectsMain() {
   }
 
   return (
-    <div className="container py-8 px-8">
+    <div className="container py-8 px-8 max-w-8xl m-auto">
       <div className="flex flex-col space-y-4">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Projects</h1>

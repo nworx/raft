@@ -23,6 +23,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar } from "@/components/ui/calendar"
 import { toast } from "../ui/use-toast"
 
+import { useRouter } from 'next/navigation';
+
 // Project type definition
 // const Priority = "Low" | "Medium" | "High" | "Critical"
 
@@ -56,6 +58,8 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
   })
 
   const [errors, setErrors] = useState({})
+ 
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -135,6 +139,11 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
     else{
       console.log("Please fill form properly ")
     }
+  }
+
+  const handleViewAllTasks = () => {
+    router.push(`/raft/projects/${projectData.id}/dashboard`)
+
   }
 
   useEffect(()=>{console.log("raj")})
@@ -292,10 +301,16 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
             </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="submit">{process === "UPDATE"?"Update ":"Create " }Project</Button>
+            <div className="flex justify-between items-center w-full">
+              {projectData?.id && <Button type="submit" onClick={handleViewAllTasks} >View All Tasks</Button>}
+
+              <div className={`flex gap-2 ${!projectData?.id ? 'justify-between items-center w-full' : ''}`}>
+                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">{process === "UPDATE"?"Update ":"Create " }Project</Button>
+              </div>
+            </div>
           </DialogFooter>
         </form>
       </DialogContent>

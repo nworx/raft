@@ -45,16 +45,16 @@ export function AppSidebar({setTabType}) {
       icon: SprayCanIcon,
       state: Tab_Type.MY_TASK
     },
-    {
-      title: "Inbox",
-      url: "#",
-      icon: Inbox,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
+    // {
+    //   title: "Inbox",
+    //   url: "#",
+    //   icon: Inbox,
+    // },
+    // {
+    //   title: "Search",
+    //   url: "#",
+    //   icon: Search,
+    // },
     // {
     //   title: "Settings",
     //   url: "#",
@@ -101,7 +101,7 @@ export function AppSidebar({setTabType}) {
   },[])
 
   return (
-    <Sidebar>
+    <Sidebar className="bg-white opacity-100">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Raft</SidebarGroupLabel>
