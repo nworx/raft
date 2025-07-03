@@ -35,7 +35,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function DashboardPage({ params }: { params: { projectId: string } }) {
+export default function DashboardPage({ params }) {
   const { projectId } = params;
 
   const project = mockProjects.find((p) => p.id === projectId);
