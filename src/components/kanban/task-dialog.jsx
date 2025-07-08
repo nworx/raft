@@ -15,11 +15,15 @@ const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
 });
 
 export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
+  const [newDescription, setNewDescription] = useState(task?.description || "");
   const [newComment, setNewComment] = useState("");
   const { toast } = useToast();
 
+
+  console.log(task, task?.description,  "Prakhar 123")
   const handleAddComment = () => {
-    if (!newComment.trim()) {
+    console.log(newComment, "newComment")
+    if (!newComment.content[0].content[0].text.trim()) {
       toast({
         title: "Error",
         description: "Comment cannot be empty",
@@ -28,7 +32,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
       return;
     }
 
-    onAddComment(newComment.trim());
+    onAddComment(newComment.content[0].content[0].text.trim());
     setNewComment(""); // Reset the input
 
     toast({
@@ -59,7 +63,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
             <div className="flex flex-col flex-grow overflow-scroll py-4">
               <div className="grid gap-4">
                 <div className="space-y-2">
-                  <Tiptap text={newComment} setText={setNewComment} height='200px'/>
+                  <Tiptap text={newDescription} setText={setNewDescription} height='150px'/>
                 </div>
               </div>
 
@@ -93,7 +97,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
               </div>
 
               <div className="mt-4 space-y-4">
-                <Tiptap text={newComment} setText={setNewComment} height='150px'/>
+                <Tiptap text={newComment} setText={setNewComment} height='30px'/>
                 <div className="flex items-center gap-2">
                   <Button onClick={handleAddComment} disabled={!newComment}>
                     Add Comment

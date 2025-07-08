@@ -7,8 +7,9 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import fetchTasksByProjectId from "@/services/task/fetchTasksByProjectId"
 import { Button } from "../ui/button"
 
+import { useSearchParams } from 'next/navigation';
 
-
+import useProjectStore from "@/zustand/projectStore"
 
 
 const initialData = {
@@ -19,6 +20,18 @@ const initialData = {
       content: "Create a Kanban board",
       description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
       comments: [
+        {
+          id: "o1",
+          user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
+          content: "This looks great! Let's add more features.",
+          createdAt: "2024-03-01T10:00:00Z",
+        },
+        {
+          id: "o2",
+          user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
+          content: "I can help with the styling.",
+          createdAt: "2024-03-01T11:30:00Z",
+        },
         {
           id: "o1",
           user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
@@ -43,9 +56,9 @@ const initialData = {
   ],
   todo: [
     {
-      id: "t1",
-      title: "Create a Kanban board",
-      content: "Create a Kanban board",
+      id: "t1", // hai
+      title: "Create a Kanban board", // hai
+      content: "Create a Kanban board", 
       description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
       comments: [
         {
@@ -96,8 +109,16 @@ const currentUser = {
   avatar: "/placeholder.svg?height=40&width=40",
 }
 
-export default function KanbanBoard({projectName}) {
+export default function KanbanBoard() {
   const [columns, setColumns] = useState(initialData)
+
+
+  const currentProject = useProjectStore((state) => state.currentProject)
+  console.log("currentProject,", currentProject);
+  
+  const searchParams = useSearchParams();
+  const projectName = searchParams.get('project');
+  const id = searchParams.get('id');
 
   const addComment = (columnId, taskId, commentContent) => {
     setColumns((prev) => {
@@ -162,25 +183,50 @@ export default function KanbanBoard({projectName}) {
     })
   }
 
+  function unslugify(slug) {
+    return slug?.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
+  }
 
-  useEffect(()=>{
-    const fetchTaskByProjectIdFunc=async()=>{
-      try{
-      const response= await fetchTasksByProjectId({projectId:1});
-      console.log(response,"response fetchTaskByProjectId")
-      }
-      catch(e){
-        console.log(e<"error fetchTaskByProjectId");
-      }
-    }
-    fetchTaskByProjectIdFunc();
+  // useEffect(()=>{
+  //   const fetchTaskByProjectIdFunc=async()=>{
+  //     try{
+  //     const response= await fetchTasksByProjectId({projectId:1});
+  //     console.log(response,"response fetchTaskByProjectId")
+  //     }
+  //     catch(e){
+  //       console.log(e<"error fetchTaskByProjectId");
+  //     }
+  //   }
+  //   fetchTaskByProjectIdFunc();
   
-  },[])
+  // },[])
+
+  useEffect(() => {
+  const fetchTaskByProjectIdFunc = async () => {
+    if (!id) {
+      console.warn("No ID provided in query params.");
+      return;
+    }
+
+    try {
+      const response = await fetchTasksByProjectId({ projectId: id });
+      if (response) {
+        // setColumns(response);
+      } else {
+        console.warn("No data returned for taskId:", id);
+      }
+    } catch (error) {
+      console.error("Error in fetchTaskByIdFunc:", error);
+    }
+  };
+
+  fetchTaskByProjectIdFunc();
+}, [id]);
 
   return (
     <ScrollArea className="container max-w-6xl py-2 m-auto mt-6">
       <div className="flex justify-center items-center">
-          <h1 className="text-3xl font-bold">{projectName}</h1>
+          <h1 className="text-3xl font-bold">{unslugify(projectName)}</h1>
       </div>
 
       <div className="flex max-w-6xl gap-4 h-[80vh] mt-4 m-auto">

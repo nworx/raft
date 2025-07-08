@@ -2,13 +2,19 @@ import React, { useState,useEffect } from "react";
 import dynamic from "next/dynamic";
 import { useToast } from "@/components/ui/use-toast";
 import createTask from "@/services/task/createTask";
+import useProjectStore from "@/zustand/projectStore";
 
 const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   ssr: false,
   loading: () => <div className="shimmer-loader"></div>,
 });
 
-export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
+export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreateTask }) {
+
+  const currentProject = useProjectStore((state) => state.currentProject)
+  console.log("currentProject,", currentProject);
+
+
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   useEffect(()=>{
@@ -17,7 +23,7 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title.trim()) {
@@ -29,15 +35,32 @@ export default function CreateTaskDialog({ open, onOpenChange, onCreateTask }) {
       return;
     }
 
-    createTask({name:title,description:description})
-
     setIsSubmitting(true);
 
     try {
+
+        const response = await createTask(
+        {
+          projectId: currentProject?.id,
+          title: title,
+          description: description.content[0].content[0].text,
+          assigneeId: 52,
+          reporterId: 4,
+          type: currentProject?.category,
+          status: columnId,
+          priority: currentProject?.priority,
+          dueDate: currentProject?.startDate,
+        }
+      )
+
+      console.log("Response of Create Task :", response);
+
+
       onCreateTask({
         title: title.trim(),
-        description: description.trim(),
+        description: description.content[0].content[0].text.trim(),
       });
+      // console.log(description.content[0].content[0].text, "discription");
 
       // Reset form
       setTitle("");

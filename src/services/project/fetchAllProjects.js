@@ -1,28 +1,28 @@
 import axios from 'axios';
 import { BASE_URL } from "@/constant/allEnv";
 
-const fetchTasksByProjectId  = async ({ projectId }) => {
+const fetchAllProjects = async ({ email }) => {
 
-    let allTasks = null;
+    let allProjects = null;
 
     return new Promise(async (resolve, reject) => {
    
       try {
 
-        const response  = await axios.get(`${BASE_URL}/projectId/${projectId}/getAllProjectTasks `);
+        const response  = await axios.get(`${BASE_URL}/email/${email}/getAllProjects`);
        
         const parsedResponse = response?.data;
-        allTasks = parsedResponse;
+        allProjects = parsedResponse;
         console.log("get all projects", parsedResponse);
-        resolve(allTasks);
+        resolve(allProjects);
       } catch (error) {
         console.log(error, "fetchEventSlots error");
         reject(error);
       }
     
-    return { allTasks: allTasks };
+    return { allProjects: allProjects };
   });
 
 }
 
-export default fetchTasksByProjectId ;
+export default fetchAllProjects;

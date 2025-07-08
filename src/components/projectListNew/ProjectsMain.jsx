@@ -11,7 +11,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Badge } from "@/components/ui/badge"
 import { ProjectCard } from "./ProjectCard"
 import { CreateProjectDialog } from "./CreateProjectDialog"
-
+import fetchAllProjects from "@/services/project/fetchAllProjects"
+import useUserStore from "@/zustand/userStore"
+import { useToast } from "@/components/ui/use-toast";
 
 
 
@@ -25,6 +27,10 @@ const priorityColors = {
 }
 
 export default function ProjectsMain() {
+
+  const user = useUserStore((state) => state.user);
+  console.log(user, "user?.email")
+  const { toast } = useToast();
   // State for projects
   const [projects, setProjects] = useState([])
   const [filteredProjects, setFilteredProjects] = useState([])
@@ -34,8 +40,8 @@ export default function ProjectsMain() {
     description: "",
     priority: "",
     tasks: 0,
-    owner: "",
-    team: "",
+    createdBy: "",
+    category: "",
     status: "",});
 
   // State for filters and sorting
@@ -54,69 +60,119 @@ export default function ProjectsMain() {
   }
 
   const handleCreateNewProject = () => {
+    setProcess("CREATE")
     setIsDialogOpen(true);
     setProjectData(null);
   }
 
   // Mock data for initial projects
-  useEffect(() => {
-    const mockProjects = [
-      {
-        id: "1",
-        name: "Website Redesign",
-        description: "Redesign the company website with new branding",
-        priority: "High",
-        tasks: 24,
-        addedDate: new Date(2023, 2, 15),
-        owner: "John Doe",
-        team: "Design",
-        status: "Active",
-        dueDate: new Date(2023, 5, 30),
-      },
-      {
-        id: "2",
-        name: "Mobile App Development",
-        description: "Develop a new mobile app for customers",
-        priority: "Critical",
-        tasks: 36,
-        addedDate: new Date(2023, 1, 10),
-        owner: "Jane Smith",
-        team: "Engineering",
-        status: "Active",
-        dueDate: new Date(2023, 7, 15),
-      },
-      {
-        id: "3",
-        name: "Marketing Campaign",
-        description: "Q2 marketing campaign for new product launch",
-        priority: "Medium",
-        tasks: 18,
-        addedDate: new Date(2023, 3, 5),
-        owner: "Mike Johnson",
-        team: "Marketing",
-        status: "On Hold",
-        dueDate: new Date(2023, 6, 1),
-      },
-      {
-        id: "4",
-        name: "Database Migration",
-        description: "Migrate from MySQL to PostgreSQL",
-        priority: "Low",
-        tasks: 12,
-        addedDate: new Date(2023, 0, 20),
-        owner: "Sarah Williams",
-        team: "Engineering",
-        status: "Completed",
-        dueDate: new Date(2023, 4, 10),
-      },
-    ]
+  // useEffect(() => {
+  //   const mockProjects = [
+  //     {
+  //       id: "1",
+  //       name: "Website Redesign",
+  //       description: "Redesign the company website with new branding",
+  //       priority: "High",
+  //       tasks: 24,
+  //       addedDate: new Date(2023, 2, 15),
+  //       owner: "John Doe",
+  //       team: "Design",
+  //       status: "Active",
+  //       dueDate: new Date(2023, 5, 30),
+  //     },
+  //     {
+  //       id: "2",
+  //       name: "Mobile App Development",
+  //       description: "Develop a new mobile app for customers",
+  //       priority: "Critical",
+  //       tasks: 36,
+  //       addedDate: new Date(2023, 1, 10),
+  //       owner: "Jane Smith",
+  //       team: "Engineering",
+  //       status: "Active",
+  //       dueDate: new Date(2023, 7, 15),
+  //     },
+  //     {
+  //       id: "3",
+  //       name: "Marketing Campaign",
+  //       description: "Q2 marketing campaign for new product launch",
+  //       priority: "Medium",
+  //       tasks: 18,
+  //       addedDate: new Date(2023, 3, 5),
+  //       owner: "Mike Johnson",
+  //       team: "Marketing",
+  //       status: "On Hold",
+  //       dueDate: new Date(2023, 6, 1),
+  //     },
+  //     {
+  //       id: "4",          
+  //       name: "Database Migration",
+  //       description: "Migrate from MySQL to PostgreSQL",
+  //       priority: "Low",
+  //       tasks: 12,
+  //       addedDate: new Date(2023, 0, 20),
+  //       owner: "Sarah Williams",
+  //       team: "Engineering",
+  //       status: "Completed",
+  //       dueDate: new Date(2023, 4, 10),
+  //     },
+  //   ]
 
-    setProjects(mockProjects)
-    setFilteredProjects(mockProjects)
-  }, [])
+  //   const fetchAllProjectsFunc = async()=>{
+            
+  //           const response=await fetchAllProjects({"email": user?.email});
+  //            console.log(response,"fetch all projects func");
+  //           if(response){
+  //                 setProjects(response)
+  //                 setFilteredProjects(response)
+  //           }
+  //           else{
+  //               toast.error("Unable To Get Content Configurations")
+
+  //           }
+            
+  //   }
+
+  //   fetchAllProjectsFunc();
+
+  //   // setProjects(mockProjects)
+  //   // setFilteredProjects(mockProjects)
+  // }, [])
 
   // Filter and sort projects when dependencies change
+  
+  const fetchAllProjectsFunc = async () => {
+    const response = await fetchAllProjects({ email: user?.email });
+    if (Array.isArray(response) && response.length > 0) {
+      setProjects(response);
+      setFilteredProjects(response);
+    } else {
+      toast({
+        title: "Error",
+        description: "Unable to get projects.",
+        variant: "destructive",
+      });
+    }
+  };
+
   useEffect(() => {
+    if(!user?.email){
+      toast({
+        title: "Error",
+        description: "User Email Not Found !",
+        variant: "destructive",
+      });
+      return;
+    }
+    fetchAllProjectsFunc();
+  }, [user]);
+  
+  useEffect(() => {
+
+    console.log("projects at filter time:", projects);
+
+    if (!Array.isArray(projects)) return;
+
     let result = [...projects]
 
     // Apply search filter
@@ -140,8 +196,8 @@ export default function ProjectsMain() {
           : priorityOrder[b.priority] - priorityOrder[a.priority]
       } else if (sortBy === "addedDate") {
         return sortDirection === "asc"
-          ? a.addedDate.getTime() - b.addedDate.getTime()
-          : b.addedDate.getTime() - a.addedDate.getTime()
+          ? a.addedDate?.getTime() - b.addedDate?.getTime()
+          : b.addedDate?.getTime() - a.addedDate?.getTime()
       }
       return 0
     })
@@ -150,17 +206,17 @@ export default function ProjectsMain() {
   }, [projects, searchQuery, priorityFilter, sortBy, sortDirection])
 
   // Handle creating a new project
-  const handleCreateProject = (newProject) => {
-    setProcess("");
-    const project = {
-      ...newProject,
-      id: Date.now().toString(),
-      addedDate: new Date(),
-    }
+  // const handleCreateProject = (newProject) => {
+  //   setProcess("");
+  //   const project = {
+  //     ...newProject,
+  //     id: Date.now().toString(),
+  //     addedDate: new Date(),
+  //   }
 
-    setProjects((prev) => [project, ...prev])
-    setIsDialogOpen(false)
-  }
+  //   setProjects((prev) => [project, ...prev])
+  //   setIsDialogOpen(false)
+  // }
 
   return (
     <div className="container py-8 px-8 max-w-8xl m-auto">
@@ -265,7 +321,7 @@ export default function ProjectsMain() {
         </div>
       </div>
 
-      <CreateProjectDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} onCreateProject={handleCreateProject} projectData={projectData} process={process} />
+      <CreateProjectDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} projectData={projectData} process={process} onProjectChange={fetchAllProjectsFunc} />
     </div>
   )
 }

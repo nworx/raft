@@ -54,6 +54,7 @@ export default function KanbanColumn({
 
       <CreateTaskDialog
         open={isCreateDialogOpen}
+        columnId={columnId}
         onOpenChange={setIsCreateDialogOpen}
         onCreateTask={(task) => onCreateTask(columnId, task)}
       />

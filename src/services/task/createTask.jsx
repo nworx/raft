@@ -1,30 +1,29 @@
-"use client"
 import axios from "axios";
+import { BASE_URL } from "@/constant/allEnv";
 
- const createTask = async ({name,description}) => {
-    console.log(name,description,"name,description")
-  const taskData = {
-    name: name,
-    description_text: description,
-    description_fileLink: [
-     
-    ],
-    createAt: new Date().toISOString(),
-    createdBy: "Raju",
-    status: "Pending"
-  };
+const createTask = async ({projectId, title, description, assigneeId, reporterId, type, status, priority, dueDate}) => {
 
-  try {
-    const response = await axios.post("http://localhost:8080/createTask", taskData, {
-      headers: {
-        "Content-Type": "application/json"
-      }
-    });
+  return new Promise( async (resolve, reject) => {
 
-    console.log("Task created successfully:", response.data);
-  } catch (error) {
-    console.error("Error creating task:", error.response ? error.response.data : error.message);
-  }
-};
+    try {
 
-export default  createTask;
+      const requestBody = {projectId, title, description, assigneeId, reporterId, type, status, priority, dueDate};
+
+      console.log("Request Body of create task api :-", requestBody);
+
+      const response = await axios.post(`${BASE_URL}/createTask`, requestBody);
+
+      console.log("Response of create task api :-", response);
+      
+
+      const parsedResponse = response?.data;
+
+      resolve(parsedResponse);
+    } catch (error) {
+      console.log("Error on create Task :- " , error);
+      reject(error);
+    }
+  })
+}
+
+export default createTask;

@@ -21,10 +21,12 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { toast } from "../ui/use-toast"
+import { useToast } from "@/components/ui/use-toast";
 
 import { useRouter } from 'next/navigation';
+import { createProject } from "@/services/project/createProject"
 
+import useProjectStore from "@/zustand/projectStore"
 // Project type definition
 // const Priority = "Low" | "Medium" | "High" | "Critical"
 
@@ -45,22 +47,23 @@ import { useRouter } from 'next/navigation';
 //   onCreateProject: (project: Project) => void
 // }
 
-export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projectData,process }) {
+export function CreateProjectDialog({ open, onOpenChange,projectData,process, onProjectChange }) {
   console.log(projectData,"rajj",process,open)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     priority: "",
     tasks: 0,
-    owner: "",
-    team: "",
+    createdBy: "",
+    category: "",
     status: "",
   })
 
   const [errors, setErrors] = useState({})
  
   const router = useRouter();
-
+  const { toast } = useToast();
+  const setProject = useProjectStore.getState().setCurrentProject;
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -101,11 +104,11 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
   const validateForm = () => {
     const newErrors= {}
 
-    if (!formData.name.trim()) {
+    if (!formData?.name?.trim()) {
       newErrors.name = "Project name is required"
     }
 
-    if (!formData.description.trim()) {
+    if (!formData?.description?.trim()) {
       newErrors.description = "Description is required"
     }
 
@@ -117,42 +120,89 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
-    console.log("handleSubmit called")
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+  console.log("handleSubmit called");
+  e.preventDefault();
 
-    if (validateForm()) {
-      onCreateProject(formData)
+  if (!validateForm()) {
+    console.log("Please fill form properly");
+    toast({
+      title: "Form Incomplete",
+      description: "Please fill out all required fields correctly.",
+      variant: "destructive",
+    });
+    return;
+  }
 
-      // Reset form
-      setFormData({
-        name: "",
-        description: "",
-        priority: "Medium",
-        tasks: 0,
-        owner: "",
-        team: "Engineering",
-        status: "Active",
-      })
-      setErrors({})
+  try {
+    if (process === "UPDATE") {
+      // await updateProject(formData);
+      toast({
+        title: "Project Updated",
+        description: "The project was updated successfully.",
+      });
+    } else {
+      await createProject(formData);
+      console.log(formData, "response9696");
+      toast({
+        title: "Project Created",
+        description: "The project was created successfully.",
+      });
     }
-    else{
-      console.log("Please fill form properly ")
+
+    if (onProjectChange) {
+      await onProjectChange();
     }
+
+    // Reset form
+    setFormData({
+      name: "",
+      description: "",
+      priority: "Medium",
+      tasks: 0,
+      createdBy: "",
+      category: "Engineering",
+      status: "Active",
+    });
+    setErrors({});
+    onOpenChange(false);
+  } catch (error) {
+    console.error("Error in project submission:", error);
+    toast({
+      title: "Submission Failed",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive",
+    });
+  }
+};
+
+
+  const slugify = (text) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-') // replace spaces/special chars with "-"
+      .replace(/^-+|-+$/g, ''); // remove leading/trailing "-"
   }
 
   const handleViewAllTasks = () => {
-    router.push(`/raft/projects/${projectData.id}/dashboard`)
 
-  }
+    setProject(formData);
+
+    const projectName = slugify(projectData.name);
+    const id = projectData.id;
+
+    router.push(`/raft/project-dashboard?project=${projectName}&id=${id}`);
+  };
 
   useEffect(()=>{console.log("raj")})
 
   useEffect(()=>{
     console.log(process,projectData,"useEEffect")
     if(process==="UPDATE"){
-      
       setFormData(projectData);
+    }else{
+      setFormData({});
     }
    },[open])
 
@@ -188,7 +238,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
               <Textarea
                 id="description"
                 name="description"
-                value={formData?.description}
+                value={formData?.description || ""}
                 onChange={handleChange}
                 rows={3}
                 className={errors.description ? "border-red-500" : ""}
@@ -228,10 +278,10 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
                 /> 
               </div> */}
               <div className="grid gap-2">
-                <Label htmlFor="team" className="flex items-center">
+                <Label htmlFor="category" className="flex items-center">
                   Team *
                 </Label>
-                <Select value={formData?.team} onValueChange={(value) => handleSelectChange("team", value)}>
+                <Select value={formData?.category} onValueChange={(value) => handleSelectChange("category", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select team" />
                   </SelectTrigger>
@@ -272,9 +322,9 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Active">Active</SelectItem>
-                    <SelectItem value="On Hold">On Hold</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
+                    <SelectItem value="ACTIVE">Active</SelectItem>
+                    <SelectItem value="ON_HOLD">On Hold</SelectItem>
+                    <SelectItem value="COMPLETED">Completed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -286,15 +336,15 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
                     <Button
                       variant="outline"
                       className={`w-full justify-start text-left font-normal ${
-                        !formData?.dueDate && "text-muted-foreground"
+                        !formData?.addedDate && "text-muted-foreground"
                       }`}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData?.dueDate ? format(formData?.dueDate, "PPP") : <span>Pick a date</span>}
+                      {formData?.addedDate ? format(formData?.addedDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={formData?.dueDate} onSelect={handleDateChange} initialFocus />
+                    <Calendar mode="single" selected={formData?.addedDate} onSelect={handleDateChange} initialFocus />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -302,7 +352,7 @@ export function CreateProjectDialog({ open, onOpenChange, onCreateProject,projec
           </div>
           <DialogFooter>
             <div className="flex justify-between items-center w-full">
-              {projectData?.id && <Button type="submit" onClick={handleViewAllTasks} >View All Tasks</Button>}
+              {projectData?.id && <Button type="button" onClick={handleViewAllTasks} >View All Tasks</Button>}
 
               <div className={`flex gap-2 ${!projectData?.id ? 'justify-between items-center w-full' : ''}`}>
                 <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

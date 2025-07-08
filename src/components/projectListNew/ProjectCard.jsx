@@ -17,9 +17,9 @@ const priorityColors = {
 
 // Status color mapping
 const statusColors= {
-  Active: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
-  Completed: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
-  "On Hold": "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
+  ACTIVE: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+  COMPLETED: "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300",
+  ON_HOLD: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300",
 }
 
 
@@ -65,7 +65,7 @@ export function ProjectCard({ project ,handleUpdateProject }) {
 
           <div className="flex items-center">
             <Badge variant="outline" className="font-normal">
-              {project.team}
+              {project.category}
             </Badge>
           </div>
 
@@ -75,7 +75,15 @@ export function ProjectCard({ project ,handleUpdateProject }) {
         </div>
       </CardContent>
       <CardFooter className="flex justify-between pt-2 border-t">
-        <div className="text-sm text-muted-foreground">Created By: {project.owner}</div>
+        <div
+          className="text-sm text-muted-foreground"
+          title={project.createdBy}
+        >
+          Created By:{' '}
+          {project.createdBy.length > 25
+            ? `${project.createdBy.slice(0, 25)}...`
+            : project.createdBy}
+        </div>
         <Button variant="ghost" size="sm" onClick={handleViewUpdateProject}>
           View/Update Details
         </Button>
