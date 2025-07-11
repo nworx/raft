@@ -15,8 +15,9 @@ import fetchAllProjects from "@/services/project/fetchAllProjects"
 import useUserStore from "@/zustand/userStore"
 import { useToast } from "@/components/ui/use-toast";
 
+import Loader from "@/utilities/skeletonLoader"
 
-
+import { Skeleton } from "../ui/skeleton"
 
 // Priority color mapping
 const priorityColors = {
@@ -31,6 +32,8 @@ export default function ProjectsMain() {
   const user = useUserStore((state) => state.user);
   console.log(user, "user?.email")
   const { toast } = useToast();
+
+  const [isLoading, setIsLoading] = useState(false);
   // State for projects
   const [projects, setProjects] = useState([])
   const [filteredProjects, setFilteredProjects] = useState([])
@@ -47,8 +50,15 @@ export default function ProjectsMain() {
   // State for filters and sorting
   const [searchQuery, setSearchQuery] = useState("")
   const [priorityFilter, setPriorityFilter] = useState("All")
-  const [sortBy, setSortBy] = useState("addedDate")
+  const [sortBy, setSortBy] = useState("startDate")
   const [sortDirection, setSortDirection] = useState("desc")
+
+
+  const [flippedCardId, setFlippedCardId] = useState(null);
+
+  const toggleFlip = (projectId) => {
+    setFlippedCardId((prev) => (prev === projectId ? null : projectId));
+  };
 
   // State for create project dialog
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -74,7 +84,7 @@ export default function ProjectsMain() {
   //       description: "Redesign the company website with new branding",
   //       priority: "High",
   //       tasks: 24,
-  //       addedDate: new Date(2023, 2, 15),
+  //       startDate: new Date(2023, 2, 15),
   //       owner: "John Doe",
   //       team: "Design",
   //       status: "Active",
@@ -86,7 +96,7 @@ export default function ProjectsMain() {
   //       description: "Develop a new mobile app for customers",
   //       priority: "Critical",
   //       tasks: 36,
-  //       addedDate: new Date(2023, 1, 10),
+  //       startDate: new Date(2023, 1, 10),
   //       owner: "Jane Smith",
   //       team: "Engineering",
   //       status: "Active",
@@ -98,7 +108,7 @@ export default function ProjectsMain() {
   //       description: "Q2 marketing campaign for new product launch",
   //       priority: "Medium",
   //       tasks: 18,
-  //       addedDate: new Date(2023, 3, 5),
+  //       startDate: new Date(2023, 3, 5),
   //       owner: "Mike Johnson",
   //       team: "Marketing",
   //       status: "On Hold",
@@ -110,7 +120,7 @@ export default function ProjectsMain() {
   //       description: "Migrate from MySQL to PostgreSQL",
   //       priority: "Low",
   //       tasks: 12,
-  //       addedDate: new Date(2023, 0, 20),
+  //       startDate: new Date(2023, 0, 20),
   //       owner: "Sarah Williams",
   //       team: "Engineering",
   //       status: "Completed",
@@ -142,16 +152,28 @@ export default function ProjectsMain() {
   // Filter and sort projects when dependencies change
   
   const fetchAllProjectsFunc = async () => {
-    const response = await fetchAllProjects({ email: user?.email });
-    if (Array.isArray(response) && response.length > 0) {
-      setProjects(response);
-      setFilteredProjects(response);
-    } else {
+    setIsLoading(true);
+    try {
+      const response = await fetchAllProjects({ email: user?.email });
+      if (Array.isArray(response) && response.length > 0) {
+        setProjects(response);
+        setFilteredProjects(response);
+      } else {
+        toast({
+          title: "Error",
+          description: "Unable to get projects.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
       toast({
         title: "Error",
-        description: "Unable to get projects.",
+        description: "Something went wrong while fetching projects.",
         variant: "destructive",
       });
+      console.error("fetchAllProjectsFunc error:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -194,10 +216,10 @@ export default function ProjectsMain() {
         return sortDirection === "asc"
           ? priorityOrder[a.priority] - priorityOrder[b.priority]
           : priorityOrder[b.priority] - priorityOrder[a.priority]
-      } else if (sortBy === "addedDate") {
+      } else if (sortBy === "startDate") {
         return sortDirection === "asc"
-          ? a.addedDate?.getTime() - b.addedDate?.getTime()
-          : b.addedDate?.getTime() - a.addedDate?.getTime()
+          ? a.startDate - b.startDate
+          : b.startDate - a.startDate
       }
       return 0
     })
@@ -211,7 +233,7 @@ export default function ProjectsMain() {
   //   const project = {
   //     ...newProject,
   //     id: Date.now().toString(),
-  //     addedDate: new Date(),
+  //     startDate: new Date(),
   //   }
 
   //   setProjects((prev) => [project, ...prev])
@@ -262,7 +284,7 @@ export default function ProjectsMain() {
                 <div className="flex items-center">
                   <ArrowUpDown className="mr-2 h-4 w-4" />
                   <span>
-                    Sort by: {sortBy === "addedDate" ? "Date Added" : sortBy === "name" ? "Name" : "Priority"}
+                    Sort by: {sortBy === "startDate" ? "Date Added" : sortBy === "name" ? "Name" : "Priority"}
                   </span>
                 </div>
                 <Badge variant="secondary">{sortDirection === "asc" ? "Ascending" : "Descending"}</Badge>
@@ -279,7 +301,7 @@ export default function ProjectsMain() {
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  setSortBy("addedDate")
+                  setSortBy("startDate")
                   setSortDirection(sortDirection === "asc" ? "desc" : "asc")
                 }}
               >
@@ -299,7 +321,7 @@ export default function ProjectsMain() {
           </DropdownMenu>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           {filteredProjects.length > 0 ? (
             filteredProjects.map((project) => <ProjectCard key={project.id} project={project}  handleUpdateProject={handleUpdateProject} />)
           ) : (
@@ -318,7 +340,52 @@ export default function ProjectsMain() {
               </CardContent>
             </Card>
           )}
-        </div>
+        </div> */}
+
+        {isLoading ? (
+            <div>
+              {/* <h1>Prakhar</h1> */}
+              <Loader />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+              {filteredProjects.length > 0 ? (
+                filteredProjects.map((project) => (
+                  // <ProjectCard
+                  //   key={project.id}
+                  //   project={project}
+                  //   handleUpdateProject={handleUpdateProject}
+                  // />
+                  <ProjectCard
+                    key={project.id}
+                    project={project}
+                    isFlipped={flippedCardId === project.id}
+                    toggleFlip={() => toggleFlip(project.id)}
+                    handleUpdateProject={handleUpdateProject}
+                  />
+                ))
+              ) : (
+                <Card className="col-span-full min-h-[70vh]">
+                  <CardContent className="flex flex-col items-center justify-center p-6">
+                    <p className="text-muted-foreground mb-4">
+                      No projects found matching your criteria
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSearchQuery("");
+                        setPriorityFilter("All");
+                      }}
+                    >
+                      Clear filters
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+          )
+        }
+
       </div>
 
       <CreateProjectDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} projectData={projectData} process={process} onProjectChange={fetchAllProjectsFunc} />

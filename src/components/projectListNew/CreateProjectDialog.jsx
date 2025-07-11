@@ -22,11 +22,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { useToast } from "@/components/ui/use-toast";
-
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from 'next/navigation';
 import { createProject } from "@/services/project/createProject"
 
 import useProjectStore from "@/zustand/projectStore"
+import { SearchBox } from "@/utilities/searchBox"
+import getAllUsers from "@/services/profile/getAllUsers"
 // Project type definition
 // const Priority = "Low" | "Medium" | "High" | "Critical"
 
@@ -48,22 +50,31 @@ import useProjectStore from "@/zustand/projectStore"
 // }
 
 export function CreateProjectDialog({ open, onOpenChange,projectData,process, onProjectChange }) {
-  console.log(projectData,"rajj",process,open)
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    priority: "",
-    tasks: 0,
-    createdBy: "",
-    category: "",
-    status: "",
-  })
 
-  const [errors, setErrors] = useState({})
- 
-  const router = useRouter();
+   const router = useRouter();
   const { toast } = useToast();
   const setProject = useProjectStore.getState().setCurrentProject;
+
+
+  console.log(projectData,"rajj",process,open)
+  const [formData, setFormData] = useState({
+    id: null,
+    name: "",
+    priority: "",
+    description: "",
+    startDate: "",
+    endDate: "",
+    category: "",
+    status: "",
+    members: [],
+  });
+
+
+  const [errors, setErrors] = useState({})
+
+  const [users, setUsers] = useState([]);
+  const [selectedUsernames, setSelectedUsernames] = useState([]);
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -97,42 +108,99 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     setFormData((prev) => ({ ...prev, [name]: numValue }))
   }
 
-  const handleDateChange = (date) => {
-    setFormData((prev) => ({ ...prev, dueDate: date }))
-  }
+  // const handleDateChange = (date) => {
+  //   setFormData((prev) => ({ ...prev, dueDate: date }))
+  // }
+
+  const handleDateChange = (field, date) => {
+    setFormData(prev => ({ ...prev, [field]: date }));
+  };
+
+
+  // const validateForm = () => {
+  //   const newErrors= {}
+
+  //   if (!formData?.name?.trim()) {
+  //     newErrors.name = "Project name is required"
+  //   }
+
+  //   if (!formData?.description?.trim()) {
+  //     newErrors.description = "Description is required"
+  //   }
+
+  //   // if (!formData.owner.trim()) {
+  //   //   newErrors.owner = "Owner name is required"
+  //   // }
+
+  //   setErrors(newErrors)
+  //   return Object.keys(newErrors).length === 0
+  // }
 
   const validateForm = () => {
-    const newErrors= {}
+    const newErrors = {};
 
     if (!formData?.name?.trim()) {
-      newErrors.name = "Project name is required"
+      newErrors.name = "Project name is required";
     }
 
     if (!formData?.description?.trim()) {
-      newErrors.description = "Description is required"
+      newErrors.description = "Description is required";
     }
 
-    // if (!formData.owner.trim()) {
-    //   newErrors.owner = "Owner name is required"
-    // }
+    if (!formData?.priority?.trim()) {
+      newErrors.priority = "Priority is required";
+    }
 
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    if (!formData?.startDate) {
+      newErrors.startDate = "Start date is required";
+    }
+
+    if (!formData?.endDate) {
+      newErrors.endDate = "End date is required";
+    }
+
+    if (formData.startDate && formData.endDate && new Date(formData.endDate) < new Date(formData.startDate)) {
+      newErrors.endDate = "End date cannot be before start date";
+    }
+
+    if (!formData?.category?.trim()) {
+      newErrors.category = "Category is required";
+    }
+
+    if (!formData?.status?.trim()) {
+      newErrors.status = "Status is required";
+    }
+
+    if (!Array.isArray(formData.members) || formData.members.length === 0) {
+      newErrors.members = "At least one member is required";
+    } else {
+      const invalidEmails = formData.members
+        .map((member, index) => (!member.email?.trim() ? `Member ${index + 1} is missing an email` : null))
+        .filter(Boolean);
+
+      if (invalidEmails.length > 0) {
+        newErrors.members = invalidEmails.join(", ");
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
 
   const handleSubmit = async (e) => {
   console.log("handleSubmit called");
   e.preventDefault();
 
-  if (!validateForm()) {
-    console.log("Please fill form properly");
-    toast({
-      title: "Form Incomplete",
-      description: "Please fill out all required fields correctly.",
-      variant: "destructive",
-    });
-    return;
-  }
+  // if (!validateForm()) {
+  //   console.log("Please fill form properly");
+  //   toast({
+  //     title: "Form Incomplete",
+  //     description: "Please fill out all required fields correctly.",
+  //     variant: "destructive",
+  //   });
+  //   return;
+  // }
 
   try {
     if (process === "UPDATE") {
@@ -195,6 +263,33 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     router.push(`/raft/project-dashboard?project=${projectName}&id=${id}`);
   };
 
+  // Fetch all users on mount
+  useEffect(() => {
+    const getAllUsersFunc = async () => {
+      try {
+        const response = await getAllUsers();
+        if (Array.isArray(response)) {
+          setUsers(response);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getAllUsersFunc();
+  }, []);
+
+  // Update formData.members whenever selectedUsernames change
+  useEffect(() => {
+    const selectedEmails = users
+      .filter((user) => selectedUsernames.includes(user.username))
+      .map((user) => ({ email: user.email }));
+
+    setFormData((prev) => ({
+      ...prev,
+      members: selectedUsernames,
+    }));
+  }, [selectedUsernames, users]);
+
   useEffect(()=>{console.log("raj")})
 
   useEffect(()=>{
@@ -208,15 +303,16 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[600px]">
-        <form onSubmit={handleSubmit}>
+      <DialogContent className="w-[90vw] max-w-4xl h-[90vh] overflow-hidden items-center">
+        <form onSubmit={handleSubmit} className="h-[80vh] ">
           <DialogHeader>
             <DialogTitle>{process==="UPDATE"?"Update":"Create New"} Project</DialogTitle>
             <DialogDescription>
               Fill in the details to create a new project. Fields marked with * are required.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+          <ScrollArea className="h-[calc(100%-6rem)] pr-2 py-2">
+          <div className="grid gap-4 py-4 p-1">
             <div className="grid grid-cols-1 gap-2">
               <Label htmlFor="name" className="flex items-center">
                 Project Name *
@@ -244,6 +340,18 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                 className={errors.description ? "border-red-500" : ""}
               />
               {errors.description && <p className="text-red-500 text-sm">{errors.description}</p>}
+            </div>
+            
+            <div className="grid grid-cols-1 gap-2">
+              <Label htmlFor="status" className="flex items-center">
+                  Members *
+                </Label>
+                {/* <SearchBox/> */}
+                <SearchBox
+                  users={users}
+                  selectedUsernames={selectedUsernames}
+                  onChange={setSelectedUsernames}
+                />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -295,7 +403,8 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                 </Select>
               </div>
             </div>
-
+            
+            
             <div className="grid grid-cols-2 gap-4">
               {/* <div className="grid gap-2">
                 <Label htmlFor="owner" className="flex items-center">
@@ -329,6 +438,40 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                 </Select>
               </div>
 
+              {/* <div className="grid gap-2">
+                <Label htmlFor="status" className="flex items-center">
+                  Members *
+                </Label>
+                <SearchBox
+                  users={users}
+                  selectedUsernames={selectedUsernames}
+                  onChange={setSelectedUsernames}
+                />
+              </div> */}
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label className="flex items-center">Start Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={`w-full justify-start text-left font-normal ${
+                        !formData?.startDate && "text-muted-foreground"
+                      }`}
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {formData?.startDate ? format(formData?.startDate, "PPP") : <span>Pick a date</span>}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0">
+                    {/* <Calendar mode="single" selected={formData?.startDate} onSelect={handleDateChange} initialFocus /> */}
+                    <Calendar mode="single" selected={formData?.startDate} onSelect={(date) => handleDateChange('startDate', date)} initialFocus />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
               <div className="grid gap-2">
                 <Label className="flex items-center">Due Date</Label>
                 <Popover>
@@ -336,20 +479,23 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                     <Button
                       variant="outline"
                       className={`w-full justify-start text-left font-normal ${
-                        !formData?.addedDate && "text-muted-foreground"
+                        !formData?.endDate && "text-muted-foreground"
                       }`}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData?.addedDate ? format(formData?.addedDate, "PPP") : <span>Pick a date</span>}
+                      {formData?.endDate? format(formData?.endDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
-                    <Calendar mode="single" selected={formData?.addedDate} onSelect={handleDateChange} initialFocus />
+                    {/* <Calendar mode="single" selected={formData?.endDate} onSelect={handleDateChange} initialFocus /> */}
+                    <Calendar mode="single" selected={formData?.endDate} onSelect={(date) => handleDateChange('endDate', date)} initialFocus />
                   </PopoverContent>
                 </Popover>
               </div>
             </div>
+
           </div>
+          </ScrollArea>
           <DialogFooter>
             <div className="flex justify-between items-center w-full">
               {projectData?.id && <Button type="button" onClick={handleViewAllTasks} >View All Tasks</Button>}

@@ -52,52 +52,32 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
 
       {open && (
         <div className="fixed inset-0 z-50 flex justify-center items-center">
-          <div className="bg-white rounded-lg shadow-lg w-[50vw] h-[80vh] p-6 flex flex-col">
-            <div className="mt-[18px]">
-              <input
-                className="text-lg font-semibold h-auto px-1 py-1 border-transparent hover:border-input focus:border-input transition-colors w-full"
-                defaultValue={task.title}
-              />
-            </div>
+          <div className="bg-white rounded-lg shadow-lg w-[60vw] h-[90vh] p-6 flex flex-col">
+            
 
-            <div className="flex flex-col flex-grow overflow-scroll py-4">
-              <div className="grid gap-4">
+            <div className="flex flex-col flex-grow overflow-scroll ">
+
+              <h1 className="text-xl font-bold">Task Details</h1>
+              <div className="my-2" title="Task Title">
+                {/* <input
+                  className="bg-[#27272a] text-white rounded-md text-base  h-auto px-4 py-1 border-transparent hover:border-input focus:border-input transition-colors w-full"
+                  defaultValue={task.title}
+                /> */}
+                <Tiptap text={task.title} height='25px'/>
+              </div>
+
+              <div className="grid gap-4" title="Task Description">
                 <div className="space-y-2">
-                  <Tiptap text={newDescription} setText={setNewDescription} height='150px'/>
+                  <Tiptap text={newDescription} setText={setNewDescription} height='100px'/>
                 </div>
               </div>
 
-              <Separator className="my-4" />
+              <Separator className="my-6" />
 
-              <div className="flex-grow overflow-hidden">
-                <label className="mb-2 block font-medium">Comments</label>
-                <ScrollArea className="h-[calc(100%-2rem)] pr-4">
-                  <div className="space-y-4">
-                    {task.comments.map((comment) => (
-                      <div key={comment.id} className="flex gap-4 group">
-                        <Avatar>
-                          <AvatarImage src={comment.user.avatar} />
-                          <AvatarFallback>{comment.user.name[0]}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-grow space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold">{comment.user.name}</span>
-                            <span className="text-sm text-muted-foreground">
-                              {formatDistanceToNow(new Date(comment.createdAt), {
-                                addSuffix: true,
-                              })}
-                            </span>
-                          </div>
-                          <p className="text-sm">{comment.content}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
 
-              <div className="mt-4 space-y-4">
-                <Tiptap text={newComment} setText={setNewComment} height='30px'/>
+              <h1 className="text-xl font-bold ">{task.comments.length} Comments</h1>
+              <div className="mt-2 space-y-4">
+                <Tiptap text={newComment} setText={setNewComment} height='200px'/>
                 <div className="flex items-center gap-2">
                   <Button onClick={handleAddComment} disabled={!newComment}>
                     Add Comment
@@ -105,6 +85,32 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
                   <p className="text-sm text-muted-foreground">
                     Press <kbd className="px-2 py-1 rounded bg-muted">⌘/Ctrl + Enter</kbd> to comment
                   </p>
+                </div>
+                <div className="mt-4 space-y-4 flex-grow overflow-hidden">
+                  <label className="mt-2 mb-2 block font-medium">Comments</label>
+                  <ScrollArea className="h-[calc(100%-2rem)] pr-4 py-2">
+                    <div className="space-y-4">
+                      {task.comments.map((comment) => (
+                        <div key={comment.id} className="flex gap-4 group">
+                          <Avatar>
+                            <AvatarImage src={comment.user.avatar} />
+                            <AvatarFallback>{comment.user.name[0]}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex-grow space-y-1">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold">{comment.user.name}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {formatDistanceToNow(new Date(comment.createdAt), {
+                                  addSuffix: true,
+                                })}
+                              </span>
+                            </div>
+                            <p className="text-sm">{comment.content}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 </div>
               </div>
             </div>

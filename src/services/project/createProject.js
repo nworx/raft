@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "@/constant/allEnv";
-
+import { format } from "date-fns";
 import { toast } from "@/components/ui/use-toast";
 // String name, String priority,
 // String description, int taskCount,
@@ -16,9 +16,22 @@ export const createProject = async (formData) =>{
 
         try {
 
-            const requestBody = {name: formData?.name, priority: formData?.priority, description: formData?.description, taskCount: formData?.tasks, startDate: formData?.dueDate, category: formData?.category, status: formData?.status};
-            // console.log(requestBody, "formdata1");
+            // const requestBody = {name: formData?.name, priority: formData?.priority, description: formData?.description, taskCount: formData?.tasks, startDate: formData?.dueDate, category: formData?.category, status: formData?.status};
+            console.log(formData, "formdata1");
+            const formattedStartDate = formData?.startDate ? format(new Date(formData.startDate), 'yyyy-MM-dd') : null;
+            const formattedEndDate = formData?.endDate ? format(new Date(formData.endDate), 'yyyy-MM-dd') : null;
 
+            const requestBody = {
+                name: formData?.name,
+                priority: formData?.priority,
+                description: formData?.description,
+                startDate: formattedStartDate,
+                endDate: formattedEndDate,    
+                category: formData?.category,
+                status: formData?.status,
+                members: formData?.members?.map(email => ({ email })),
+                // members: formData?.members
+            };
 
             const response = await axios.post(`${BASE_URL}/createProject`, requestBody, {
                 headers: {
