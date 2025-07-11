@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,6 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
   const { toast } = useToast();
 
 
-  console.log(task, task?.description,  "Prakhar 123")
   const handleAddComment = () => {
     console.log(newComment, "newComment")
     if (!newComment.content[0].content[0].text.trim()) {
