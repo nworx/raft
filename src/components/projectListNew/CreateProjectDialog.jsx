@@ -51,7 +51,7 @@ import getAllUsers from "@/services/profile/getAllUsers"
 
 export function CreateProjectDialog({ open, onOpenChange,projectData,process, onProjectChange }) {
 
-   const router = useRouter();
+  const router = useRouter();
   const { toast } = useToast();
   const setProject = useProjectStore.getState().setCurrentProject;
 
@@ -74,6 +74,8 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
 
   const [users, setUsers] = useState([]);
   const [selectedUsernames, setSelectedUsernames] = useState([]);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -170,6 +172,8 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     return;
   }
 
+  setIsLoading(true);
+
   try {
     if (process === "UPDATE") {
       await updateProject(formData);
@@ -209,6 +213,8 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
       description: "Something went wrong. Please try again.",
       variant: "destructive",
     });
+  } finally {
+    setIsLoading(false);
   }
 };
 
@@ -437,13 +443,22 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
           </ScrollArea>
           <DialogFooter>
             <div className="flex justify-between items-center w-full">
-              {projectData?.id && <Button type="button" onClick={handleViewAllTasks} >View All Tasks</Button>}
+              {projectData?.id && <Button type="button" onClick={handleViewAllTasks} disabled={isLoading} >View All Tasks</Button>}
 
               <div className={`flex gap-2 ${!projectData?.id ? 'justify-between items-center w-full' : ''}`}>
-                <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+                <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
                   Cancel
                 </Button>
-                <Button type="submit">{process === "UPDATE"?"Update ":"Create " }Project</Button>
+                <Button type="submit" className="w-36" disabled={isLoading}>
+                  {/* {process === "UPDATE"?"Update ":"Create " }Project */}
+                  {isLoading? (
+                    <div className="w-4 h-4 border-2 border-[#999999] border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <>
+                      {process === "UPDATE" ? "Update" : "Create"} Project
+                    </>
+                  )}
+                </Button>
               </div>
             </div>
           </DialogFooter>
