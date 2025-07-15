@@ -2,15 +2,10 @@ import axios from "axios";
 import { BASE_URL } from "@/constant/allEnv";
 import { format } from "date-fns";
 import { toast } from "@/components/ui/use-toast";
-// String name, String priority,
-// String description, int taskCount,
-// LocalDate startDate, String category,
-// ProjectStatus status
+
 export const createProject = async (formData) =>{
-    // console.log(formData, "formdata");
     
     const token = document.cookie.match(/(?:^|;\s*)jwt=([^;]*)/)?.[1];
-    // console.log( "token", token);
 
     return new Promise ( async (resolve, reject)=>{
 

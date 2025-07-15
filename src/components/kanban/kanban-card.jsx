@@ -18,10 +18,8 @@ import {
 } from '@/components/ui/tooltip'
 
 const dummyData = [
-                { src: 'https://github.com/shadcn.png', alt: '@shadcn', fallback: 'CN' },
-                { src: 'https://github.com/leerob.png', alt: '@leerob', fallback: 'LR' },
-                { src: 'https://github.com/evilrabbit.png', alt: '@evilrabbit', fallback: 'ER' }
-              ]
+  { src: 'https://github.com/shadcn.png', alt: '@shadcn', fallback: 'CN' },
+]
 
 export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment }) {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -56,9 +54,9 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
                     {dummyData.map((user, index) => (
                       <Tooltip key={index}>
                         <TooltipTrigger asChild>
-                          <Avatar className="h-5 w-5 data-[slot=avatar]:ring-2 data-[slot=avatar]:ring-background data-[slot=avatar]:grayscale">
+                          <Avatar className="h-7 w-7 data-[slot=avatar]:ring-2 data-[slot=avatar]:ring-background data-[slot=avatar]:grayscale">
                             <AvatarImage src={user.src} alt={user.alt} />
-                            <AvatarFallback>{user.fallback}</AvatarFallback>
+                            <AvatarFallback className="font-medium text-sm">{user.fallback}</AvatarFallback>
                           </Avatar>
                         </TooltipTrigger>
                         <TooltipContent>
