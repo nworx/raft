@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/components/ui/use-toast";
+import createComment from "@/services/comment/createComment";
 
 const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   ssr: false,
@@ -20,8 +21,9 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
   const { toast } = useToast();
 
 
-  const handleAddComment = () => {
-    console.log(newComment, "newComment")
+  const handleAddComment = async () => {
+
+    console.log(newComment, "newComment",task)
     if (!newComment.trim()) {
       toast({
         title: "Error",
@@ -30,7 +32,8 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
       });
       return;
     }
-
+    const response=await createComment({taskId:task?.id, contents:newComment});
+    if(response){
     onAddComment(newComment.trim());
     setNewComment(""); // Reset the input
 
@@ -38,7 +41,15 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
       title: "Success",
       description: "Comment added successfully",
     });
+  }
+  else{
+    toast({
+      title: "Error",
+      description: "Unable to add comment.",
+    });
+  }
   };
+
 
   return (
     <>
