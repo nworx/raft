@@ -7,7 +7,7 @@ import CreateTaskDialog from "./create-task-dialog"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
-
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export default function KanbanColumn({
@@ -19,6 +19,8 @@ export default function KanbanColumn({
   onDrop,
   onAddComment,
   onCreateTask,
+  isLoading,
+  noOfSkeleton,
 }) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
@@ -29,16 +31,23 @@ export default function KanbanColumn({
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent className="flex-1 overflow-auto space-y-2">
-          {items.map((item) => (
-            <KanbanCard
-              key={item.id}
-              id={item.id}
-              task={item}
-              columnId={columnId}
-              onDragStart={(e) => onDragStart(e, item.id, columnId)}
-              onAddComment={onAddComment}
-            />
-          ))}
+          {isLoading
+            ? Array.from({ length: noOfSkeleton }).map((_, index) => (
+                <Skeleton key={index} className="h-16 w-full" />
+              ))
+            : items?.map((item) => (
+                <KanbanCard
+                  key={item.id}
+                  id={item.id}
+                  task={item}
+                  columnId={columnId}
+                  onDragStart={(e) => onDragStart(e, item.id, columnId)}
+                  onAddComment={onAddComment}
+                  isLoading={false} // optionally pass this if KanbanCard uses it internally
+                  noOfSkeleton={0}
+                />
+              ))
+          }
         </CardContent>
         <CardFooter className="pt-2">
           <Button

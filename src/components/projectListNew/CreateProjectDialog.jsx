@@ -467,7 +467,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
                     {/* <Calendar mode="single" selected={formData?.startDate} onSelect={handleDateChange} initialFocus /> */}
-                    <Calendar mode="single" selected={formData?.startDate} onSelect={(date) => handleDateChange('startDate', date)} initialFocus />
+                    <Calendar mode="single" selected={formData?.startDate} onSelect={(date) => handleDateChange('startDate', date)} />
                   </PopoverContent>
                 </Popover>
               </div>
@@ -486,7 +486,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                       {formData?.endDate? format(formData?.endDate, "PPP") : <span>Pick a date</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent className="w-auto h-96 overflow-hidden p-0" align="start">
                     {/* <Calendar mode="single" selected={formData?.endDate} onSelect={handleDateChange} initialFocus /> */}
                     <Calendar mode="single" selected={formData?.endDate} onSelect={(date) => handleDateChange('endDate', date)} initialFocus />
                   </PopoverContent>

@@ -17,7 +17,7 @@ import { useToast } from "@/components/ui/use-toast";
 
 import Loader from "@/utilities/skeletonLoader"
 
-import { Skeleton } from "../ui/skeleton"
+
 
 // Priority color mapping
 const priorityColors = {
@@ -385,7 +385,6 @@ export default function ProjectsMain() {
             </div>
           )
         }
-
       </div>
 
       <CreateProjectDialog open={isDialogOpen} onOpenChange={setIsDialogOpen} projectData={projectData} process={process} onProjectChange={fetchAllProjectsFunc} />

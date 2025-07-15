@@ -12,6 +12,93 @@ import { useSearchParams } from 'next/navigation';
 import useProjectStore from "@/zustand/projectStore"
 
 
+function transformBackendDataToFrontendFormat(backendTasks) {
+  const formattedData = {
+    on_hold: [],
+    todo: [],
+    "in-progress": [],
+    done: [],
+  };
+
+  // Map backend `status` to frontend keys
+  const statusMap = {
+    OPEN: "todo",
+    "in-progress": "in-progress",
+    "on_hold": "on_hold",
+    "done": "done",
+  };
+
+  backendTasks.forEach(task => {
+    const statusKey = statusMap[task.status] || "todo";
+
+    const formattedTask = {
+      id: task?.id,
+      title: task?.title,
+      content: task?.title,
+      description: task?.description,
+      comments: [],
+    };
+
+    formattedData[statusKey].push(formattedTask);
+  });
+
+  return formattedData;
+}
+
+
+const backendResponse = [
+  {
+    id: 1,
+    title: "test1_task1",
+    description: "descriptiondescription",
+    status: "OPEN",
+    type: "TASK",
+    priority: "MEDIUM",
+    createdAt: "2025-07-04T18:51:51.061231",
+    updatedAt: "2025-07-04T18:51:51.061312",
+    dueDate: null,
+    project: {
+      id: 52,
+      name: "test1"
+    }
+  },
+  {
+    id: 2,
+    title: "test1_task1",
+    description: "descriptiondescription",
+    status: "",
+    type: "TASK",
+    priority: "",
+    createdAt: "2025-07-07T13:36:47.351428",
+    updatedAt: "2025-07-07T13:36:47.351523",
+    dueDate: null,
+    project: {
+      id: 52,
+      name: "test1"
+    }
+  },
+  {
+    id: 3,
+    title: "test 2",
+    description: " test 2 description",
+    status: "OPEN",
+    type: null,
+    priority: "MEDIUM",
+    createdAt: "2025-07-07T14:12:10.107838",
+    updatedAt: "2025-07-07T14:12:10.107875",
+    dueDate: null,
+    project: {
+      id: 52,
+      name: "test1"
+    }
+  }
+];
+
+const transformed = transformBackendDataToFrontendFormat(backendResponse);
+console.log(transformed);
+
+
+
 const initialData = {
   on_hold:[
     {
@@ -110,8 +197,8 @@ const currentUser = {
 }
 
 export default function KanbanBoard() {
-  const [columns, setColumns] = useState(initialData)
-
+  const [columns, setColumns] = useState({})
+  const [isLoading, setIsLoading] = useState(false)
 
   const currentProject = useProjectStore((state) => state.currentProject)
   console.log("currentProject,", currentProject);
@@ -202,34 +289,41 @@ export default function KanbanBoard() {
   // },[])
 
   useEffect(() => {
-  const fetchTaskByProjectIdFunc = async () => {
-    if (!id) {
-      console.warn("No ID provided in query params.");
-      return;
-    }
-
-    try {
-      const response = await fetchTasksByProjectId({ projectId: id });
-      if (response) {
-        // setColumns(response);
-      } else {
-        console.warn("No data returned for taskId:", id);
+    const fetchTaskByProjectIdFunc = async () => {
+      if (!id) {
+        console.warn("No ID provided in query params.");
+        return;
       }
-    } catch (error) {
-      console.error("Error in fetchTaskByIdFunc:", error);
-    }
-  };
 
-  fetchTaskByProjectIdFunc();
-}, [id]);
+      setIsLoading(true); 
+
+      try {
+        const response = await fetchTasksByProjectId({ projectId: id });
+
+        if (response) {
+          const transformedv1 = transformBackendDataToFrontendFormat(response);
+          console.log(transformedv1, "transformedv1", response);
+          setColumns(transformedv1);
+        } else {
+          console.warn("No data returned for taskId:", id);
+        }
+      } catch (error) {
+        console.error("Error in fetchTaskByProjectIdFunc:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchTaskByProjectIdFunc();
+  }, [id]);
 
   return (
-    <ScrollArea className="container max-w-6xl py-2 m-auto mt-6">
+    <ScrollArea className="container  py-2 m-auto mt-6">
       <div className="flex justify-center items-center">
           <h1 className="text-3xl font-bold">{unslugify(projectName)}</h1>
       </div>
 
-      <div className="flex max-w-6xl gap-4 h-[80vh] mt-4 m-auto">
+      <div className="flex  gap-4 h-[80vh] mt-4 m-auto">
       <KanbanColumn
           title="On Hold"
           columnId="on_hold"
@@ -239,6 +333,8 @@ export default function KanbanBoard() {
           onDrop={(e) => onDrop(e, "on_hold")}
           onAddComment={addComment}
           onCreateTask={createTask}
+          isLoading={isLoading}
+          noOfSkeleton={5}
         />
         <KanbanColumn
           title="To Do"
@@ -249,6 +345,8 @@ export default function KanbanBoard() {
           onDrop={(e) => onDrop(e, "todo")}
           onAddComment={addComment}
           onCreateTask={createTask}
+          isLoading={isLoading}
+          noOfSkeleton={6}
         />
         <KanbanColumn
           title="In Progress"
@@ -259,6 +357,8 @@ export default function KanbanBoard() {
           onDrop={(e) => onDrop(e, "in-progress")}
           onAddComment={addComment}
           onCreateTask={createTask}
+          isLoading={isLoading}
+          noOfSkeleton={3}
         />
         <KanbanColumn
           title="Done"
@@ -269,6 +369,8 @@ export default function KanbanBoard() {
           onDrop={(e) => onDrop(e, "done")}
           onAddComment={addComment}
           onCreateTask={createTask}
+          isLoading={isLoading}
+          noOfSkeleton={5}
         />
       </div>
     </ScrollArea>
