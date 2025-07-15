@@ -101,92 +101,92 @@ console.log(transformed);
 
 const initialData = {
   on_hold:[
-    {
-      id: "o1",
-      title: "Create a Kanban board",
-      content: "Create a Kanban board",
-      description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
-      comments: [
-        {
-          id: "o1",
-          user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
-          content: "This looks great! Let's add more features.",
-          createdAt: "2024-03-01T10:00:00Z",
-        },
-        {
-          id: "o2",
-          user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
-          content: "I can help with the styling.",
-          createdAt: "2024-03-01T11:30:00Z",
-        },
-        {
-          id: "o1",
-          user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
-          content: "This looks great! Let's add more features.",
-          createdAt: "2024-03-01T10:00:00Z",
-        },
-        {
-          id: "o2",
-          user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
-          content: "I can help with the styling.",
-          createdAt: "2024-03-01T11:30:00Z",
-        },
-      ],
-    },
-    {
-      id: "o21",
-      title: "Add drag and drop functionality",
-      content: "Add drag and drop functionality",
-      description: "Implement drag and drop functionality for cards between columns.",
-      comments: [],
-    },
+    // {
+    //   id: "o1",
+    //   title: "Create a Kanban board",
+    //   content: "Create a Kanban board",
+    //   description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
+    //   comments: [
+    //     {
+    //       id: "o1",
+    //       user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
+    //       content: "This looks great! Let's add more features.",
+    //       createdAt: "2024-03-01T10:00:00Z",
+    //     },
+    //     {
+    //       id: "o2",
+    //       user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
+    //       content: "I can help with the styling.",
+    //       createdAt: "2024-03-01T11:30:00Z",
+    //     },
+    //     {
+    //       id: "o1",
+    //       user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
+    //       content: "This looks great! Let's add more features.",
+    //       createdAt: "2024-03-01T10:00:00Z",
+    //     },
+    //     {
+    //       id: "o2",
+    //       user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
+    //       content: "I can help with the styling.",
+    //       createdAt: "2024-03-01T11:30:00Z",
+    //     },
+    //   ],
+    // },
+    // {
+    //   id: "o21",
+    //   title: "Add drag and drop functionality",
+    //   content: "Add drag and drop functionality",
+    //   description: "Implement drag and drop functionality for cards between columns.",
+    //   comments: [],
+    // },
   ],
   todo: [
-    {
-      id: "t1", // hai
-      title: "Create a Kanban board", // hai
-      content: "Create a Kanban board", 
-      description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
-      comments: [
-        {
-          id: "c1",
-          user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
-          content: "This looks great! Let's add more features.",
-          createdAt: "2024-03-01T10:00:00Z",
-        },
-        {
-          id: "c2",
-          user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
-          content: "I can help with the styling.",
-          createdAt: "2024-03-01T11:30:00Z",
-        },
-      ],
-    },
-    {
-      id: "t2",
-      title: "Add drag and drop functionality",
-      content: "Add drag and drop functionality",
-      description: "Implement drag and drop functionality for cards between columns.",
-      comments: [],
-    },
+    // {
+    //   id: "t1", // hai
+    //   title: "Create a Kanban board", // hai
+    //   content: "Create a Kanban board", 
+    //   description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
+    //   comments: [
+    //     {
+    //       id: "c1",
+    //       user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
+    //       content: "This looks great! Let's add more features.",
+    //       createdAt: "2024-03-01T10:00:00Z",
+    //     },
+    //     {
+    //       id: "c2",
+    //       user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
+    //       content: "I can help with the styling.",
+    //       createdAt: "2024-03-01T11:30:00Z",
+    //     },
+    //   ],
+    // },
+    // {
+    //   id: "t2",
+    //   title: "Add drag and drop functionality",
+    //   content: "Add drag and drop functionality",
+    //   description: "Implement drag and drop functionality for cards between columns.",
+    //   comments: [],
+    // },
   ],
   "in-progress": [
-    {
-      id: "t3",
-      title: "Design UI for board",
-      content: "Design UI for board",
-      description: "Create a clean and modern UI design for the Kanban board.",
-      comments: [],
-    },
+    // {
+    //   id: "t3",
+    //   title: "Design UI for board",
+    //   content: "Design UI for board",
+    //   description: "Create a clean and modern UI design for the Kanban board.",
+    //   comments: [],
+    // },
   ],
   done: [
-    {
-      id: "t4",
-      title: "Set up project structure",
-      content: "Set up project structure",
-      description: "Initialize the project and set up necessary dependencies.",
-      comments: [],
-    },
+    // {
+    //   id: "t4",
+    //   title: "Set up project structure",
+    //   content: "Set up project structure",
+    //   description: "Initialize the project and set up necessary dependencies.",
+    //   comments: [],
+    // },
   ],
 }
 

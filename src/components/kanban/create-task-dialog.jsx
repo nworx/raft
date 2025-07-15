@@ -60,7 +60,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
         title: title.trim(),
         description: description,
       });
-      // console.log(description.content[0].content[0].text, "discription");
+     
 
       // Reset form
       setTitle("");
