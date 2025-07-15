@@ -33,7 +33,7 @@ export default function KanbanColumn({
         <CardContent className="flex-1 overflow-auto space-y-2">
           {isLoading
             ? Array.from({ length: noOfSkeleton }).map((_, index) => (
-                <Skeleton key={index} className="h-16 w-full" />
+                <Skeleton key={index} className="h-16 w-full bg-[#d8d8d8]" />
               ))
             : items?.map((item) => (
                 <KanbanCard
