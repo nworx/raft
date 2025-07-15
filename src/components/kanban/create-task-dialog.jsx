@@ -4,6 +4,9 @@ import { useToast } from "@/components/ui/use-toast";
 import createTask from "@/services/task/createTask";
 import useProjectStore from "@/zustand/projectStore";
 
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
 const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   ssr: false,
   loading: () => <div className="shimmer-loader"></div>,
@@ -17,6 +20,10 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [priority, setPriority] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [taskType, setTaskType] = useState("");
+  
   useEffect(()=>{
     console.log(description,"description")
   },[description])
@@ -46,10 +53,10 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
           description: description,
           assigneeId: 52,
           reporterId: 4,
-          type: currentProject?.category,
+          type: taskType,
           status: columnId,
-          priority: currentProject?.priority,
-          dueDate: currentProject?.startDate,
+          priority: priority,
+          dueDate: new Date(dueDate),
         }
       )
 
@@ -111,6 +118,64 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                   autoFocus
                 />
               </div>
+
+              <div className="flex justify-around gap-4">
+                  <div className="w-40 grid gap-2">
+                    <Label htmlFor="priority" className="flex items-center">
+                      Priority *
+                    </Label>
+                    <Select
+                      id="priority"
+                      value={priority}
+                      onValueChange={(value) => {
+                        setPriority(value);
+                      }}
+                    >
+                      <SelectTrigger id="priority">
+                        <SelectValue placeholder="Select Priority"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Low">Low</SelectItem>
+                        <SelectItem value="Medium">Medium</SelectItem>
+                        <SelectItem value="High">High</SelectItem>
+                        <SelectItem value="Critical">Critical</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="w-40 grid gap-2">
+                    <Label htmlFor="dueDate" className="flex items-center">
+                      Date *
+                    </Label>
+                    <input
+                      id="dueDate"
+                      name="dueDate"
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate( e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                    />
+                  </div>
+
+                  <div className="w-40 grid gap-2">
+                    <Label htmlFor="type" className="flex items-center">
+                      Type *
+                    </Label>
+                    <Select id="type" value={taskType} onValueChange={(value) => {setTaskType(value)}}>
+                      <SelectTrigger id="type">
+                        <SelectValue placeholder="Select Task Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="BUG">Bug</SelectItem>
+                        <SelectItem value="NEW_FEATURE">New Feature</SelectItem>
+                        <SelectItem value="FEATURE_UPDATE">Feature Update</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+              </div>
+
+
 
               <div className="space-y-2">
                 <label htmlFor="description" className="block font-medium">

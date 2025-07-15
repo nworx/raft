@@ -182,7 +182,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
 
       {selectedImage && (
         <div
-          className="z-[9999] fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+          className="z-[9999] fixed inset-0 flex items-center justify-center bg-black bg-opacity-75"
           onClick={() => setSelectedImage(null)}
         >
           <img

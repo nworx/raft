@@ -37,6 +37,9 @@ function transformBackendDataToFrontendFormat(backendTasks) {
       content: task?.title,
       description: task?.description,
       comments: [],
+      priority: task?.priority,
+      status: task?.status,
+      dueDate: task?.dueDate
     };
 
     formattedData[statusKey].push(formattedTask);
