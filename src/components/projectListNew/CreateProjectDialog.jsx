@@ -25,7 +25,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRouter } from 'next/navigation';
 import { createProject } from "@/services/project/createProject"
-
+import { updateProject } from "@/services/project/updateProject"
 import useProjectStore from "@/zustand/projectStore"
 import { SearchBox } from "@/utilities/searchBox"
 import getAllUsers from "@/services/profile/getAllUsers"
@@ -108,33 +108,9 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     setFormData((prev) => ({ ...prev, [name]: numValue }))
   }
 
-  // const handleDateChange = (date) => {
-  //   setFormData((prev) => ({ ...prev, dueDate: date }))
-  // }
-
   const handleDateChange = (field, date) => {
     setFormData(prev => ({ ...prev, [field]: date }));
   };
-
-
-  // const validateForm = () => {
-  //   const newErrors= {}
-
-  //   if (!formData?.name?.trim()) {
-  //     newErrors.name = "Project name is required"
-  //   }
-
-  //   if (!formData?.description?.trim()) {
-  //     newErrors.description = "Description is required"
-  //   }
-
-  //   // if (!formData.owner.trim()) {
-  //   //   newErrors.owner = "Owner name is required"
-  //   // }
-
-  //   setErrors(newErrors)
-  //   return Object.keys(newErrors).length === 0
-  // }
 
   const validateForm = () => {
     const newErrors = {};
@@ -171,17 +147,9 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
       newErrors.status = "Status is required";
     }
 
-    if (!Array.isArray(formData.members) || formData.members.length === 0) {
+    if (!Array.isArray(selectedUsernames) || selectedUsernames?.length === 0) {
       newErrors.members = "At least one member is required";
-    } else {
-      const invalidEmails = formData.members
-        .map((member, index) => (!member.email?.trim() ? `Member ${index + 1} is missing an email` : null))
-        .filter(Boolean);
-
-      if (invalidEmails.length > 0) {
-        newErrors.members = invalidEmails.join(", ");
-      }
-    }
+    } 
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -189,22 +157,22 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
 
 
   const handleSubmit = async (e) => {
-  console.log("handleSubmit called");
+  console.log("handleSubmit called", formData);
   e.preventDefault();
 
-  // if (!validateForm()) {
-  //   console.log("Please fill form properly");
-  //   toast({
-  //     title: "Form Incomplete",
-  //     description: "Please fill out all required fields correctly.",
-  //     variant: "destructive",
-  //   });
-  //   return;
-  // }
+  if (!validateForm()) {
+    console.log("Please fill form properly" , errors);
+    toast({
+      title: "Form Incomplete",
+      description: "Please fill out all required fields correctly.",
+      variant: "destructive",
+    });
+    return;
+  }
 
   try {
     if (process === "UPDATE") {
-      // await updateProject(formData);
+      await updateProject(formData);
       toast({
         title: "Project Updated",
         description: "The project was updated successfully.",
@@ -296,8 +264,13 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     console.log(process,projectData,"useEEffect")
     if(process==="UPDATE"){
       setFormData(projectData);
+      const userEmails = projectData?.members?.map(member => member.user.email) || [];
+      console.log(projectData, userEmails, "projectData?.members");
+      
+      setSelectedUsernames(userEmails);
     }else{
       setFormData({});
+      setSelectedUsernames([]);
     }
    },[open])
 
@@ -352,102 +325,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                   selectedUsernames={selectedUsernames}
                   onChange={setSelectedUsernames}
                 />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="priority" className="flex items-center">
-                  Priority *
-                </Label>
-                <Select value={formData?.priority} onValueChange={(value) => handleSelectChange("priority", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Low">Low</SelectItem>
-                    <SelectItem value="Medium">Medium</SelectItem>
-                    <SelectItem value="High">High</SelectItem>
-                    <SelectItem value="Critical">Critical</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* <div className="grid gap-2">
-                <Label htmlFor="tasks" className="flex items-center">
-                  Number of Tasks *
-                </Label>
-                <Input
-                  id="tasks"
-                  name="tasks"
-                  type="number"
-                  min="0"
-                  value={formData.tasks}
-                  onChange={handleNumberChange}
-                /> 
-              </div> */}
-              <div className="grid gap-2">
-                <Label htmlFor="category" className="flex items-center">
-                  Team *
-                </Label>
-                <Select value={formData?.category} onValueChange={(value) => handleSelectChange("category", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select team" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Engineering">Engineering</SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Marketing">Marketing</SelectItem>
-                    <SelectItem value="Sales">Sales</SelectItem>
-                    <SelectItem value="Support">Support</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            
-            <div className="grid grid-cols-2 gap-4">
-              {/* <div className="grid gap-2">
-                <Label htmlFor="owner" className="flex items-center">
-                  Owner *
-                </Label>
-                <Input
-                  id="owner"
-                  name="owner"
-                  value={formData.owner}
-                  onChange={handleChange}
-                  className={errors.owner ? "border-red-500" : ""}
-                />
-                {errors.owner && <p className="text-red-500 text-sm">{errors.owner}</p>}
-              </div> */}   
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="status" className="flex items-center">
-                  Status *
-                </Label>
-                <Select value={formData?.status} onValueChange={(value) => handleSelectChange("status", value )}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ACTIVE">Active</SelectItem>
-                    <SelectItem value="ON_HOLD">On Hold</SelectItem>
-                    <SelectItem value="COMPLETED">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* <div className="grid gap-2">
-                <Label htmlFor="status" className="flex items-center">
-                  Members *
-                </Label>
-                <SearchBox
-                  users={users}
-                  selectedUsernames={selectedUsernames}
-                  onChange={setSelectedUsernames}
-                />
-              </div> */}
+                {errors.members && <p className="text-red-500 text-sm">{errors.members}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -470,6 +348,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                     <Calendar mode="single" selected={formData?.startDate} onSelect={(date) => handleDateChange('startDate', date)} />
                   </PopoverContent>
                 </Popover>
+                {errors.startDate && <p className="text-red-500 text-sm">{errors.startDate}</p>}
               </div>
 
               <div className="grid gap-2">
@@ -491,6 +370,66 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                     <Calendar mode="single" selected={formData?.endDate} onSelect={(date) => handleDateChange('endDate', date)} initialFocus />
                   </PopoverContent>
                 </Popover>
+                {errors.endDate && <p className="text-red-500 text-sm">{errors.endDate}</p>}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="priority" className="flex items-center">
+                  Priority *
+                </Label>
+                <Select value={formData?.priority} onValueChange={(value) => handleSelectChange("priority", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Low">Low</SelectItem>
+                    <SelectItem value="Medium">Medium</SelectItem>
+                    <SelectItem value="High">High</SelectItem>
+                    <SelectItem value="Critical">Critical</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.priority && <p className="text-red-500 text-sm">{errors.priority}</p>}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="category" className="flex items-center">
+                  Team *
+                </Label>
+                <Select value={formData?.category} onValueChange={(value) => handleSelectChange("category", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Engineering">Engineering</SelectItem>
+                    <SelectItem value="Design">Design</SelectItem>
+                    <SelectItem value="Marketing">Marketing</SelectItem>
+                    <SelectItem value="Sales">Sales</SelectItem>
+                    <SelectItem value="Support">Support</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
+              </div>
+            </div>
+            
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="status" className="flex items-center">
+                  Status *
+                </Label>
+                <Select value={formData?.status} onValueChange={(value) => handleSelectChange("status", value )}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ACTIVE">Active</SelectItem>
+                    <SelectItem value="ON_HOLD">On Hold</SelectItem>
+                    <SelectItem value="COMPLETED">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
               </div>
             </div>
 

@@ -43,7 +43,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
         {
           projectId: currentProject?.id,
           title: title,
-          description: description.content[0].content[0].text,
+          description: description,
           assigneeId: 52,
           reporterId: 4,
           type: currentProject?.category,
@@ -58,7 +58,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
 
       onCreateTask({
         title: title.trim(),
-        description: description.content[0].content[0].text.trim(),
+        description: description,
       });
       // console.log(description.content[0].content[0].text, "discription");
 

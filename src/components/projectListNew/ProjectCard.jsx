@@ -136,15 +136,15 @@ export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFli
             </div>
           </CardHeader>
 
-          <CardContent className="pb-2 flex-1 min-h-40 space-x-6">
+          <CardContent className="pb-2 flex-1 min-h-40 space-x-1">
             <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
               {project.description ?? "No description provided"}
             </p>
 
             <div className="grid grid-cols-2 gap-3 text-sm space-y-2 ">
-              <div className="flex items-center">
+              <div className="flex items-end">
                 <CalendarIcon className="h-4 w-4 mr-2 text-muted-foreground" />
-                <span className="truncate">Start: {project.startDate ?? "N/A"}</span>
+                <span>Start: {project.startDate ?? "N/A"}</span>
               </div>
               <div className="flex items-center">
                 <ClockAlert className="h-4 w-4 mr-2 text-red-600" />
