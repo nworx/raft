@@ -72,7 +72,7 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
           </div>
         </CardContent>
       </Card>
-      <div className="space-y-0">
+      {isDialogOpen && <div className="space-y-0">
         <TaskDialog
           task={task}
           open={isDialogOpen}
@@ -80,6 +80,7 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
           onAddComment={(comment) => onAddComment(columnId, task.id, comment)}
         />
       </div>
+      }
     </>
   )
 }
