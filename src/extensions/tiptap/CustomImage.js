@@ -24,6 +24,20 @@ export const CustomImage = Node.create({
     return [
       {
         tag: 'figure',
+        getAttrs: (node) => {
+        if (!(node instanceof HTMLElement)) return false;
+
+        const img = node.querySelector('img');
+        const figcaption = node.querySelector('figcaption');
+
+        if (!img) return false;
+
+        return {
+          src: img.getAttribute('src'),
+          alt: img.getAttribute('alt'),
+          caption: figcaption?.innerHTML || '',
+        };
+      },
       },
     ];
   },
