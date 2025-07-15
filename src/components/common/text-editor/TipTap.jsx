@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import BubbleMenuExtension from '@tiptap/extension-bubble-menu';
@@ -15,6 +15,7 @@ import { CustomImage } from '@/extensions/tiptap/CustomImage';
 import { SlashCommand } from "./SlashCommand";
 import suggestion from './mention/Suggestion';
 import { DropdownItem } from './DropdownItem';
+import { isEqual } from "lodash";
 
 import {
   FaListUl,
@@ -125,11 +126,24 @@ export default function Tiptap({ text, setText, height='100px' }) {
       }
     },
     onUpdate: () => {
-      setText(editor.getJSON());
+      // setText(editor.getJSON());
+      setText(editor.getHTML());
     }
   });
 
-  if (!editor) return null;
+  useEffect(() => {
+    console.log(text, editor,"text editor")
+  // if (editor && !isEqual(editor.getJSON(), text)) {
+  //   editor.commands.setContent(text || {}, false);
+  // }
+  if (editor && text !== editor.getHTML()) {
+    editor.commands.setContent(text || '', false);
+  }
+}, [text, editor]);
+
+ if (!editor) return null;
+
+ 
 
   const toggleTextDropdown = () => {
     setShowTextDropdown(prev => !prev);

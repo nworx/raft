@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -20,10 +20,9 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
   const { toast } = useToast();
 
 
-  console.log(task, task?.description,  "Prakhar 123")
   const handleAddComment = () => {
     console.log(newComment, "newComment")
-    if (!newComment.content[0].content[0].text.trim()) {
+    if (!newComment.trim()) {
       toast({
         title: "Error",
         description: "Comment cannot be empty",
@@ -32,7 +31,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
       return;
     }
 
-    onAddComment(newComment.content[0].content[0].text.trim());
+    onAddComment(newComment.trim());
     setNewComment(""); // Reset the input
 
     toast({
@@ -105,7 +104,11 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
                                 })}
                               </span>
                             </div>
-                            <p className="text-sm">{comment.content}</p>
+                            {/* <p className="text-sm">{comment.content}</p> */}
+                            <div
+                              className="text-sm prose prose-sm dark:prose-invert max-w-none"
+                              dangerouslySetInnerHTML={{ __html: comment.content }}
+                            />
                           </div>
                         </div>
                       ))}

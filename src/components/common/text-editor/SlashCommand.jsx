@@ -17,6 +17,7 @@ import {
   handleFileAttach,
   handleGIFInsert,
 } from "../../../utilities/mediaHandlers";
+import { uploadImage } from '@/services/gCloud/uploadImage';
 
 export const SlashCommand = Extension.create({
   name: 'slash-command',
@@ -91,8 +92,10 @@ export const SlashCommand = Extension.create({
                 reader.onload = () => {
                   const uploadImageHandler = () => async () => {
                     console.log("Simulated upload in progress...");
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    return `https://picsum.photos/seed/${Date.now()}/600/400`;
+                    const uri=await uploadImage({image:file});
+                    return uri;
+                    // await new Promise(resolve => setTimeout(resolve, 1000));
+                    // return `https://picsum.photos/seed/${Date.now()}/600/400`;
                   };
             
                   editor.chain()
