@@ -10,6 +10,10 @@ import { Button } from "../ui/button"
 import { useSearchParams } from 'next/navigation';
 
 import useProjectStore from "@/zustand/projectStore"
+import getAllUserTask from "@/services/task/getAllUserTask"
+import { useRouter } from 'next/navigation';
+import updateTaskStatus from "@/services/task/updateTaskStatus"
+import { useToast } from "../ui/use-toast"
 
 
 function transformBackendDataToFrontendFormat(backendTasks) {
@@ -50,55 +54,55 @@ function transformBackendDataToFrontendFormat(backendTasks) {
 
 
 const backendResponse = [
-  {
-    id: 1,
-    title: "test1_task1",
-    description: "descriptiondescription",
-    status: "OPEN",
-    type: "TASK",
-    priority: "MEDIUM",
-    createdAt: "2025-07-04T18:51:51.061231",
-    updatedAt: "2025-07-04T18:51:51.061312",
-    dueDate: null,
-    project: {
-      id: 52,
-      name: "test1"
-    }
-  },
-  {
-    id: 2,
-    title: "test1_task1",
-    description: "descriptiondescription",
-    status: "",
-    type: "TASK",
-    priority: "",
-    createdAt: "2025-07-07T13:36:47.351428",
-    updatedAt: "2025-07-07T13:36:47.351523",
-    dueDate: null,
-    project: {
-      id: 52,
-      name: "test1"
-    }
-  },
-  {
-    id: 3,
-    title: "test 2",
-    description: " test 2 description",
-    status: "OPEN",
-    type: null,
-    priority: "MEDIUM",
-    createdAt: "2025-07-07T14:12:10.107838",
-    updatedAt: "2025-07-07T14:12:10.107875",
-    dueDate: null,
-    project: {
-      id: 52,
-      name: "test1"
-    }
-  }
+  // {
+  //   id: 1,
+  //   title: "test1_task1",
+  //   description: "descriptiondescription",
+  //   status: "OPEN",
+  //   type: "TASK",
+  //   priority: "MEDIUM",
+  //   createdAt: "2025-07-04T18:51:51.061231",
+  //   updatedAt: "2025-07-04T18:51:51.061312",
+  //   dueDate: null,
+  //   project: {
+  //     id: 52,
+  //     name: "test1"
+  //   }
+  // },
+  // {
+  //   id: 2,
+  //   title: "test1_task1",
+  //   description: "descriptiondescription",
+  //   status: "",
+  //   type: "TASK",
+  //   priority: "",
+  //   createdAt: "2025-07-07T13:36:47.351428",
+  //   updatedAt: "2025-07-07T13:36:47.351523",
+  //   dueDate: null,
+  //   project: {
+  //     id: 52,
+  //     name: "test1"
+  //   }
+  // },
+  // {
+  //   id: 3,
+  //   title: "test 2",
+  //   description: " test 2 description",
+  //   status: "OPEN",
+  //   type: null,
+  //   priority: "MEDIUM",
+  //   createdAt: "2025-07-07T14:12:10.107838",
+  //   updatedAt: "2025-07-07T14:12:10.107875",
+  //   dueDate: null,
+  //   project: {
+  //     id: 52,
+  //     name: "test1"
+  //   }
+  // }
 ];
 
-const transformed = transformBackendDataToFrontendFormat(backendResponse);
-console.log(transformed);
+// const transformed = transformBackendDataToFrontendFormat(backendResponse);
+// console.log(transformed);
 
 
 
@@ -200,8 +204,10 @@ const currentUser = {
 }
 
 export default function KanbanBoard() {
-  const [columns, setColumns] = useState({})
-  const [isLoading, setIsLoading] = useState(false)
+  const router=useRouter();
+  const [columns, setColumns] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const currentProject = useProjectStore((state) => state.currentProject)
   console.log("currentProject,", currentProject);
@@ -235,6 +241,7 @@ export default function KanbanBoard() {
   }
 
   const onDragStart = (e, itemId, sourceColumn) => {
+
     e.dataTransfer.setData("text/plain", JSON.stringify({ itemId, sourceColumn }))
   }
 
@@ -242,12 +249,15 @@ export default function KanbanBoard() {
     e.preventDefault()
   }
 
-  const onDrop = (e, targetColumn) => {
+  const onDrop = async(e, targetColumn) => {
     e.preventDefault()
+   
     const { itemId, sourceColumn } = JSON.parse(e.dataTransfer.getData("text"))
-
+     console.log(itemId, targetColumn,"e, targetColumn onDrop")
     if (sourceColumn === targetColumn) return
-
+    const response= await updateTaskStatusFunc({taskId:itemId, status:targetColumn});
+    if (response.status===200){
+    
     setColumns((prev) => {
       const newColumns = { ...prev }
       const item = newColumns[sourceColumn].find((item) => item.id === itemId)
@@ -255,6 +265,20 @@ export default function KanbanBoard() {
       newColumns[targetColumn].push(item)
       return newColumns
     })
+  }
+  else{
+      toast({
+        title: "Error",
+        description: "Unable to update task status.",
+        variant: "destructive",
+      });
+  }
+  }
+
+  const updateTaskStatusFunc=async({taskId, status})=>{
+    
+    const response=await updateTaskStatus({taskId, status});
+    return response;
   }
 
   const createTask = (columnId, task) => {
@@ -319,6 +343,30 @@ export default function KanbanBoard() {
 
     fetchTaskByProjectIdFunc();
   }, [id]);
+
+
+  const getAllUserTaskFunc=async()=>{
+    try{
+       setIsLoading(true);
+      const response =await getAllUserTask();
+      console.log(response,"responseresponse")
+      if(response){
+        const transformedv1 = transformBackendDataToFrontendFormat(response?.data);
+        setColumns(transformedv1);
+      }
+       setIsLoading(false);
+    }
+    catch(error){
+      setIsLoading(false);
+    }
+  }
+
+
+  useEffect(()=>{
+    if(!unslugify(projectName)){
+      getAllUserTaskFunc();
+    }
+  },[router.isReady])
 
   return (
     <ScrollArea className="container  py-2 m-auto mt-6">

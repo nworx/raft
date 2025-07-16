@@ -1,3 +1,4 @@
+"use client"
 import axios from "axios";
 
 const token = document.cookie.match(/(?:^|;\s*)jwt=([^;]*)/)?.[1];
