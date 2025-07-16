@@ -142,6 +142,22 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
     }
   };
 
+  function getInitials(fullName) {
+  if (!fullName || typeof fullName !== 'string') return '';
+
+  const parts = fullName
+    .trim()
+    .split(' ')
+    .filter(Boolean);
+
+  if (parts.length === 0) return '';
+
+  const firstInitial = parts[0]?.[0]?.toUpperCase() || '';
+  const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.[0]?.toUpperCase() : '';
+
+  return firstInitial + lastInitial;
+}
+
   useEffect(() => {
     getCommentByTaskFunc();
   }, []);
@@ -284,13 +300,13 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
                           <Avatar>
                             <AvatarImage src={comment?.user?.avatar} />
                             <AvatarFallback>
-                              {comment?.user?.name[0]}
+                              {getInitials(comment?.authorName)}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-grow space-y-1">
                             <div className="flex items-center gap-2">
                               <span className="font-semibold">
-                                {comment?.user?.name}
+                                {comment?.authorName}
                               </span>
                               <span className="text-sm text-muted-foreground">
                                 {formatDistanceToNow(
