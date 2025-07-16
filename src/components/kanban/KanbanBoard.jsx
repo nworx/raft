@@ -10,6 +10,8 @@ import { Button } from "../ui/button"
 import { useSearchParams } from 'next/navigation';
 
 import useProjectStore from "@/zustand/projectStore"
+import getAllUserTask from "@/services/task/getAllUserTask"
+import { useRouter } from 'next/navigation';
 
 
 function transformBackendDataToFrontendFormat(backendTasks) {
@@ -200,6 +202,7 @@ const currentUser = {
 }
 
 export default function KanbanBoard() {
+  const router=useRouter();
   const [columns, setColumns] = useState({})
   const [isLoading, setIsLoading] = useState(false)
 
@@ -319,6 +322,30 @@ export default function KanbanBoard() {
 
     fetchTaskByProjectIdFunc();
   }, [id]);
+
+
+  const getAllUserTaskFunc=async()=>{
+    try{
+       setIsLoading(true);
+      const response =await getAllUserTask();
+      console.log(response,"responseresponse")
+      if(response){
+        const transformedv1 = transformBackendDataToFrontendFormat(response?.data);
+        setColumns(transformedv1);
+      }
+       setIsLoading(false);
+    }
+    catch(error){
+      setIsLoading(false);
+    }
+  }
+
+
+  useEffect(()=>{
+    if(!unslugify(projectName)){
+      getAllUserTaskFunc();
+    }
+  },[router.isReady])
 
   return (
     <ScrollArea className="container  py-2 m-auto mt-6">
