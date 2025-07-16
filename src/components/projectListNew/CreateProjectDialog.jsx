@@ -229,7 +229,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
 
   const handleViewAllTasks = () => {
 
-    setProject(formData);
+    setProject(projectData);
 
     const projectName = slugify(projectData.name);
     const id = projectData.id;

@@ -15,7 +15,11 @@ const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
 export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreateTask }) {
 
   const currentProject = useProjectStore((state) => state.currentProject)
-  console.log("currentProject,", currentProject);
+  useEffect(() => {
+
+      console.log("currentProject,", currentProject);
+  }, [currentProject])
+
 
 
   const [title, setTitle] = useState("");
@@ -23,6 +27,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
   const [priority, setPriority] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [taskType, setTaskType] = useState("");
+  const [assignedToId, setAssignedToId] = useState("");
   
   useEffect(()=>{
     console.log(description,"description")
@@ -169,6 +174,28 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                         <SelectItem value="BUG">Bug</SelectItem>
                         <SelectItem value="NEW_FEATURE">New Feature</SelectItem>
                         <SelectItem value="FEATURE_UPDATE">Feature Update</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="w-60 grid gap-2">
+                    <Label htmlFor="assignee" className="flex items-center">
+                      Assign To *
+                    </Label>
+                    <Select
+                      id="assignee"
+                      value={assignedToId}
+                      onValueChange={(value) => setAssignedToId(value)}
+                    >
+                      <SelectTrigger id="assignee" className="overflow-hidden text-ellipsis whitespace-nowrap">
+                        <SelectValue placeholder="Select Email" className="overflow-hidden text-ellipsis whitespace-nowrap"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currentProject?.members?.map(({ user }) => (
+                          <SelectItem key={user.id} value={String(user.id)}>
+                            {user?.username}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
