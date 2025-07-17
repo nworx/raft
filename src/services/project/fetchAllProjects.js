@@ -9,7 +9,7 @@ const fetchAllProjects = async ({ email }) => {
    
       try {
 
-        const response  = await axios.get(`${BASE_URL}/email/${email}/getAllProjects`);
+        const response  = await axios.get(`${BASE_URL}/email/${email}/getUserAllProjects`);
        
         const parsedResponse = response?.data;
         allProjects = parsedResponse;
