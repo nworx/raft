@@ -24,13 +24,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "@/components/ui/use-toast";
+import { toast, useToast } from "@/components/ui/use-toast";
+import getUser from "@/services/profile/getUser";
 
 
 export default function ProfilePage() {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
-
+  const { toast } = useToast();
   const [imageError, setImageError] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -83,6 +84,34 @@ export default function ProfilePage() {
     router.push("/auth");
   };
 
+
+  const getUserFunc=async()=>{
+    
+      const user=await getUser();
+      if(user){
+      setFormData((prev)=>({
+        ...prev,
+         name: user?.username,
+         email: user.email,
+         team:user.team,
+         bio: user.bio,
+         
+       }));
+      }
+      else{
+        toast({
+      title: "Unable to get profile.",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive",
+    });
+      }
+   
+  }
+
+  useEffect(()=>{
+    getUserFunc();
+  },[])
+
   return (
     <div className="container max-w-6xl pt-6 m-auto">
       <div className="flex justify-between items-center mb-3">
@@ -132,6 +161,7 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email *</Label>
                   <Input
+                  disabled
                     id="email"
                     name="email"
                     type="email"
