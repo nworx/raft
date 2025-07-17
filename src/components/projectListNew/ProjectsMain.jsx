@@ -159,10 +159,14 @@ export default function ProjectsMain() {
         setProjects(response);
         setFilteredProjects(response);
       } else {
+        // toast({
+        //   title: "Warning",
+        //   description: "Unable to get projects.",
+        //   variant: "destructive",
+        // });
         toast({
-          title: "Error",
-          description: "Unable to get projects.",
-          variant: "destructive",
+          title: "⚠️ No Projects Found!",
+          // description: "No Projects Found!",
         });
       }
     } catch (error) {

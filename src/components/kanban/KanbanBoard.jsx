@@ -18,22 +18,22 @@ import { useToast } from "../ui/use-toast"
 
 function transformBackendDataToFrontendFormat(backendTasks) {
   const formattedData = {
-    on_hold: [],
-    todo: [],
-    "in-progress": [],
-    done: [],
+    ON_HOLD: [],
+    TO_DO: [],
+    IN_PROGRESS: [],
+    DONE: [],
   };
 
   // Map backend `status` to frontend keys
   const statusMap = {
-    OPEN: "todo",
-    "in-progress": "in-progress",
-    "on_hold": "on_hold",
-    "done": "done",
+    TO_DO: "todo",
+    IN_PROGRESS: "in-progress",
+    ON_HOLD: "on_hold",
+    DONE: "done",
   };
 
   backendTasks.forEach(task => {
-    const statusKey = statusMap[task.status] || "todo";
+    const statusKey = task.status || "TO_DO";
 
     const formattedTask = {
       id: task?.id,
@@ -43,158 +43,15 @@ function transformBackendDataToFrontendFormat(backendTasks) {
       comments: [],
       priority: task?.priority,
       status: task?.status,
-      dueDate: task?.dueDate
+      dueDate: task?.dueDate,
+      type: task?.type,
+      project: task?.project?.name
     };
 
     formattedData[statusKey].push(formattedTask);
   });
 
   return formattedData;
-}
-
-
-const backendResponse = [
-  // {
-  //   id: 1,
-  //   title: "test1_task1",
-  //   description: "descriptiondescription",
-  //   status: "OPEN",
-  //   type: "TASK",
-  //   priority: "MEDIUM",
-  //   createdAt: "2025-07-04T18:51:51.061231",
-  //   updatedAt: "2025-07-04T18:51:51.061312",
-  //   dueDate: null,
-  //   project: {
-  //     id: 52,
-  //     name: "test1"
-  //   }
-  // },
-  // {
-  //   id: 2,
-  //   title: "test1_task1",
-  //   description: "descriptiondescription",
-  //   status: "",
-  //   type: "TASK",
-  //   priority: "",
-  //   createdAt: "2025-07-07T13:36:47.351428",
-  //   updatedAt: "2025-07-07T13:36:47.351523",
-  //   dueDate: null,
-  //   project: {
-  //     id: 52,
-  //     name: "test1"
-  //   }
-  // },
-  // {
-  //   id: 3,
-  //   title: "test 2",
-  //   description: " test 2 description",
-  //   status: "OPEN",
-  //   type: null,
-  //   priority: "MEDIUM",
-  //   createdAt: "2025-07-07T14:12:10.107838",
-  //   updatedAt: "2025-07-07T14:12:10.107875",
-  //   dueDate: null,
-  //   project: {
-  //     id: 52,
-  //     name: "test1"
-  //   }
-  // }
-];
-
-// const transformed = transformBackendDataToFrontendFormat(backendResponse);
-// console.log(transformed);
-
-
-
-const initialData = {
-  on_hold:[
-    // {
-    //   id: "o1",
-    //   title: "Create a Kanban board",
-    //   content: "Create a Kanban board",
-    //   description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
-    //   comments: [
-    //     {
-    //       id: "o1",
-    //       user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
-    //       content: "This looks great! Let's add more features.",
-    //       createdAt: "2024-03-01T10:00:00Z",
-    //     },
-    //     {
-    //       id: "o2",
-    //       user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
-    //       content: "I can help with the styling.",
-    //       createdAt: "2024-03-01T11:30:00Z",
-    //     },
-    //     {
-    //       id: "o1",
-    //       user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
-    //       content: "This looks great! Let's add more features.",
-    //       createdAt: "2024-03-01T10:00:00Z",
-    //     },
-    //     {
-    //       id: "o2",
-    //       user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
-    //       content: "I can help with the styling.",
-    //       createdAt: "2024-03-01T11:30:00Z",
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: "o21",
-    //   title: "Add drag and drop functionality",
-    //   content: "Add drag and drop functionality",
-    //   description: "Implement drag and drop functionality for cards between columns.",
-    //   comments: [],
-    // },
-  ],
-  todo: [
-    // {
-    //   id: "t1", // hai
-    //   title: "Create a Kanban board", // hai
-    //   content: "Create a Kanban board", 
-    //   description: "Implement a Kanban board with drag and drop functionality using React and Tailwind CSS.",
-    //   comments: [
-    //     {
-    //       id: "c1",
-    //       user: { name: "John Doe", avatar: "/placeholder.svg?height=40&width=40" },
-    //       content: "This looks great! Let's add more features.",
-    //       createdAt: "2024-03-01T10:00:00Z",
-    //     },
-    //     {
-    //       id: "c2",
-    //       user: { name: "Jane Smith", avatar: "/placeholder.svg?height=40&width=40" },
-    //       content: "I can help with the styling.",
-    //       createdAt: "2024-03-01T11:30:00Z",
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: "t2",
-    //   title: "Add drag and drop functionality",
-    //   content: "Add drag and drop functionality",
-    //   description: "Implement drag and drop functionality for cards between columns.",
-    //   comments: [],
-    // },
-  ],
-  "in-progress": [
-    // {
-    //   id: "t3",
-    //   title: "Design UI for board",
-    //   content: "Design UI for board",
-    //   description: "Create a clean and modern UI design for the Kanban board.",
-    //   comments: [],
-    // },
-  ],
-  done: [
-    // {
-    //   id: "t4",
-    //   title: "Set up project structure",
-    //   content: "Set up project structure",
-    //   description: "Initialize the project and set up necessary dependencies.",
-    //   comments: [],
-    // },
-  ],
 }
 
 // Mock current user
@@ -286,10 +143,16 @@ export default function KanbanBoard() {
       const newColumns = { ...prev }
       const newTask = {
         id: `t${Date.now()}`, // Simple way to generate unique IDs
-        title: task.title,
+        title: task?.title,
         content: task.title, // For backwards compatibility
-        description: task.description,
-        comments: [],
+        projectId: task?.projectId,
+        description: task?.description,
+        assigneeId: task?.assigneeId,
+        reporterId: 4,
+        type: task?.type,
+        status: columnId,
+        priority: task?.priority,
+        dueDate: task?.dueDate,
       }
 
       newColumns[columnId] = [...newColumns[columnId], newTask]
@@ -300,20 +163,6 @@ export default function KanbanBoard() {
   function unslugify(slug) {
     return slug?.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
   }
-
-  // useEffect(()=>{
-  //   const fetchTaskByProjectIdFunc=async()=>{
-  //     try{
-  //     const response= await fetchTasksByProjectId({projectId:1});
-  //     console.log(response,"response fetchTaskByProjectId")
-  //     }
-  //     catch(e){
-  //       console.log(e<"error fetchTaskByProjectId");
-  //     }
-  //   }
-  //   fetchTaskByProjectIdFunc();
-  
-  // },[])
 
   useEffect(() => {
     const fetchTaskByProjectIdFunc = async () => {
@@ -377,51 +226,55 @@ export default function KanbanBoard() {
       <div className="flex  gap-4 h-[80vh] mt-4 m-auto">
       <KanbanColumn
           title="On Hold"
-          columnId="on_hold"
-          items={columns["on_hold"]}
+          columnId="ON_HOLD"
+          items={columns["ON_HOLD"]}
           onDragStart={onDragStart}
           onDragOver={onDragOver}
-          onDrop={(e) => onDrop(e, "on_hold")}
+          onDrop={(e) => onDrop(e, "ON_HOLD")}
           onAddComment={addComment}
           onCreateTask={createTask}
           isLoading={isLoading}
           noOfSkeleton={5}
+          projectName={projectName}
         />
         <KanbanColumn
           title="To Do"
-          columnId="todo"
-          items={columns["todo"]}
+          columnId="TO_DO"
+          items={columns["TO_DO"]}
           onDragStart={onDragStart}
           onDragOver={onDragOver}
-          onDrop={(e) => onDrop(e, "todo")}
+          onDrop={(e) => onDrop(e, "TO_DO")}
           onAddComment={addComment}
           onCreateTask={createTask}
           isLoading={isLoading}
           noOfSkeleton={6}
+          projectName={projectName}
         />
         <KanbanColumn
           title="In Progress"
-          columnId="in-progress"
-          items={columns["in-progress"]}
+          columnId="IN_PROGRESS"
+          items={columns["IN_PROGRESS"]}
           onDragStart={onDragStart}
           onDragOver={onDragOver}
-          onDrop={(e) => onDrop(e, "in-progress")}
+          onDrop={(e) => onDrop(e, "IN_PROGRESS")}
           onAddComment={addComment}
           onCreateTask={createTask}
           isLoading={isLoading}
           noOfSkeleton={3}
+          projectName={projectName}
         />
         <KanbanColumn
           title="Done"
-          columnId="done"
-          items={columns["done"]}
+          columnId="DONE"
+          items={columns["DONE"]}
           onDragStart={onDragStart}
           onDragOver={onDragOver}
-          onDrop={(e) => onDrop(e, "done")}
+          onDrop={(e) => onDrop(e, "DONE")}
           onAddComment={addComment}
           onCreateTask={createTask}
           isLoading={isLoading}
           noOfSkeleton={5}
+          projectName={projectName}
         />
       </div>
     </ScrollArea>

@@ -21,6 +21,7 @@ export default function KanbanColumn({
   onCreateTask,
   isLoading,
   noOfSkeleton,
+  projectName
 }) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
@@ -37,19 +38,20 @@ export default function KanbanColumn({
               ))
             : items?.map((item) => (
                 <KanbanCard
-                  key={item.id}
-                  id={item.id}
+                  key={item?.id}
+                  id={item?.id}
                   task={item}
                   columnId={columnId}
                   onDragStart={(e) => onDragStart(e, item.id, columnId)}
                   onAddComment={onAddComment}
                   isLoading={false} // optionally pass this if KanbanCard uses it internally
                   noOfSkeleton={0}
+                  projectName={projectName}
                 />
               ))
           }
         </CardContent>
-        <CardFooter className="pt-2">
+        {projectName? <CardFooter className="pt-2">
           <Button
             variant="ghost"
             className="w-full justify-start text-muted-foreground border-2 border-gray-100 hover:text-foreground"
@@ -58,7 +60,7 @@ export default function KanbanColumn({
             <Plus className="h-4 w-4 mr-2" />
             Add task
           </Button>
-        </CardFooter>
+        </CardFooter> : null}
       </Card>
 
       <CreateTaskDialog

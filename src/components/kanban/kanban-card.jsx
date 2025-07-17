@@ -10,7 +10,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar"
 
-import { Bug, GitPullRequestCreateArrow, GitCompareArrows, ClockAlert  } from "lucide-react";
+import { Bug, Layers, UserRoundCheck, LaptopMinimalCheck, TriangleAlert  } from "lucide-react";
 import { format } from "date-fns";
 
 import {
@@ -20,20 +20,31 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 
+import { Badge } from "@/components/ui/badge"
+
 const dummyData = [
   { src: 'https://github.com/shadcn.png', alt: '@shadcn', fallback: 'CN' },
 ]
 
-export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment }) {
+const priorityColors = {
+  LOW: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+  MEDIUM: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+  HIGH: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+  CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+}
+
+export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment, projectName }) {
   const [formattedDueDate, setFormattedDueDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  console.log(task, "taskkkkkkkk");
+  console.log(task, "taskkkkkkkk", projectName);
 
   const statusMap = {
-    done: { icon: Bug, label: "Bug" },
-    OPEN: { icon: GitPullRequestCreateArrow, label: "New Feature" },
-    on_hold: { icon: GitCompareArrows, label: "Feature Update" },
+    EPIC: { icon: Layers, label: "EPIC" },
+    STORY: { icon: UserRoundCheck, label: "STORY" },
+    TASK: { icon: LaptopMinimalCheck, label: "TASK" },
+    BUG: { icon: Bug, label: "BUG" },
+    ISSUE: { icon: TriangleAlert , label: "ISSUE" },
   };
 
   useEffect(() => {
@@ -54,16 +65,10 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
       >
         <CardContent className="relative flex-row p-3">
 
-          {/* <div className="absolute top-2 right-2">
-            {task?.status === "done" && <Bug className="h-4 w-4 text-muted-foreground"/>}
-            {task?.status === "OPEN" && <GitPullRequestCreateArrow className="h-4 w-4 text-muted-foreground" />}
-            {task?.status === "on_hold" && <GitCompareArrows className="h-4 w-4 text-muted-foreground"/>}
-          </div> */}
-
           <TooltipProvider>
-            <div className="absolute top-2 right-4">
-              {task?.status && statusMap[task.status] && (() => {
-                const { icon: Icon, label } = statusMap[task.status];
+            <div className="absolute top-1 right-3">
+              {task?.type && statusMap[task.type] && (() => {
+                const { icon: Icon, label } = statusMap[task.type];
                 return (
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -80,7 +85,7 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
 
           <div className="font-medium h-12 max-h-12 line-clamp-2">{task?.title}</div>
 
-          <div className="flex justify-between">
+          <div className="flex justify-start gap-1 overflow-hidden mt-1">
                
                 {/* <div className="text-sm text-muted-foreground mt-1">
                   {task.comments.length > 0 ? (
@@ -94,22 +99,26 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
                   )}
                 </div> */}
 
-                <div className="flex items-center w-18">
-                  <ClockAlert className="h-4 text-red-600" />
-                  <span className="text-sm">{formattedDueDate ?? "N/A"}</span>
-                </div>
+                {/* <div className="flex items-center w-18"> */}
+                  <Badge
+                    className={`line-clamp-1 ${
+                      projectName === null
+                        ? "bg-black text-white dark:bg-blue-900"
+                        : "bg-yellow-500 text-black dark:bg-yellow-700"
+                    }`}
+                    title={projectName ? "Due Date" : "Project Name"}
+                  >
+                      {projectName ? formattedDueDate : task?.project ?? "N/A"}
+                  </Badge>
+                {/* </div> */}
 
-                <div className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                      task.priority === "high"
-                        ? "bg-red-100 text-red-700"
-                        : task.priority === "MEDIUM"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-green-100 text-green-700"
-                    }`}>
-                  {task.priority ? task?.priority :  "N/A"}
-                </div>
+                {/* <div> */}
+                  <Badge className={`line-clamp-1 ${priorityColors[task?.priority]}`}>
+                    {task?.priority ?? "No Priority"}
+                  </Badge>
+                {/* </div> */}
 
-                <div className="flex -space-x-2">
+                {/* <div className="flex -space-x-2">
                   <TooltipProvider>
                     {dummyData.map((user, index) => (
                       <Tooltip key={index}>
@@ -125,9 +134,27 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
                       </Tooltip>
                     ))}
                   </TooltipProvider>
-                </div>
+                </div> */}
 
           </div>
+
+          <TooltipProvider>
+            <div className="absolute bottom-3 right-3">
+              {dummyData.map((user, index) => (
+                <Tooltip key={index}>
+                  <TooltipTrigger asChild>
+                    <Avatar className="h-6 w-6 data-[slot=avatar]:ring-2 data-[slot=avatar]:ring-background data-[slot=avatar]:grayscale">
+                      <AvatarImage src={user.src} alt={user.alt} />
+                      <AvatarFallback className="font-medium text-xs ">{user.fallback}</AvatarFallback>
+                    </Avatar>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{user.fallback}</p>
+                  </TooltipContent>
+                </Tooltip>
+              ))}
+            </div>
+          </TooltipProvider>
         </CardContent>
       </Card>
       {isDialogOpen && <div className="space-y-0">

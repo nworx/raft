@@ -6,6 +6,8 @@ import useProjectStore from "@/zustand/projectStore";
 
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import useUserStore from "@/zustand/userStore";
+import getAllUsers from "@/services/profile/getAllUsers";
 
 const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   ssr: false,
@@ -15,8 +17,9 @@ const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
 export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreateTask }) {
 
   const currentProject = useProjectStore((state) => state.currentProject)
-  useEffect(() => {
+  const user = useUserStore((state) => state.user);
 
+  useEffect(() => {
       console.log("currentProject,", currentProject);
   }, [currentProject])
 
@@ -28,10 +31,11 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
   const [dueDate, setDueDate] = useState("");
   const [taskType, setTaskType] = useState("");
   const [assignedToId, setAssignedToId] = useState("");
-  
-  useEffect(()=>{
-    console.log(description,"description")
-  },[description])
+  const [reporterId, setReporterId] = useState("");
+
+  // useEffect(()=>{
+  //   console.log(description,"description")
+  // },[description])
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -57,7 +61,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
           title: title,
           description: description,
           assigneeId: assignedToId,
-          reporterId: 4,
+          reporterId: reporterId,
           type: taskType,
           status: columnId,
           priority: priority,
@@ -69,8 +73,15 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
 
 
       onCreateTask({
-        title: title.trim(),
+        projectId: currentProject?.id,
+        title: title,
         description: description,
+        assigneeId: assignedToId,
+        reporterId: reporterId,
+        type: taskType,
+        status: columnId,
+        priority: priority,
+        dueDate: new Date(dueDate),
       });
      
 
@@ -93,6 +104,27 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    const getAllUsersFunc = async () => {
+      try {
+        const response = await getAllUsers();
+        if (Array.isArray(response)) {
+          const matchedUser = response.find(u => u.email === user?.email);
+          if (matchedUser) {
+            console.log(matchedUser.id, "matchedUser.id");
+            setReporterId(matchedUser.id);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch users:', err);
+      }
+    };
+
+    if (user?.email) {
+      getAllUsersFunc();
+    }
+  }, [user?.email]);
 
 
  
@@ -140,10 +172,10 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                         <SelectValue placeholder="Select Priority"/>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Low">Low</SelectItem>
-                        <SelectItem value="Medium">Medium</SelectItem>
-                        <SelectItem value="High">High</SelectItem>
-                        <SelectItem value="Critical">Critical</SelectItem>
+                        <SelectItem value="LOW">Low</SelectItem>
+                        <SelectItem value="MEDIUM">Medium</SelectItem>
+                        <SelectItem value="HIGH">High</SelectItem>
+                        <SelectItem value="CRITICAL">Critical</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -171,14 +203,16 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                         <SelectValue placeholder="Select Task Type" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="BUG">Bug</SelectItem>
-                        <SelectItem value="NEW_FEATURE">New Feature</SelectItem>
-                        <SelectItem value="FEATURE_UPDATE">Feature Update</SelectItem>
+                        <SelectItem value="EPIC">Epic</SelectItem>
+                        <SelectItem value="STORY">User Story</SelectItem>
+                        <SelectItem value="TASK">Task</SelectItem>
+                        <SelectItem value="BUG">BUG</SelectItem>
+                        <SelectItem value="ISSUE">Issue</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
-                  <div className="w-60 grid gap-2">
+                  {currentProject ? <div className="w-60 grid gap-2">
                     <Label htmlFor="assignee" className="flex items-center">
                       Assign To *
                     </Label>
@@ -198,7 +232,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                         ))}
                       </SelectContent>
                     </Select>
-                  </div>
+                  </div> : null}
 
               </div>
 
