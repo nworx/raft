@@ -56,7 +56,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
           projectId: currentProject?.id,
           title: title,
           description: description,
-          assigneeId: 52,
+          assigneeId: assignedToId,
           reporterId: 4,
           type: taskType,
           status: columnId,
@@ -150,7 +150,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
 
                   <div className="w-40 grid gap-2">
                     <Label htmlFor="dueDate" className="flex items-center">
-                      Date *
+                      Due Date *
                     </Label>
                     <input
                       id="dueDate"
@@ -188,7 +188,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                       onValueChange={(value) => setAssignedToId(value)}
                     >
                       <SelectTrigger id="assignee" className="overflow-hidden text-ellipsis whitespace-nowrap">
-                        <SelectValue placeholder="Select Email" className="overflow-hidden text-ellipsis whitespace-nowrap"/>
+                        <SelectValue placeholder="Select User" className="overflow-hidden text-ellipsis whitespace-nowrap"/>
                       </SelectTrigger>
                       <SelectContent>
                         {currentProject?.members?.map(({ user }) => (
