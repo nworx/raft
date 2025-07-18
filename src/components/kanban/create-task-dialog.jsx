@@ -3,21 +3,19 @@ import dynamic from "next/dynamic";
 import { useToast } from "@/components/ui/use-toast";
 import createTask from "@/services/task/createTask";
 import useProjectStore from "@/zustand/projectStore";
+import Spinner from "@/components/ui/spinner";
 
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import useUserStore from "@/zustand/userStore";
-import getAllUsers from "@/services/profile/getAllUsers";
 
 const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   ssr: false,
   loading: () => <div className="shimmer-loader"></div>,
 });
 
-export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreateTask }) {
+export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreateTask, reporterId }) {
 
   const currentProject = useProjectStore((state) => state.currentProject)
-  const user = useUserStore((state) => state.user);
 
   useEffect(() => {
       console.log("currentProject,", currentProject);
@@ -31,11 +29,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
   const [dueDate, setDueDate] = useState("");
   const [taskType, setTaskType] = useState("");
   const [assignedToId, setAssignedToId] = useState("");
-  const [reporterId, setReporterId] = useState("");
 
-  // useEffect(()=>{
-  //   console.log(description,"description")
-  // },[description])
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -72,22 +66,21 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
       console.log("Response of Create Task :", response);
 
 
-      onCreateTask({
-        projectId: currentProject?.id,
-        title: title,
-        description: description,
-        assigneeId: assignedToId,
-        reporterId: reporterId,
-        type: taskType,
-        status: columnId,
-        priority: priority,
-        dueDate: new Date(dueDate),
-      });
+      // onCreateTask({
+      //   projectId: currentProject?.id,
+      //   title: title,
+      //   description: description,
+      //   assigneeId: assignedToId,
+      //   reporterId: reporterId,
+      //   type: taskType,
+      //   status: columnId,
+      //   priority: priority,
+      //   dueDate: new Date(dueDate),
+      // });
      
 
       // Reset form
-      setTitle("");
-      setDescription("");
+      await onCreateTask();
       onOpenChange(false);
 
       toast({
@@ -102,30 +95,14 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
       });
     } finally {
       setIsSubmitting(false);
+      setTitle("");
+      setDescription("");
+      setPriority("");
+      setDueDate("");
+      setAssignedToId("");
+      setTaskType("");
     }
   };
-
-  useEffect(() => {
-    const getAllUsersFunc = async () => {
-      try {
-        const response = await getAllUsers();
-        if (Array.isArray(response)) {
-          const matchedUser = response.find(u => u.email === user?.email);
-          if (matchedUser) {
-            console.log(matchedUser.id, "matchedUser.id");
-            setReporterId(matchedUser.id);
-          }
-        }
-      } catch (err) {
-        console.error('Failed to fetch users:', err);
-      }
-    };
-
-    if (user?.email) {
-      getAllUsersFunc();
-    }
-  }, [user?.email]);
-
 
  
   return (
@@ -260,7 +237,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                     isSubmitting || !title.trim() ? "bg-gray-400" : "bg-blue-500"
                   } text-white`}
                 >
-                  Create Task
+                  {isSubmitting? (<Spinner/>) : "Create Task"}
                 </button>
               </div>
             </form>

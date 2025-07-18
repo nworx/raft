@@ -83,7 +83,7 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
             </div>
           </TooltipProvider>
 
-          <div className="font-medium h-12 max-h-12 line-clamp-2">{task?.title}</div>
+          <div className="font-medium h-12 max-h-12 line-clamp-2 mt-1">{task?.title}</div>
 
           <div className="flex justify-start gap-1 overflow-hidden mt-1">
                
@@ -99,7 +99,6 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
                   )}
                 </div> */}
 
-                {/* <div className="flex items-center w-18"> */}
                   <Badge
                     className={`line-clamp-1 ${
                       projectName === null
@@ -110,31 +109,10 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
                   >
                       {projectName ? formattedDueDate : task?.project ?? "N/A"}
                   </Badge>
-                {/* </div> */}
 
-                {/* <div> */}
                   <Badge className={`line-clamp-1 ${priorityColors[task?.priority]}`}>
                     {task?.priority ?? "No Priority"}
                   </Badge>
-                {/* </div> */}
-
-                {/* <div className="flex -space-x-2">
-                  <TooltipProvider>
-                    {dummyData.map((user, index) => (
-                      <Tooltip key={index}>
-                        <TooltipTrigger asChild>
-                          <Avatar className="h-6 w-6 data-[slot=avatar]:ring-2 data-[slot=avatar]:ring-background data-[slot=avatar]:grayscale">
-                            <AvatarImage src={user.src} alt={user.alt} />
-                            <AvatarFallback className="font-medium text-xs ">{user.fallback}</AvatarFallback>
-                          </Avatar>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{user.fallback}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    ))}
-                  </TooltipProvider>
-                </div> */}
 
           </div>
 

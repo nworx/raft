@@ -4,17 +4,16 @@ import  React,{useEffect} from "react"
 import { useState } from "react"
 import KanbanColumn from "./kanban-column"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import fetchTasksByProjectId from "@/services/task/fetchTasksByProjectId"
-import { Button } from "../ui/button"
 
 import { useSearchParams } from 'next/navigation';
 
 import useProjectStore from "@/zustand/projectStore"
-import getAllUserTask from "@/services/task/getAllUserTask"
 import { useRouter } from 'next/navigation';
 import updateTaskStatus from "@/services/task/updateTaskStatus"
 import { useToast } from "../ui/use-toast"
 
+import useUserStore from "@/zustand/userStore";
+import getAllUsers from "@/services/profile/getAllUsers";
 
 function transformBackendDataToFrontendFormat(backendTasks) {
   const formattedData = {
@@ -22,14 +21,6 @@ function transformBackendDataToFrontendFormat(backendTasks) {
     TO_DO: [],
     IN_PROGRESS: [],
     DONE: [],
-  };
-
-  // Map backend `status` to frontend keys
-  const statusMap = {
-    TO_DO: "todo",
-    IN_PROGRESS: "in-progress",
-    ON_HOLD: "on_hold",
-    DONE: "done",
   };
 
   backendTasks.forEach(task => {
@@ -60,14 +51,17 @@ const currentUser = {
   avatar: "/placeholder.svg?height=40&width=40",
 }
 
-export default function KanbanBoard() {
+export default function KanbanBoard({taskData, isLoading, onCreateTask}) {
   const router=useRouter();
   const [columns, setColumns] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const currentProject = useProjectStore((state) => state.currentProject)
   console.log("currentProject,", currentProject);
+
+  const user = useUserStore((state) => state.user);
+  const [reporterId, setReporterId] = useState("");
   
   const searchParams = useSearchParams();
   const projectName = searchParams.get('project');
@@ -81,7 +75,7 @@ export default function KanbanBoard() {
 
       if (taskIndex !== -1) {
         const newComment = {
-          id: `c${Date.now()}`, // Simple way to generate unique IDs
+          id: `c${Date.now()}`, 
           user: currentUser,
           content: commentContent,
           createdAt: new Date().toISOString(),
@@ -142,9 +136,9 @@ export default function KanbanBoard() {
     setColumns((prev) => {
       const newColumns = { ...prev }
       const newTask = {
-        id: `t${Date.now()}`, // Simple way to generate unique IDs
+        id: `t${Date.now()}`, 
         title: task?.title,
-        content: task.title, // For backwards compatibility
+        content: task.title,
         projectId: task?.projectId,
         description: task?.description,
         assigneeId: task?.assigneeId,
@@ -165,57 +159,99 @@ export default function KanbanBoard() {
   }
 
   useEffect(() => {
-    const fetchTaskByProjectIdFunc = async () => {
-      if (!id) {
-        console.warn("No ID provided in query params.");
-        return;
+    // const fetchTaskByProjectIdFunc = async () => {
+    //   if (!id) {
+    //     console.warn("No ID provided in query params.");
+    //     return;
+    //   }
+
+    //   setIsLoading(true); 
+
+    //   try {
+    //     const response = await fetchTasksByProjectId({ projectId: id });
+
+    //     if (response) {
+    //       const transformedv1 = transformBackendDataToFrontendFormat(response);
+    //       console.log(transformedv1, "transformedv1", response);
+    //       setColumns(transformedv1);
+    //     } else {
+    //       console.warn("No data returned for taskId:", id);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error in fetchTaskByProjectIdFunc:", error);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // };
+
+    // fetchTaskByProjectIdFunc();
+
+    if(!unslugify(projectName)){
+      // taskData
+      if(taskData){
+        console.log(taskData, "taskData");
+        const transformedv1 = transformBackendDataToFrontendFormat(taskData);
+        setColumns(transformedv1);
       }
+      // getAllUserTaskFunc();
+    } else if (id && taskData) {
+      const transformedv1 = transformBackendDataToFrontendFormat(taskData);
+      console.log(transformedv1, "transformedv1", taskData);
+      setColumns(transformedv1);
+    } else {
+      console.warn("No data returned for taskId:", id);
+    }
+  }, [taskData, id]);
 
-      setIsLoading(true); 
-
+  useEffect(() => {
+    const getAllUsersFunc = async () => {
       try {
-        const response = await fetchTasksByProjectId({ projectId: id });
-
-        if (response) {
-          const transformedv1 = transformBackendDataToFrontendFormat(response);
-          console.log(transformedv1, "transformedv1", response);
-          setColumns(transformedv1);
-        } else {
-          console.warn("No data returned for taskId:", id);
+        const response = await getAllUsers();
+        if (Array.isArray(response)) {
+          const matchedUser = response.find(u => u.email === user?.email);
+          if (matchedUser) {
+            console.log(matchedUser.id, "matchedUser.id");
+            setReporterId(matchedUser.id);
+          }
         }
-      } catch (error) {
-        console.error("Error in fetchTaskByProjectIdFunc:", error);
-      } finally {
-        setIsLoading(false);
+      } catch (err) {
+        console.error('Failed to fetch users:', err);
       }
     };
 
-    fetchTaskByProjectIdFunc();
-  }, [id]);
-
-
-  const getAllUserTaskFunc=async()=>{
-    try{
-       setIsLoading(true);
-      const response =await getAllUserTask();
-      console.log(response,"responseresponse")
-      if(response){
-        const transformedv1 = transformBackendDataToFrontendFormat(response?.data);
-        setColumns(transformedv1);
-      }
-       setIsLoading(false);
+    if (user?.email) {
+      getAllUsersFunc();
     }
-    catch(error){
-      setIsLoading(false);
-    }
-  }
+  }, [user?.email]);
+
+  // const getAllUserTaskFunc=async()=>{
+  //   try{
+  //      setIsLoading(true);
+  //     const response =await getAllUserTask();
+  //     console.log(response,"responseresponse")
+  //     if(response){
+  //       const transformedv1 = transformBackendDataToFrontendFormat(response?.data);
+  //       setColumns(transformedv1);
+  //     }
+  //      setIsLoading(false);
+  //   }
+  //   catch(error){
+  //     setIsLoading(false);
+  //   }
+  // }
 
 
-  useEffect(()=>{
-    if(!unslugify(projectName)){
-      getAllUserTaskFunc();
-    }
-  },[router.isReady])
+  // useEffect(()=>{
+  //   if(!unslugify(projectName)){
+  //     // taskData
+  //     if(taskData){
+  //       console.log(taskData, "taskData");
+  //       const transformedv1 = transformBackendDataToFrontendFormat(taskData);
+  //       setColumns(transformedv1);
+  //     }
+  //     // getAllUserTaskFunc();
+  //   }
+  // },[taskData])
 
   return (
     <ScrollArea className="container  py-2 m-auto mt-6">
@@ -232,10 +268,11 @@ export default function KanbanBoard() {
           onDragOver={onDragOver}
           onDrop={(e) => onDrop(e, "ON_HOLD")}
           onAddComment={addComment}
-          onCreateTask={createTask}
+          onCreateTask={onCreateTask}
           isLoading={isLoading}
           noOfSkeleton={5}
           projectName={projectName}
+          reporterId={reporterId}
         />
         <KanbanColumn
           title="To Do"
@@ -245,10 +282,11 @@ export default function KanbanBoard() {
           onDragOver={onDragOver}
           onDrop={(e) => onDrop(e, "TO_DO")}
           onAddComment={addComment}
-          onCreateTask={createTask}
+          onCreateTask={onCreateTask}
           isLoading={isLoading}
           noOfSkeleton={6}
           projectName={projectName}
+          reporterId={reporterId}
         />
         <KanbanColumn
           title="In Progress"
@@ -258,10 +296,11 @@ export default function KanbanBoard() {
           onDragOver={onDragOver}
           onDrop={(e) => onDrop(e, "IN_PROGRESS")}
           onAddComment={addComment}
-          onCreateTask={createTask}
+          onCreateTask={onCreateTask}
           isLoading={isLoading}
           noOfSkeleton={3}
           projectName={projectName}
+          reporterId={reporterId}
         />
         <KanbanColumn
           title="Done"
@@ -271,10 +310,11 @@ export default function KanbanBoard() {
           onDragOver={onDragOver}
           onDrop={(e) => onDrop(e, "DONE")}
           onAddComment={addComment}
-          onCreateTask={createTask}
+          onCreateTask={onCreateTask}
           isLoading={isLoading}
           noOfSkeleton={5}
           projectName={projectName}
+          reporterId={reporterId}
         />
       </div>
     </ScrollArea>

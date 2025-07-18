@@ -1,11 +1,53 @@
 "use client";
 
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import KanbanBoard from '@/components/kanban/KanbanBoard';
 import LeftNavbar from '@/components/common/LeftNavbar';
 import ListView from '@/components/listview/ListView';
+import fetchTasksByProjectId from '@/services/task/fetchTasksByProjectId';
+import { useSearchParams } from 'next/navigation';
+
 const page = () => {
+  const searchParams = useSearchParams();
+  const id = searchParams.get('id');
+
   const [toggleView, setToggleView] = useState(true);
+
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchTaskByProjectIdFunc = async () => {
+    if (!id) {
+      console.warn("No ID provided in query params.");
+      return;
+    }
+
+    setIsLoading(true); 
+
+    try {
+      const response = await fetchTasksByProjectId({ projectId: id });
+
+      if (response) {
+        setData(response);
+      } else {
+        console.warn("No data returned for taskId:", id);
+      }
+    } catch (error) {
+      console.error("Error in fetchTaskByProjectIdFunc:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleCreateTask = async (taskData) => {
+    
+    await fetchTaskByProjectIdFunc(); 
+  };
+
+  useEffect(() => {
+    fetchTaskByProjectIdFunc();
+  }, [id]);
+
   return ( 
     <div className='flex'>
     <LeftNavbar>
@@ -15,7 +57,7 @@ const page = () => {
       >
         {toggleView? "List View" : "Kanban View"}
       </button>
-      {toggleView? <KanbanBoard/> : <ListView/>}
+      {toggleView? <KanbanBoard taskData={data} isLoading={isLoading} onCreateTask={handleCreateTask}/> : <ListView taskData={data} isLoading={isLoading}/>}
     </LeftNavbar>
     </div>
   )

@@ -21,7 +21,8 @@ export default function KanbanColumn({
   onCreateTask,
   isLoading,
   noOfSkeleton,
-  projectName
+  projectName,
+  reporterId
 }) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
@@ -44,7 +45,7 @@ export default function KanbanColumn({
                   columnId={columnId}
                   onDragStart={(e) => onDragStart(e, item.id, columnId)}
                   onAddComment={onAddComment}
-                  isLoading={false} // optionally pass this if KanbanCard uses it internally
+                  isLoading={false}
                   noOfSkeleton={0}
                   projectName={projectName}
                 />
@@ -67,7 +68,8 @@ export default function KanbanColumn({
         open={isCreateDialogOpen}
         columnId={columnId}
         onOpenChange={setIsCreateDialogOpen}
-        onCreateTask={(task) => onCreateTask(columnId, task)}
+        onCreateTask={onCreateTask}
+        reporterId={reporterId}
       />
     </>
   )
