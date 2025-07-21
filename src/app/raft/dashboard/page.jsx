@@ -1,6 +1,6 @@
 "use client";
 
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, Suspense} from 'react'
 import KanbanBoard from '@/components/kanban/KanbanBoard';
 import LeftNavbar from '@/components/common/LeftNavbar';
 import ListView from '@/components/listview/ListView';
@@ -43,7 +43,11 @@ const Dashboard = () => {
       >
         {toggleView? "List View" : "Kanban View"}
       </button>
-      {toggleView? <KanbanBoard taskData={data} isLoading={isLoading}/> : <ListView taskData={data} isLoading={isLoading}/>}
+      {toggleView? 
+        <Suspense fallback={<div>Loading...</div>}>
+          <KanbanBoard taskData={data} isLoading={isLoading}/> 
+        </Suspense>
+      : <ListView taskData={data} isLoading={isLoading}/>}
     </LeftNavbar>
     </div>
   )
