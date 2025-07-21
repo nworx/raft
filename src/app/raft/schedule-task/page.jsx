@@ -81,14 +81,16 @@
 //   );
 // }
 
-import React from 'react'
+import React, { Suspense } from 'react'
 import KanbanBoard from '@/components/kanban/KanbanBoard';
 import LeftNavbar from '@/components/common/LeftNavbar';
 
 const page = () => {
   return (
     <LeftNavbar>
-    <KanbanBoard/>
+        <Suspense fallback={<div>Loading...</div>}>
+          <KanbanBoard/>
+        </Suspense>
     </LeftNavbar>
   )
 }

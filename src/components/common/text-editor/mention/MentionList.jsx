@@ -1,9 +1,11 @@
+"use client"
+
 import React, {
     forwardRef, useEffect, useImperativeHandle,
     useState,
   } from 'react'
   
-  export default forwardRef((props, ref) => {
+  const Suggestion = forwardRef((props, ref) => {
     const [selectedIndex, setSelectedIndex] = useState(0)
   
     const selectItem = index => {
@@ -66,3 +68,6 @@ import React, {
       </div>
     )
   })
+  Suggestion.displayName = 'Suggestion';
+
+  export default Suggestion;
