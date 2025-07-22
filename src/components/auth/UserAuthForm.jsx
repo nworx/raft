@@ -18,7 +18,7 @@ import signUp from "@/services/auth/signUp"
 
 // interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function UserAuthForm({ className, ...props }) {
+export function UserAuthForm( props ) {
   const router =useRouter();
   const [isLoading, setIsLoading] = useState(false)
   const [formData,setFormData]=useState({});
@@ -55,7 +55,7 @@ export function UserAuthForm({ className, ...props }) {
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-6")} {...props}>
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">

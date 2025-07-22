@@ -13,15 +13,15 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const { ut } = useUserStore.getState();
-  const token = document.cookie.match(/(?:^|;\s*)jwt=([^;]*)/)?.[1];
+  // const token = document.cookie.match(/(?:^|;\s*)jwt=([^;]*)/)?.[1];
 
   // Only attach token for endpoints that are NOT public
   const isPublic = config.headers?.skipAuth === true || config.url.includes("/signIn","/signUp");
 
-  if (!isPublic && token) {
+  if (!isPublic && ut) {
     config.headers.Authorization = `Bearer ${ut}`;
   } else {
-    delete config.headers.Authorization;
+    // delete config.headers.Authorization;
   }
 
   return config;

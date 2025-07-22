@@ -7,12 +7,13 @@ import React,{useEffect, useLayoutEffect} from 'react';
 
 export default function DashboardLayout({ children }) {
     const router=useRouter();
+    const { setUser, setUt, clearUser, user, ut } = useUserStore.getState();
 //   const cookieStore = cookies();
 //   const token = cookieStore.get('jwt')?.value;
 
  useLayoutEffect(() => {
     const cookies = document.cookie;
-    const { setUser, setUt, clearUser, user, ut } = useUserStore.getState();
+    
     const hasJWT = cookies.includes('jwt');
    
 

@@ -19,15 +19,11 @@ const signIn = async({ email, password }) => {
     });
     if(response.status === 200){
 
+     
 
-       const token = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('jwt='))
-        ?.split('=')[1];
-        setUt(token);
-      if (!token) {
-        throw new Error('JWT token not found in cookies');
-      }
+      
+        setUt(response?.data);
+      
       
 
       // const userData = response?.config?.data;
