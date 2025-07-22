@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "@/constant/allEnv";
+import api from "@/lib/axiosInstance";
 
 const createTask = async ({projectId, title, description, assigneeId, reporterId, type, status, priority, dueDate}) => {
 
@@ -11,7 +12,7 @@ const createTask = async ({projectId, title, description, assigneeId, reporterId
 
       console.log("Request Body of create task api :-", requestBody);
 
-      const response = await axios.post(`${BASE_URL}/createTask`, requestBody);
+      const response = await api.post(`/createTask`, requestBody);
 
       console.log("Response of create task api :-", response);
       

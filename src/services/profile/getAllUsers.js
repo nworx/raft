@@ -1,12 +1,13 @@
 import axios from "axios";
 import { BASE_URL } from "@/constant/allEnv";
+import api from "@/lib/axiosInstance";
 
 const getAllUsers = async () => {
 
     return new Promise( async (resolve, reject) => {
 
         try {
-            const response = await axios.get(`${BASE_URL}/api/getAllUsers`);
+            const response = await api.get(`/api/getAllUsers`);
             const parsedResponse = response?.data;
             resolve(parsedResponse);
         } catch (error) {

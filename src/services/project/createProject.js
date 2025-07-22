@@ -2,6 +2,7 @@ import axios from "axios";
 import { BASE_URL } from "@/constant/allEnv";
 import { format } from "date-fns";
 import { toast } from "@/components/ui/use-toast";
+import api from "@/lib/axiosInstance";
 
 export const createProject = async (formData) =>{
     
@@ -28,13 +29,7 @@ export const createProject = async (formData) =>{
                 // members: formData?.members
             };
 
-            const response = await axios.post(`${BASE_URL}/createProject`, requestBody, {
-                headers: {
-                    Authorization: `Bearer ${token}`, 
-                    "Content-Type": "application/json",
-                },
-                withCredentials: true,
-            });
+            const response = await api.post(`/createProject`, requestBody);
 
             const parsedResponse = response?.data;
             resolve(parsedResponse);
