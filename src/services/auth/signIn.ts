@@ -13,7 +13,7 @@ const signIn = async({ email, password }) => {
 
 
   try {
-    const response = await api.post(`${BASE_URL}/api/signIn`, {
+    const response = await api.post(`/api/signIn`, {
       email,
       password,
     });

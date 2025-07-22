@@ -22,7 +22,7 @@ export const createProject = async (formData) =>{
                 description: formData?.description,
                 startDate: formattedStartDate,
                 endDate: formattedEndDate,    
-                category: formData?.category,
+                team: formData?.team,
                 status: formData?.status,
                 members: formData?.members?.map(email => ({ email })),
                 // members: formData?.members
