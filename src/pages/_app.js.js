@@ -19,15 +19,26 @@ export const metadata = {
   description: "Agile project management and issue tracking tool for planning, tracking, and delivering software projects.",
 };
 
-export default function RootLayout({ children }) {
+// export default function RootLayout({ children }) {
+//   return (
+//     <html lang="en">
+//       <body
+//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+//       >
+//         {children}
+//           <Toaster />
+//       </body>
+//     </html>
+//   );
+// }
+
+export default function MyApp({ Component, pageProps }) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
-          <Toaster />
-      </body>
-    </html>
+    <main
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
+      <Component {...pageProps} />
+      <Toaster />
+    </main>
   );
 }
