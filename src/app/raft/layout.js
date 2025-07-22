@@ -1,4 +1,5 @@
 "use client";
+import useUserStore from '@/zustand/userStore';
 // import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { useRouter } from 'next/navigation';
@@ -11,11 +12,11 @@ export default function DashboardLayout({ children }) {
 
  useLayoutEffect(() => {
     const cookies = document.cookie;
-    
-    console.log(cookies,"cookiescookiescookies")
+    const { setUser, setUt, clearUser, user, ut } = useUserStore.getState();
     const hasJWT = cookies.includes('jwt');
+   
 
-    if (!hasJWT) {
+    if (!ut) {
       router.push('/');
     }
   }, []);

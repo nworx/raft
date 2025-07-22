@@ -9,7 +9,7 @@ import useUserStore from "@/zustand/userStore";
 
 const signIn = async({ email, password }) => {
 
-  const setUser = useUserStore.getState().setUser;
+  const { setUser, setUt, clearUser, user, ut } = useUserStore.getState();
 
 
   try {
@@ -18,6 +18,16 @@ const signIn = async({ email, password }) => {
       password,
     });
     if(response.status === 200){
+
+
+       const token = document.cookie
+        .split('; ')
+        .find((row) => row.startsWith('jwt='))
+        ?.split('=')[1];
+        setUt(token);
+      if (!token) {
+        throw new Error('JWT token not found in cookies');
+      }
       
 
       // const userData = response?.config?.data;
