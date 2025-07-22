@@ -87,6 +87,13 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
         title: "Success",
         description: "Task created successfully",
       });
+
+      setTitle("");
+      setDescription("");
+      setPriority("");
+      setDueDate("");
+      setAssignedToId("");
+      setTaskType("");
     } catch (error) {
       toast({
         title: "Error",
@@ -95,12 +102,6 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
       });
     } finally {
       setIsSubmitting(false);
-      setTitle("");
-      setDescription("");
-      setPriority("");
-      setDueDate("");
-      setAssignedToId("");
-      setTaskType("");
     }
   };
 
@@ -158,20 +159,6 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                   </div>
 
                   <div className="w-40 grid gap-2">
-                    <Label htmlFor="dueDate" className="flex items-center">
-                      Due Date *
-                    </Label>
-                    <input
-                      id="dueDate"
-                      name="dueDate"
-                      type="date"
-                      value={dueDate}
-                      onChange={(e) => setDueDate( e.target.value)}
-                      className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
-                    />
-                  </div>
-
-                  <div className="w-40 grid gap-2">
                     <Label htmlFor="type" className="flex items-center">
                       Type *
                     </Label>
@@ -189,9 +176,23 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                     </Select>
                   </div>
 
+                  <div className="w-40 grid gap-2">
+                    <Label htmlFor="dueDate" className="flex items-center">
+                      Due Date 
+                    </Label>
+                    <input
+                      id="dueDate"
+                      name="dueDate"
+                      type="date"
+                      value={dueDate}
+                      onChange={(e) => setDueDate( e.target.value)}
+                      className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                    />
+                  </div>
+
                   {currentProject ? <div className="w-60 grid gap-2">
                     <Label htmlFor="assignee" className="flex items-center">
-                      Assign To *
+                      Assign To 
                     </Label>
                     <Select
                       id="assignee"

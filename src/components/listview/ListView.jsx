@@ -2,8 +2,20 @@
 
 import React, { useState, useMemo } from "react"
 import { format } from 'date-fns';
+import { useSearchParams } from "next/navigation";
+
+const priorityColors = {
+  LOW: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
+  MEDIUM: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
+  HIGH: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
+  CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
+}
 
 export default function ListView({taskData}) {
+
+  const searchParams = useSearchParams();
+  const projectName = searchParams.get('project');
+  
   const [filters, setFilters] = useState({
     id: "",
     priority: "",
@@ -11,21 +23,45 @@ export default function ListView({taskData}) {
     createdBy: "",
     dueDate: "",
     project: "",
+    assignee: ""
   })
 
   const [dueDateSort, setDueDateSort] = useState("")
 
+  const [istaskDialogOpen, setIsTaskDialogOpen] = useState(false)
+
   const filteredTasks = useMemo(() => {
+
+
+    const normalizeDate = (date) => {
+      const normalized = new Date(format(new Date(date), 'dd MMMM yyyy'));
+      normalized.setMilliseconds(0);
+      return normalized;
+    };
+
+
     let filtered = taskData?.filter((task) => {
+      const taskDueDate = task.dueDate ? normalizeDate(new Date(task.dueDate)).getTime() : null;
+      const filterDueDate = filters.dueDate ? normalizeDate(new Date(filters.dueDate)).getTime() : null;
+
+        console.log(
+          task.dueDate,
+          "sort",
+          taskDueDate,filters.dueDate,
+          "filterDueDate",
+          filterDueDate
+        );
       return (
         task.id.toString().toLowerCase().includes(filters.id.toLowerCase()) &&
         task.priority.toLowerCase().includes(filters.priority.toLowerCase()) &&
         task.title.toLowerCase().includes(filters.title.toLowerCase()) &&
         (task.createdBy?.toLowerCase().includes(filters.createdBy.toLowerCase()) ?? true) &&
         task.project.name.toLowerCase().includes(filters.project.toLowerCase()) &&
-        (!filters.dueDate || new Date(task.dueDate) >= new Date(filters.dueDate))
-      )
-    })
+        (!filters.dueDate || (taskDueDate && taskDueDate == filterDueDate)) &&
+        task?.assignee?.username.toLowerCase().includes(filters.assignee.toLowerCase())
+      );
+    });
+
 
     if (dueDateSort) {
       filtered = filtered.sort((a, b) => {
@@ -87,22 +123,28 @@ export default function ListView({taskData}) {
               placeholder="Filter by Created By"
               className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
             /> */}
+            {projectName ? <input
+              value={filters.assignee}
+              onChange={(e) => setFilters({ ...filters, assignee: e.target.value })}
+              placeholder="Filter by User"
+              className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+            /> :
             <input
               value={filters.project}
               onChange={(e) => setFilters({ ...filters, project: e.target.value })}
               placeholder="Filter by Project"
               className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
-            />
+            />}
           </div>
 
           {/* Table Header */}
-          <div className="grid grid-cols-6 px-4 py-2 text-xs font-semibold text-gray-500 uppercase bg-gray-50 border-t">
+          <div className="grid grid-cols-[80px_100px_1fr_150px_150px] px-4 py-2 text-xs font-semibold text-gray-500 uppercase bg-gray-50 border-t">
             <div>Task ID</div>
             <div>Priority</div>
             <div>Title</div>
-            <div className="col-span-1">Description</div>
+            {/* <div>Description</div> */}
             <div
-              className="text-center cursor-pointer hover:text-black transition"
+              className=" cursor-pointer hover:text-black transition"
               onClick={toggleDueDateSort}
             >
               Due Date
@@ -112,7 +154,8 @@ export default function ListView({taskData}) {
                 : ""
               }
             </div>
-            <div>Project</div>
+            {projectName ? <div>Assigned To</div> :
+            <div>Project</div>}
           </div>
         </div>
 
@@ -122,26 +165,22 @@ export default function ListView({taskData}) {
             filteredTasks?.map((task) => (
               <div
                 key={task.id}
-                className="grid grid-cols-6 px-4 py-3 hover:bg-gray-50 transition-colors"
+                className="grid grid-cols-[80px_100px_1fr_150px_150px] px-4 py-3 hover:bg-gray-50 transition-colors"
+                onClick={() => setIsTaskDialogOpen(true)}
               >
                 <div className="truncate">Task-{task.id}</div>
                 <div>
                   <span
-                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
-                      task.priority === "high"
-                        ? "bg-red-100 text-red-700"
-                        : task.priority === "medium"
-                        ? "bg-yellow-100 text-yellow-700"
-                        : "bg-green-100 text-green-700"
-                    }`}
+                    className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${priorityColors[task?.priority]}`}
                   >
                     {task.priority}
                   </span>
                 </div>
                 <div className="truncate">{task.title}</div>
-                <div className="truncate text-gray-600" dangerouslySetInnerHTML={{ __html: task.description }} /> 
-                <div className="text-center">{format(new Date(task.dueDate), 'dd MMMM yyyy')}</div>
-                <div className="truncate">{task.project?.name || "N/A"}</div>
+                {/* <div className="truncate text-gray-600" dangerouslySetInnerHTML={{ __html: task.description }} />  */}
+                <div className="">{task.dueDate ? format(new Date(task.dueDate), 'dd MMMM yyyy') : "N/A"}</div>
+                {projectName?<div className="truncate">{task?.assignee?.username || "Not Assigned"}</div> :
+                <div className="truncate">{task.project?.name || "N/A"}</div>}
               </div>
             ))
           ) : (

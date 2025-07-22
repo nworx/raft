@@ -33,7 +33,7 @@ const priorityColors = {
   CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
 }
 
-export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment, projectName }) {
+export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment, projectName, reporterId, onCreateTask }) {
   const [formattedDueDate, setFormattedDueDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -51,7 +51,7 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
     if (task?.dueDate) {
       setFormattedDueDate(format(new Date(task.dueDate), 'dd-MM'));
     } else {
-      setFormattedDueDate(null);
+      setFormattedDueDate("N/A");
     }
   }, [task]);
   
@@ -117,21 +117,19 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
           </div>
 
           <TooltipProvider>
-            <div className="absolute bottom-3 right-3">
-              {dummyData.map((user, index) => (
-                <Tooltip key={index}>
+            {task?.assignee && <div className="absolute bottom-3 right-3">
+                <Tooltip>
                   <TooltipTrigger asChild>
                     <Avatar className="h-6 w-6 data-[slot=avatar]:ring-2 data-[slot=avatar]:ring-background data-[slot=avatar]:grayscale">
-                      <AvatarImage src={user.src} alt={user.alt} />
-                      <AvatarFallback className="font-medium text-xs ">{user.fallback}</AvatarFallback>
+                      {/* <AvatarImage src={user.src} alt={user.alt} /> */}
+                      <AvatarFallback className="font-medium text-xs ">{task?.assignee?.username.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{user.fallback}</p>
+                    <p>{task?.assignee?.username}</p>
                   </TooltipContent>
                 </Tooltip>
-              ))}
-            </div>
+            </div>}
           </TooltipProvider>
         </CardContent>
       </Card>
@@ -141,6 +139,9 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
           open={isDialogOpen}
           onOpenChange={setIsDialogOpen}
           onAddComment={(comment) => onAddComment(columnId, task.id, comment)}
+          projectName={projectName}
+          reporterId={reporterId}
+          onCreateTask={onCreateTask}
         />
       </div>
       }

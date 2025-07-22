@@ -14,13 +14,33 @@ import Spinner from "@/components/ui/spinner";
 import updateComment from "@/services/comment/updateComment";
 import { Pencil } from "lucide-react";
 import { X } from "lucide-react";
-
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
+import assignTask from "@/services/task/assignTask";
+import { format } from 'date-fns';
+import useProjectStore from "@/zustand/projectStore";
 const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   ssr: false,
   loading: () => <div className="shimmer-loader"></div>,
 });
 
-export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
+const dummyData = [
+  { src: 'https://github.com/shadcn.png', alt: '@shadcn', fallback: 'Alex' },
+  { src: 'https://github.comm/leerob.png', alt: '@leerob', fallback: 'Prakhar' },
+]
+
+export default function TaskDialog({ task, open, onOpenChange, onAddComment, projectName, reporterId, onCreateTask }) {
+  
+  const currentProject = useProjectStore((state) => state.currentProject)
+
+
   const [newDescription, setNewDescription] = useState(task?.description || "");
   const [newComment, setNewComment] = useState("");
   const [allComments, setAllComments] = useState([]);
@@ -32,13 +52,17 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
   const [showUpdateTestPopup, setShowUpdateTestPopup] = useState(false);
   const contentRef = useRef();
   const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [assignedToId, setAssignedToId] = useState("");
+  const [localAssignee, setLocalAssignee] = useState(null);
 
+  const [isUpdated, setIsUpdated] = useState(false);
 
   const getTextFromHTML = (html) => {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-  return div.textContent || div.innerText || "";
-};
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.textContent || div.innerText || "";
+  };
 
   const handleAddComment = async () => {
     console.log(newComment, "newComment", task);
@@ -61,7 +85,8 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
         onAddComment(newComment.trim());
         setAllComments((previouscoment) => [...previouscoment, response]);
         setNewComment(""); // Reset the input
-
+        
+        setIsUpdated(true);
         toast({
           title: "Success",
           description: "Comment added successfully",
@@ -103,7 +128,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
           comment.id === response.id ? response : comment
         ));
         
-
+        setIsUpdated(true)
         toast({
           title: "Success",
           description: "Comment updated successfully",
@@ -143,24 +168,60 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
   };
 
   function getInitials(fullName) {
-  if (!fullName || typeof fullName !== 'string') return '';
+    if (!fullName || typeof fullName !== 'string') return '';
 
-  const parts = fullName
-    .trim()
-    .split(' ')
-    .filter(Boolean);
+    const parts = fullName
+      .trim()
+      .split(' ')
+      .filter(Boolean);
 
-  if (parts.length === 0) return '';
+    if (parts.length === 0) return '';
 
-  const firstInitial = parts[0]?.[0]?.toUpperCase() || '';
-  const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.[0]?.toUpperCase() : '';
+    const firstInitial = parts[0]?.[0]?.toUpperCase() || '';
+    const lastInitial = parts.length > 1 ? parts[parts.length - 1]?.[0]?.toUpperCase() : '';
 
-  return firstInitial + lastInitial;
-}
+    return firstInitial + lastInitial;
+  }
+
+  const closeTaskDialogHandler = async () => {
+    
+    if(isUpdated){
+      await onCreateTask();
+      onOpenChange(false);
+    } else {
+      onOpenChange(false);
+    }
+  }
+
+  const assignTaskHandler = async (assigneeId) => {
+    setIsLoading(true);
+    try {
+      const response = await assignTask({ taskId: task?.id, assigneeId });
+      console.log("assignTask Response:", response);
+      setIsUpdated(true)
+      // await onCreateTask();
+    } catch (error) {
+      console.log("Error in assign task handler:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
+  const assignTaskFunc = () => {
+    assignTaskHandler(reporterId);
+  };
+
+  useEffect(() => {
+    if (assignedToId) {
+      assignTaskHandler(assignedToId);
+    }
+  }, [assignedToId]);
 
   useEffect(() => {
     getCommentByTaskFunc();
   }, []);
+
   useEffect(() => {
     const container = contentRef.current;
     if (!container) return;
@@ -241,8 +302,9 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
 
       {open && (
         <div className="fixed inset-0 z-50 flex justify-center items-center">
-          <div className="bg-white rounded-lg shadow-lg w-[60vw] h-[90vh] p-6 flex flex-col">
-            <div className="flex flex-col flex-grow overflow-scroll ">
+          <div className="bg-white rounded-lg shadow-lg w-[70vw] h-[90vh] p-6 flex flex-row gap-4">
+
+            <div className="flex flex-col flex-grow overflow-scroll pr-4">
               <h1 className="text-xl font-bold">Task Details</h1>
               <div className="my-2" title="Task Title">
                 {/* <input
@@ -264,9 +326,40 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
 
               <Separator className="my-6" />
 
-              <h1 className="text-xl font-bold ">
-                {allComments.length} Comments
-              </h1>
+              <div className="flex justify-between">
+                <h1 className="text-xl font-bold ">
+                  {allComments.length} Comments
+                </h1>
+
+                {/* {projectName && <div className="flex justify-center items-center gap-1">
+
+
+                {!task?.assignee && <Button 
+                  type="button"
+                  className="bg-transparent text-black hover:text-white hover:bg-black/80 transition-colors duration-200" 
+                  onClick={assignTaskFunc}
+                  disabled={isLoading}
+                >
+                  {isLoading? <Spinner/> : "Assign to Me" }
+                </Button>}
+
+                  <TooltipProvider>
+                    {task?.assignee && <div className="flex -space-x-3">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Avatar className="h-7 w-7 data-[slot=avatar]:ring-2 data-[slot=avatar]:ring-background data-[slot=avatar]:grayscale">
+                              <AvatarFallback className="font-bold text-sm ">{(localAssignee?.username || task?.assignee?.username)?.charAt(0)?.toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{localAssignee?.username || task?.assignee?.username}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                    </div>}
+                  </TooltipProvider>
+                </div>} */}
+              </div>
+
               <div className="mt-2 space-y-4">
                 <Tiptap
                   text={newComment}
@@ -342,14 +435,75 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment }) {
               </div>
             </div>
 
-            <div className="mt-4">
-              <Button
-                onClick={() => onOpenChange(false)}
-                variant="outline"
-                className="w-full"
+            <div className="w-36 border-l pl-4 flex-shrink-0">
+              <h2 className="text-lg font-semibold mb-4">Properties</h2>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Project</label>
+                <p className="text-sm text-gray-900 font-semibold">{task?.project}</p>
+              </div>
+              
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Status</label>
+                <p className="text-sm text-gray-900 font-semibold">{task?.status}</p>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Priority</label>
+                <p className="text-sm text-gray-900 font-semibold">{task?.priority}</p>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Type</label>
+                <p className="text-sm text-gray-900 font-semibold">{task?.type}</p>
+              </div>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Due Date</label>
+                <p className="text-sm text-gray-900 font-semibold">{task.dueDate ? format(new Date(task.dueDate), 'dd MMMM yyyy') : "N/A"}</p>
+              </div>
+
+              <div className="mb-4">
+                {/* <label className="block text-sm font-medium text-gray-700" htmlFor="assignee">Assign</label> */}
+                {/* <p className="text-sm text-gray-900">{task?.assignee?.username}</p> */}
+                {projectName && currentProject && <div className="w-40 grid gap-2">
+                    <Label htmlFor="assignee" className="flex items-center">
+                      Assign To
+                    </Label>
+                    <Select
+                      id="assignee"
+                      value={assignedToId}
+                      onValueChange={(value) => {
+                      setAssignedToId(value);
+                      const selectedUser = currentProject?.members.find(({ user }) => String(user.id) === value)?.user;
+                      setLocalAssignee(selectedUser);
+                    }}
+                    >
+                      <SelectTrigger id="assignee" className="overflow-hidden text-ellipsis whitespace-nowrap">
+                        <SelectValue placeholder={task?.assignee?.username? task?.assignee?.username : "Assign task to"} className="overflow-hidden text-ellipsis whitespace-nowrap"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {currentProject?.members?.map(({ user }) => (
+                          <SelectItem key={user.id} value={String(user.id)}>
+                            {user?.username}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>}
+              </div>
+
+            </div>
+
+            <div className="-mt-5 -mr-3">
+              <button
+                onClick={closeTaskDialogHandler}
+                className="text-gray-500 hover:text-gray-700 rounded-full p-1 transition-colors"
+                aria-label="Close"
+                disabled={isLoading}
               >
-                Close
-              </Button>
+                {isLoading? <Spinner className="w-5 h-5"/> :<X className="w-5 h-5" />}
+              </button>
             </div>
           </div>
         </div>

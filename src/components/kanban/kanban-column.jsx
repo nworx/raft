@@ -48,6 +48,8 @@ export default function KanbanColumn({
                   isLoading={false}
                   noOfSkeleton={0}
                   projectName={projectName}
+                  reporterId={reporterId}
+                  onCreateTask={onCreateTask}
                 />
               ))
           }
