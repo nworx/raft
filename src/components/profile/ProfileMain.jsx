@@ -26,9 +26,11 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { toast, useToast } from "@/components/ui/use-toast";
 import getUser from "@/services/profile/getUser";
+import useUserStore from "@/zustand/userStore";
 
 
 export default function ProfilePage() {
+  const {clearUser} = useUserStore.getState();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
@@ -61,9 +63,11 @@ export default function ProfilePage() {
     });
   };
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
+    clearUser();
     // Clear localStorage
     localStorage.clear();
+    
 
     // Clear sessionStorage if needed
     sessionStorage.clear();
@@ -81,7 +85,7 @@ export default function ProfilePage() {
     });
 
     // Redirect to login page
-    router.push("/auth");
+    router.push("/");
   };
 
 
