@@ -18,6 +18,7 @@ export default function DashboardLayout({ children }) {
    
 
     if (!ut) {
+      console.log("routing to home "+ut)
       router.push('/');
     }
   }, []);
