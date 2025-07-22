@@ -11,6 +11,14 @@ const priorityColors = {
   CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
 }
 
+const normalizeDate = (date) => {
+  const d = new Date(date);
+  if (isNaN(d)) return null;
+  d.setHours(0, 0, 0, 0); // normalize to start of day
+  return d;
+};
+
+
 export default function ListView({taskData}) {
 
   const searchParams = useSearchParams();
@@ -31,48 +39,36 @@ export default function ListView({taskData}) {
   const [istaskDialogOpen, setIsTaskDialogOpen] = useState(false)
 
   const filteredTasks = useMemo(() => {
-
-
-    const normalizeDate = (date) => {
-      const normalized = new Date(format(new Date(date), 'dd MMMM yyyy'));
-      normalized.setMilliseconds(0);
-      return normalized;
-    };
-
-
     let filtered = taskData?.filter((task) => {
-      const taskDueDate = task.dueDate ? normalizeDate(new Date(task.dueDate)).getTime() : null;
-      const filterDueDate = filters.dueDate ? normalizeDate(new Date(filters.dueDate)).getTime() : null;
+      const taskDueDate = task.dueDate ? normalizeDate(task.dueDate)?.getTime() : null;
+      const filterDueDate = filters.dueDate ? normalizeDate(filters.dueDate)?.getTime() : null;
 
-        console.log(
-          task.dueDate,
-          "sort",
-          taskDueDate,filters.dueDate,
-          "filterDueDate",
-          filterDueDate
-        );
       return (
-        task.id.toString().toLowerCase().includes(filters.id.toLowerCase()) &&
-        task.priority.toLowerCase().includes(filters.priority.toLowerCase()) &&
-        task.title.toLowerCase().includes(filters.title.toLowerCase()) &&
+        task.id?.toString().toLowerCase().includes(filters.id.toLowerCase()) &&
+        task.priority?.toLowerCase().includes(filters.priority.toLowerCase()) &&
+        task.title?.toLowerCase().includes(filters.title.toLowerCase()) &&
         (task.createdBy?.toLowerCase().includes(filters.createdBy.toLowerCase()) ?? true) &&
-        task.project.name.toLowerCase().includes(filters.project.toLowerCase()) &&
-        (!filters.dueDate || (taskDueDate && taskDueDate == filterDueDate)) &&
-        task?.assignee?.username.toLowerCase().includes(filters.assignee.toLowerCase())
+        (task.project?.name?.toLowerCase().includes(filters.project.toLowerCase()) ?? true) &&
+        (!filters.dueDate || (taskDueDate && taskDueDate === filterDueDate)) &&
+        (task?.assignee?.username?.toLowerCase().includes(filters.assignee.toLowerCase()) ?? true)
       );
-    });
-
+    }) ?? [];
 
     if (dueDateSort) {
-      filtered = filtered.sort((a, b) => {
-        const dateA = new Date(a.dueDate)
-        const dateB = new Date(b.dueDate)
-        return dueDateSort === "asc" ? dateA - dateB : dateB - dateA
-      })
+      filtered.sort((a, b) => {
+        const dateA = new Date(a.dueDate);
+        const dateB = new Date(b.dueDate);
+        return dueDateSort === "asc" ? dateA - dateB : dateB - dateA;
+      });
     }
 
-    return filtered
-  }, [filters, dueDateSort, taskData])
+    console.log("Filtering with:", filters);
+    console.log("Filtered tasks:", filtered);
+
+
+    return filtered;
+  }, [filters, dueDateSort, taskData]);
+
 
   const toggleDueDateSort = () => {
     setDueDateSort((prev) =>

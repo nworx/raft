@@ -29,32 +29,14 @@ import { updateProject } from "@/services/project/updateProject"
 import useProjectStore from "@/zustand/projectStore"
 import { SearchBox } from "@/utilities/searchBox"
 import getAllUsers from "@/services/profile/getAllUsers"
-// Project type definition
-// const Priority = "Low" | "Medium" | "High" | "Critical"
-
-// const Project {
-//   name: string
-//   description: string
-//   priority: Priority
-//   tasks: number
-//   owner: string
-//   team: string
-//   status: "Active" | "Completed" | "On Hold"
-//   dueDate?: Date
-// }
-
-// interface CreateProjectDialogProps {
-//   open: boolean
-//   onOpenChange: (open: boolean) => void
-//   onCreateProject: (project: Project) => void
-// }
+import useUserStore from "@/zustand/userStore"
 
 export function CreateProjectDialog({ open, onOpenChange,projectData,process, onProjectChange }) {
 
   const router = useRouter();
   const { toast } = useToast();
   const setProject = useProjectStore.getState().setCurrentProject;
-
+  const user = useUserStore((state) => state.user);
 
   console.log(projectData,"rajj",process,open)
   const [formData, setFormData] = useState({
@@ -257,6 +239,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     const selectedEmails = users
       .filter((user) => selectedUsernames.includes(user.username))
       .map((user) => ({ email: user.email }));
+    console.log(selectedUsernames, "selectedUsernames");
 
     setFormData((prev) => ({
       ...prev,
@@ -275,8 +258,21 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
       
       setSelectedUsernames(userEmails);
     }else{
-      setFormData({});
-      setSelectedUsernames([]);
+      // setFormData({});
+
+      setFormData({
+        id: null,
+        name: "",
+        priority: "",
+        description: "",
+        startDate: "",
+        endDate: "",
+        category: "",
+        status: "",
+        members: [user?.email],
+      });
+
+      setSelectedUsernames([user?.email]);
     }
    },[open])
 
@@ -330,12 +326,13 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                   users={users}
                   selectedUsernames={selectedUsernames}
                   onChange={setSelectedUsernames}
+                  currentUserEmail={user?.email}
                 />
                 {errors.members && <p className="text-red-500 text-sm">{errors.members}</p>}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
+              {/* <div className="grid gap-2">
                 <Label className="flex items-center">Start Date</Label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -350,32 +347,31 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0">
-                    {/* <Calendar mode="single" selected={formData?.startDate} onSelect={handleDateChange} initialFocus /> */}
                     <Calendar mode="single" selected={formData?.startDate} onSelect={(date) => handleDateChange('startDate', date)} />
                   </PopoverContent>
                 </Popover>
+                {errors.startDate && <p className="text-red-500 text-sm">{errors.startDate}</p>}
+              </div> */}
+
+              <div className="grid gap-2">
+                <Label className="flex items-center">Start Date</Label>
+                <input
+                  type="date"
+                  value={formData?.startDate ? formData.startDate : ''}
+                  onChange={(e) => handleDateChange('startDate', e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                />
                 {errors.startDate && <p className="text-red-500 text-sm">{errors.startDate}</p>}
               </div>
 
               <div className="grid gap-2">
                 <Label className="flex items-center">Due Date</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className={`w-full justify-start text-left font-normal ${
-                        !formData?.endDate && "text-muted-foreground"
-                      }`}
-                    >
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {formData?.endDate? format(formData?.endDate, "PPP") : <span>Pick a date</span>}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto h-96 overflow-hidden p-0" align="start">
-                    {/* <Calendar mode="single" selected={formData?.endDate} onSelect={handleDateChange} initialFocus /> */}
-                    <Calendar mode="single" selected={formData?.endDate} onSelect={(date) => handleDateChange('endDate', date)} initialFocus />
-                  </PopoverContent>
-                </Popover>
+                <input
+                  type="date"
+                  value={formData?.endDate ? formData.endDate : ''}
+                  onChange={(e) => handleDateChange('endDate', e.target.value)}
+                  className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-gray-400"
+                />
                 {errors.endDate && <p className="text-red-500 text-sm">{errors.endDate}</p>}
               </div>
             </div>
