@@ -164,7 +164,7 @@ export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFli
               </div>
               <div className="flex items-center">
                 <Badge variant="outline" className="font-normal">
-                  {project.category ?? "Uncategorized"}
+                  {project.team ?? "Uncategorized"}
                 </Badge>
               </div>
               <div className="flex items-center">
