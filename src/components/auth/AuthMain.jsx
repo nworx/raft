@@ -24,6 +24,7 @@ export default function AuthMain() {
   const { ut } = useUserStore.getState();
 
    useEffect(() => {
+    console.log(ut,"utututut Auth")
     if (ut) {
       router.push("/raft/dashboard");
     }
@@ -36,7 +37,7 @@ export default function AuthMain() {
     setCurrentState(state)
   }
 
- if (ut) return (<div></div>);
+//  if (ut) return (<div></div>);
   return (
     <div>
       <div className="md:hidden">
@@ -60,7 +61,7 @@ export default function AuthMain() {
           // href="/examples/authentication"
        
           onClick={(()=>{
-            handleChangeCurrentState( currentState==="login"? "signUp":currentState==="signUp"?"login":""
+            handleChangeCurrentState( currentState==="login"? "signUp":currentState==="signUp"?"login":"Unknown State"
             )
           })
         }

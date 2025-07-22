@@ -18,7 +18,7 @@ import signUp from "@/services/auth/signUp"
 
 // interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function UserAuthForm( props ) {
+export function UserAuthForm( {currentState} ) {
   const router =useRouter();
   const [isLoading, setIsLoading] = useState(false)
   const [formData,setFormData]=useState({});
@@ -27,7 +27,7 @@ export function UserAuthForm( props ) {
     event.preventDefault()
     setIsLoading(true)
     let response;
-    if(props?.currentState==="login"){
+    if(currentState==="login"){
       response=await signIn(formData);
       console.log("looks like",response);
       if(response){
@@ -55,7 +55,7 @@ export function UserAuthForm( props ) {
   }
 
   return (
-    <div className={cn("grid gap-6")} {...props}>
+    <div className={cn("grid gap-6")} >
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
@@ -97,7 +97,7 @@ export function UserAuthForm( props ) {
                 <></>
             //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {props?.currentState==="login"? "Sign In with Email":props?.currentState==="signUp"?" Create your account":""}
+            {currentState==="login"? "Sign In with Email":currentState==="signUp"?" Create your account":""}
 
            
           </Button>
