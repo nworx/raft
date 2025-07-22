@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from "@/constant/allEnv";
+import api from '@/lib/axiosInstance';
 
 const fetchTasksByProjectId  = async ({ projectId }) => {
 
@@ -9,7 +10,7 @@ const fetchTasksByProjectId  = async ({ projectId }) => {
    
       try {
 
-        const response  = await axios.get(`${BASE_URL}/projectId/${projectId}/getAllProjectTasks `);
+        const response  = await api.get(`/projectId/${projectId}/getAllProjectTasks `);
        
         const parsedResponse = response?.data;
         allTasks = parsedResponse;

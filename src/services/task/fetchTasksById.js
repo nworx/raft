@@ -1,12 +1,13 @@
 "use client"
 import { BASE_URL } from "@/constant/allEnv";
+import api from "@/lib/axiosInstance";
 import axios from "axios";
 
  const fetchTasksById = async ({taskId}) => {
 
 
   try {
-    const response = await axios.get(`${BASE_URL}/fetchTasksById/${taskId}`, {
+    const response = await api.get(`/fetchTasksById/${taskId}`, {
       headers: {
         "Content-Type": "application/json"
       }

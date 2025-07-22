@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from "@/constant/allEnv";
+import api from '@/lib/axiosInstance';
 
 const fetchAllProjects = async ({ email }) => {
 
@@ -9,7 +10,7 @@ const fetchAllProjects = async ({ email }) => {
    
       try {
 
-        const response  = await axios.get(`${BASE_URL}/email/${email}/getUserAllProjects`);
+        const response  = await api.get(`/email/${email}/getUserAllProjects`);
        
         const parsedResponse = response?.data;
         allProjects = parsedResponse;
