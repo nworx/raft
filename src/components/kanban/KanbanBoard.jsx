@@ -36,7 +36,8 @@ function transformBackendDataToFrontendFormat(backendTasks) {
       status: task?.status,
       dueDate: task?.dueDate,
       type: task?.type,
-      project: task?.project?.name
+      project: task?.project?.name,
+      assignee: task?.assignee
     };
 
     formattedData[statusKey].push(formattedTask);
@@ -132,28 +133,6 @@ export default function KanbanBoard({taskData, isLoading, onCreateTask}) {
     return response;
   }
 
-  const createTask = (columnId, task) => {
-    setColumns((prev) => {
-      const newColumns = { ...prev }
-      const newTask = {
-        id: `t${Date.now()}`, 
-        title: task?.title,
-        content: task.title,
-        projectId: task?.projectId,
-        description: task?.description,
-        assigneeId: task?.assigneeId,
-        reporterId: 4,
-        type: task?.type,
-        status: columnId,
-        priority: task?.priority,
-        dueDate: task?.dueDate,
-      }
-
-      newColumns[columnId] = [...newColumns[columnId], newTask]
-      return newColumns
-    })
-  }
-
   function unslugify(slug) {
     return slug?.split('-').map((s) => s.charAt(0).toUpperCase() + s.slice(1)).join(' ');
   }
@@ -223,35 +202,6 @@ export default function KanbanBoard({taskData, isLoading, onCreateTask}) {
       getAllUsersFunc();
     }
   }, [user?.email]);
-
-  // const getAllUserTaskFunc=async()=>{
-  //   try{
-  //      setIsLoading(true);
-  //     const response =await getAllUserTask();
-  //     console.log(response,"responseresponse")
-  //     if(response){
-  //       const transformedv1 = transformBackendDataToFrontendFormat(response?.data);
-  //       setColumns(transformedv1);
-  //     }
-  //      setIsLoading(false);
-  //   }
-  //   catch(error){
-  //     setIsLoading(false);
-  //   }
-  // }
-
-
-  // useEffect(()=>{
-  //   if(!unslugify(projectName)){
-  //     // taskData
-  //     if(taskData){
-  //       console.log(taskData, "taskData");
-  //       const transformedv1 = transformBackendDataToFrontendFormat(taskData);
-  //       setColumns(transformedv1);
-  //     }
-  //     // getAllUserTaskFunc();
-  //   }
-  // },[taskData])
 
   return (
     <ScrollArea className="container  py-2 m-auto mt-6">
