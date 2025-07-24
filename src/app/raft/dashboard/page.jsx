@@ -15,8 +15,8 @@ const Dashboard = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-  const getAllUserTaskFunc = async () => {
+
+   const getAllUserTaskFunc = async () => {
       try {
         setIsLoading(true);
         const response = await getAllUserTask();
@@ -31,6 +31,8 @@ const Dashboard = () => {
       }
     };
 
+  useEffect(() => {
+ 
     getAllUserTaskFunc();
   }, [router.isReady]);
 
@@ -45,9 +47,9 @@ const Dashboard = () => {
       </button>
       {toggleView? 
         <Suspense fallback={<div>Loading...</div>}>
-          <KanbanBoard taskData={data} isLoading={isLoading}/> 
+          <KanbanBoard taskData={data} isLoading={isLoading} onTaskUpdate={getAllUserTaskFunc}/> 
         </Suspense>
-      : <ListView taskData={data} isLoading={isLoading}/>}
+      : <ListView taskData={data} isLoading={isLoading} />}
     </LeftNavbar>
     </div>
   )

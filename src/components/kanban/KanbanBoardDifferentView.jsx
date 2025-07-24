@@ -38,7 +38,7 @@ const KanbanBoardDifferentView = () => {
     }
   };
 
-  const handleCreateTask = async (taskData) => {
+  const handleGetTask = async (taskData) => {
     
     await fetchTaskByProjectIdFunc(); 
   };
@@ -58,7 +58,7 @@ const KanbanBoardDifferentView = () => {
       </button>
       {toggleView? 
       <Suspense fallback={<div>Loading...</div>}>
-      <KanbanBoard taskData={data} isLoading={isLoading} onCreateTask={handleCreateTask}/> 
+      <KanbanBoard taskData={data} isLoading={isLoading} onTaskUpdate={handleGetTask}/> 
       </Suspense>
       : <ListView taskData={data} isLoading={isLoading}/>}
     </LeftNavbar>

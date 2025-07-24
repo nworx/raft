@@ -52,7 +52,7 @@ const currentUser = {
   avatar: "/placeholder.svg?height=40&width=40",
 }
 
-export default function KanbanBoard({taskData, isLoading, onCreateTask}) {
+export default function KanbanBoard({taskData, isLoading, onTaskUpdate}) {
   const router=useRouter();
   const [columns, setColumns] = useState({});
   // const [isLoading, setIsLoading] = useState(false);
@@ -218,7 +218,7 @@ export default function KanbanBoard({taskData, isLoading, onCreateTask}) {
           onDragOver={onDragOver}
           onDrop={(e) => onDrop(e, "ON_HOLD")}
           onAddComment={addComment}
-          onCreateTask={onCreateTask}
+          onTaskUpdate={onTaskUpdate}
           isLoading={isLoading}
           noOfSkeleton={5}
           projectName={projectName}
@@ -232,7 +232,7 @@ export default function KanbanBoard({taskData, isLoading, onCreateTask}) {
           onDragOver={onDragOver}
           onDrop={(e) => onDrop(e, "TO_DO")}
           onAddComment={addComment}
-          onCreateTask={onCreateTask}
+          onTaskUpdate={onTaskUpdate}
           isLoading={isLoading}
           noOfSkeleton={6}
           projectName={projectName}
@@ -246,7 +246,7 @@ export default function KanbanBoard({taskData, isLoading, onCreateTask}) {
           onDragOver={onDragOver}
           onDrop={(e) => onDrop(e, "IN_PROGRESS")}
           onAddComment={addComment}
-          onCreateTask={onCreateTask}
+          onTaskUpdate={onTaskUpdate}
           isLoading={isLoading}
           noOfSkeleton={3}
           projectName={projectName}
@@ -260,7 +260,7 @@ export default function KanbanBoard({taskData, isLoading, onCreateTask}) {
           onDragOver={onDragOver}
           onDrop={(e) => onDrop(e, "DONE")}
           onAddComment={addComment}
-          onCreateTask={onCreateTask}
+          onTaskUpdate={onTaskUpdate}
           isLoading={isLoading}
           noOfSkeleton={5}
           projectName={projectName}
