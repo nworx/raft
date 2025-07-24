@@ -9,15 +9,21 @@ import useUserStore from "@/zustand/userStore";
 
 const signIn = async({ email, password }) => {
 
-  const setUser = useUserStore.getState().setUser;
+  const { setUser, setUt, clearUser, user, ut } = useUserStore.getState();
 
 
   try {
-    const response = await api.post(`${BASE_URL}/api/signIn`, {
+    const response = await api.post(`/api/signIn`, {
       email,
       password,
     });
     if(response.status === 200){
+
+     
+
+      
+        setUt(response?.data);
+      
       
 
       // const userData = response?.config?.data;

@@ -18,7 +18,7 @@ export default function KanbanColumn({
   onDragOver,
   onDrop,
   onAddComment,
-  onCreateTask,
+  onTaskUpdate,
   isLoading,
   noOfSkeleton,
   projectName,
@@ -49,7 +49,7 @@ export default function KanbanColumn({
                   noOfSkeleton={0}
                   projectName={projectName}
                   reporterId={reporterId}
-                  onCreateTask={onCreateTask}
+                  onTaskUpdate={onTaskUpdate}
                 />
               ))
           }
@@ -70,7 +70,7 @@ export default function KanbanColumn({
         open={isCreateDialogOpen}
         columnId={columnId}
         onOpenChange={setIsCreateDialogOpen}
-        onCreateTask={onCreateTask}
+        onTaskUpdate={onTaskUpdate}
         reporterId={reporterId}
       />
     </>

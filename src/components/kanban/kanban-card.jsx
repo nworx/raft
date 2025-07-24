@@ -33,11 +33,9 @@ const priorityColors = {
   CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
 }
 
-export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment, projectName, reporterId, onCreateTask }) {
+export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment, projectName, reporterId, onTaskUpdate }) {
   const [formattedDueDate, setFormattedDueDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-
-  console.log(task, "taskkkkkkkk", projectName);
 
   const statusMap = {
     EPIC: { icon: Layers, label: "EPIC" },
@@ -175,7 +173,7 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
           onAddComment={(comment) => onAddComment(columnId, task.id, comment)}
           projectName={projectName}
           reporterId={reporterId}
-          onCreateTask={onCreateTask}
+          onTaskUpdate={onTaskUpdate}
         />
       </div>
       }

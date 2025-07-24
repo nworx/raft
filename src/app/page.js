@@ -1,8 +1,8 @@
-import AuthMain from "@/components/auth/AuthMain";
-import Image from "next/image";
+
+import AuthMain from "../components/auth/AuthMain"
 
 export default function Home() {
-  return (
+   return(
    <>
    <AuthMain/>
    </>

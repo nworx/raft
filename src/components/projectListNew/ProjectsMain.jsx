@@ -44,7 +44,7 @@ export default function ProjectsMain() {
     priority: "",
     tasks: 0,
     createdBy: "",
-    category: "",
+    team: "",
     status: "",});
 
   // State for filters and sorting

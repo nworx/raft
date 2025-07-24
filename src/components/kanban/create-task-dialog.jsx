@@ -13,7 +13,7 @@ const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   loading: () => <div className="shimmer-loader"></div>,
 });
 
-export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreateTask, reporterId }) {
+export default function CreateTaskDialog({ open, columnId, onOpenChange, onTaskUpdate, reporterId }) {
 
   const currentProject = useProjectStore((state) => state.currentProject)
 
@@ -91,7 +91,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
       console.log("Response of Create Task :", response);
 
 
-      // onCreateTask({
+      // onTaskUpdate({
       //   projectId: currentProject?.id,
       //   title: title,
       //   description: description,
@@ -105,7 +105,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
      
 
       // Reset form
-      await onCreateTask();
+      await onTaskUpdate();
       onOpenChange(false);
 
       toast({

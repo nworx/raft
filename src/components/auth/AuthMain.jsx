@@ -1,6 +1,6 @@
 "use client"
 import { Metadata } from "next"
-import React,{useState} from "react"
+import React,{useEffect, useState} from "react"
 
 import Image from "next/image"
 import Link from "next/link"
@@ -8,6 +8,10 @@ import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "../ui/button"
 import { UserAuthForm } from "./UserAuthForm"
+import useUserStore from "@/zustand/userStore"
+import { useRouter } from 'next/navigation';
+
+
 
 // export const metadata: Metadata = {
 //   title: "Authentication",
@@ -16,12 +20,24 @@ import { UserAuthForm } from "./UserAuthForm"
 
 export default function AuthMain() {
   const [currentState,setCurrentState]=useState("login");
+  const router=useRouter()
+  const { ut } = useUserStore.getState();
+
+   useEffect(() => {
+    console.log(ut,"utututut Auth")
+    if (ut) {
+      router.push("/raft/dashboard");
+    }
+  }, [ut, router]);
+
+  // prevent rendering anything until router.push completes or ut is confirmed missing
+ 
 
   const handleChangeCurrentState=(state)=>{
     setCurrentState(state)
   }
 
-
+//  if (ut) return (<div></div>);
   return (
     <div>
       <div className="md:hidden">
@@ -45,7 +61,7 @@ export default function AuthMain() {
           // href="/examples/authentication"
        
           onClick={(()=>{
-            handleChangeCurrentState( currentState==="login"? "signUp":currentState==="signUp"?"login":""
+            handleChangeCurrentState( currentState==="login"? "signUp":currentState==="signUp"?"login":"Unknown State"
             )
           })
         }

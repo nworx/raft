@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "@/constant/allEnv";
+import api from "@/lib/axiosInstance";
 
 export const upsertProfile = async (formData) => {
 
@@ -12,7 +13,7 @@ export const upsertProfile = async (formData) => {
             
             const requestBody = formData;
 
-            const response = await axios.post(`${BASE_URL}/upsertProfile`, requestBody, {
+            const response = await api.post(`/upsertProfile`, requestBody, {
                 headers : {
                     Authorization: `Bearer ${token}`, 
                     "Content-Type": "application/json",

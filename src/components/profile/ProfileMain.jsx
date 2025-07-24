@@ -26,13 +26,20 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { toast, useToast } from "@/components/ui/use-toast";
 import getUser from "@/services/profile/getUser";
+import useUserStore from "@/zustand/userStore";
+import { updateUser } from "@/services/profile/updateUser";
+import Spinner from "../ui/spinner";
 
 
 export default function ProfilePage() {
+  const {clearUser} = useUserStore.getState();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const { toast } = useToast();
   const [imageError, setImageError] = useState(false);
+  const [updateProfileLoader,setUpdateProfileLoader]=useState(false);
+  const [profileLoader,setprofileLoader]=useState(false);
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -52,18 +59,31 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // Here you would typically send the data to your API
+    setUpdateProfileLoader(true);
+    const response =await updateUser(formData);
+    if(response){
     toast({
       title: "Profile Updated",
       description: "Your profile has been updated successfully.",
     });
-  };
+  }
+  else{
+      toast({
+      title: "Unable to update profile.",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive",
+    });
+  }
+  setUpdateProfileLoader(false);
+}
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
+    clearUser();
     // Clear localStorage
     localStorage.clear();
+    
 
     // Clear sessionStorage if needed
     sessionStorage.clear();
@@ -81,19 +101,19 @@ export default function ProfilePage() {
     });
 
     // Redirect to login page
-    router.push("/auth");
+    router.push("/");
   };
 
 
   const getUserFunc=async()=>{
-    
+    setprofileLoader(true);
       const user=await getUser();
       if(user){
       setFormData((prev)=>({
         ...prev,
          name: user?.username,
          email: user.email,
-         team:user.team,
+         team:user.userTeam,
          bio: user.bio,
          
        }));
@@ -105,6 +125,7 @@ export default function ProfilePage() {
       variant: "destructive",
     });
       }
+      setprofileLoader(false);
    
   }
 
@@ -136,6 +157,10 @@ export default function ProfilePage() {
         </div>
       </div>
 
+     { 
+      profileLoader?
+      <Spinner/>
+      :
       <Card>
         <CardHeader>
           <CardTitle>Profile Information</CardTitle>
@@ -283,11 +308,17 @@ export default function ProfilePage() {
             </div>
 
             <div className="flex justify-end">
+             { 
+             updateProfileLoader?
+             <Spinner/>
+             :
               <Button type="submit">Save Changes</Button>
+              }
             </div>
           </form>
         </CardContent>
       </Card>
+      }
     </div>
   );
 }

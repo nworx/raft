@@ -30,23 +30,29 @@ const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
 
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import updateTask from "@/services/task/updateTask";
+import {TASK_STATUS_LABEL,TASK_PRIORITY,TASK_TYPE} from "@/constant/task"
+import useUserStore from "@/zustand/userStore";
+// import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-const dummyData = [
-  { src: 'https://github.com/shadcn.png', alt: '@shadcn', fallback: 'Alex' },
-  { src: 'https://github.comm/leerob.png', alt: '@leerob', fallback: 'Prakhar' },
-]
 
-export default function TaskDialog({ task, open, onOpenChange, onAddComment, projectName, reporterId, onCreateTask }) {
-  
+
+
+
+export default function TaskDialog({ task, open, onOpenChange, onAddComment, projectName, reporterId, onTaskUpdate }) {
+ 
+  const user = useUserStore((state) => state.user);
+  const [taskWholeData,setTaskWholeData]=useState(task)
   const currentProject = useProjectStore((state) => state.currentProject)
 
 
-  const [newDescription, setNewDescription] = useState(task?.description || "");
+  const [taskTitle, setTaskTitle]=useState(taskWholeData?.title||"");
+  const [newDescription, setNewDescription] = useState(taskWholeData?.description || "");
   const [newComment, setNewComment] = useState("");
   const [allComments, setAllComments] = useState([]);
   const [selectedImage, setSelectedImage] = useState(null);
   const [addCommentLoader, setAddCommentLoader] = useState(false);
-  const [commentLoader,setCommentLoader]=useState(false);
+  const [updateTitleAndDescriptionLoader,setUpdateTitleAndDescriptionLoader]=useState(false);
   const [updateCommentText, setUpdateCommentText] = useState("");
   const [updateCommentObj, setUpdateCommentObj] = useState("");
   const [showUpdateTestPopup, setShowUpdateTestPopup] = useState(false);
@@ -78,7 +84,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
     try {
       setAddCommentLoader(true);
       const response = await createComment({
-        taskId: task?.id,
+        taskId: taskWholeData?.id,
         content: newComment,
       });
       if (response) {
@@ -104,12 +110,89 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
     }
   };
 
+  const handleUpdateTaskTitleAndDesc = async () =>{
+    setUpdateTitleAndDescriptionLoader(true);
+     try{
+    const response=await updateTask({
+      taskId:taskWholeData?.id,
+      title:taskTitle,
+      description:newDescription,
+    })
+    if(response?.status === 200){
+      setIsUpdated(true);
+      setTaskWholeData((prev)=>({
+        ...prev,
+        ...response?.data,
+        project:response?.data?.project?.name
+      }))
+       toast({
+          title: "Success",
+          description: "Task updated successfully.",
+        });
+    }
+    else{
+      toast({
+        title: "Error",
+        description: "Unable to update task.",
+        variant: "destructive",
+      });
+    }
+    }
+    catch{
+    setUpdateTitleAndDescriptionLoader(false);
+     toast({
+        title: "Error",
+        description: "Unable to update task.",
+        variant: "destructive",
+      });
+    }
+     setUpdateTitleAndDescriptionLoader(false);
+  }
+
+  const updateTaskSingleValue=async({place,value})=>{
+    setIsLoading(true);
+    try{
+    const response=await updateTask({
+      taskId:task?.id,
+     [place]:value
+    })
+    if(response?.status === 200){
+    setIsUpdated(true);
+      setTaskWholeData((prev)=>({
+        ...prev,
+        ...response?.data,
+        project:response?.data?.project?.name
+      }))
+       toast({
+          title: "Success",
+          description: "Task updated successfully",
+        });
+    }
+    else{
+      toast({
+        title: "Error",
+        description: "Unable to update.",
+        variant: "destructive",
+      });
+    }
+    }
+    catch{
+    setIsLoading(false);
+     toast({
+        title: "Error",
+        description: "Unable to update.",
+        variant: "destructive",
+      });
+    }
+    setIsLoading(false);
+  }
+
   const handleUpdateComment = async () => {
-    console.log(updateCommentText, "handleUpdateComment", task);
+    console.log(updateCommentText, "handleUpdateComment");
     if (!getTextFromHTML(updateCommentText).trim()) {
       toast({
         title: "Error",
-        description: "Comment cannot be empty",
+        description: "Comment cannot be empty.",
         variant: "destructive",
       });
       return;
@@ -127,8 +210,6 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
           prevComments.map((comment) =>
           comment.id === response.id ? response : comment
         ));
-        
-        setIsUpdated(true)
         toast({
           title: "Success",
           description: "Comment updated successfully",
@@ -154,7 +235,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
   };
 
   const getCommentByTaskFunc = async () => {
-    const response = await getCommentByTask({ taskId: task.id });
+    const response = await getCommentByTask({ taskId: taskWholeData.id });
     if (response) {
 
       setAllComments(response);
@@ -186,7 +267,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
   const closeTaskDialogHandler = async () => {
     
     if(isUpdated){
-      await onCreateTask();
+      await onTaskUpdate();
       onOpenChange(false);
     } else {
       onOpenChange(false);
@@ -196,10 +277,10 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
   const assignTaskHandler = async (assigneeId) => {
     setIsLoading(true);
     try {
-      const response = await assignTask({ taskId: task?.id, assigneeId });
+      const response = await assignTask({ taskId: taskWholeData?.id, assigneeId });
       console.log("assignTask Response:", response);
       setIsUpdated(true)
-      // await onCreateTask();
+      // await onTaskUpdate();
     } catch (error) {
       console.log("Error in assign task handler:", error);
     } finally {
@@ -311,7 +392,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
                   className="bg-[#27272a] text-white rounded-md text-base  h-auto px-4 py-1 border-transparent hover:border-input focus:border-input transition-colors w-full"
                   defaultValue={task.title}
                 /> */}
-                <Tiptap text={task.title} height="25px" />
+                <Tiptap text={taskTitle} setText={setTaskTitle} height="25px" />
               </div>
 
               <div className="grid gap-4" title="Task Description">
@@ -322,6 +403,17 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
                     height="100px"
                   />
                 </div>
+
+                 <div className="flex items-center gap-2">
+                { 
+                 updateTitleAndDescriptionLoader?
+                 <Spinner/>
+                 :
+                  <Button onClick={handleUpdateTaskTitleAndDesc} disabled={!getTextFromHTML(taskTitle)||!getTextFromHTML(newDescription) } >
+                    Update Title & Description
+                 </Button>
+                 }
+                 </div>
               </div>
 
               <Separator className="my-6" />
@@ -440,27 +532,113 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Project</label>
-                <p className="text-sm text-gray-900 font-semibold">{task?.project}</p>
+                <p className="text-sm text-gray-900 font-semibold">{taskWholeData?.project}</p>
               </div>
               
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Status</label>
-                <p className="text-sm text-gray-900 font-semibold">{task?.status}</p>
-              </div>
+                <p className="text-sm text-gray-900 font-semibold">{TASK_STATUS_LABEL[taskWholeData?.status]||taskWholeData?.status}</p>
+              </div> */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="w-40 grid gap-2 mb-4">
+                      <Label htmlFor="status" className="flex items-center">
+                        Status
+                      </Label>
+                      <Select
+                        disabled={projectName && currentProject && taskWholeData?.assignee && user?.email !== taskWholeData?.assignee?.email}
+                        id="status"
+                        value={taskWholeData?.status}
+                        onValueChange={(value) => {
 
-              <div className="mb-4">
+                          updateTaskSingleValue({ place: "status", value })
+                        }}
+                      >
+                        <SelectTrigger id="status" className="overflow-hidden text-ellipsis whitespace-nowrap">
+                          <SelectValue placeholder={taskWholeData?.status ? taskWholeData?.status : "Select Status"} className="overflow-hidden text-ellipsis whitespace-nowrap" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object?.keys?.(TASK_STATUS_LABEL)?.map((key) => (
+                            <SelectItem key={key} value={key}>
+                              {TASK_STATUS_LABEL[key]}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </TooltipTrigger>
+                  {projectName &&
+                    currentProject &&
+                    taskWholeData?.assignee &&
+                    user?.email !== taskWholeData?.assignee?.email ? (
+                    <TooltipContent>
+                      Only the assignee can update the status
+                    </TooltipContent>
+                  ) : null}
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Priority</label>
-                <p className="text-sm text-gray-900 font-semibold">{task?.priority}</p>
-              </div>
+                <p className="text-sm text-gray-900 font-semibold">{taskWholeData?.priority}</p>
+              </div> */}
+              <div className="w-40 grid gap-2">
+                    <Label htmlFor="priority" className="flex items-center">
+                      Priority
+                    </Label>
+                    <Select
+                      id="priority"
+                      value={taskWholeData?.priority}
+                      onValueChange={(value) => {
+                      updateTaskSingleValue({place:"priority",value});
+                    }}
+                    >
+                      <SelectTrigger id="priority" className="overflow-hidden text-ellipsis whitespace-nowrap">
+                        <SelectValue placeholder={taskWholeData?.priority? taskWholeData?.priority : "Select Priority "} className="overflow-hidden text-ellipsis whitespace-nowrap"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object?.keys?.(TASK_PRIORITY)?.map(( key ) => (
+                          <SelectItem key={key} value={key}>
+                            {TASK_PRIORITY[key]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              <div className="mb-4">
+              {/* <div className="mt-4 mb-4">
                 <label className="block text-sm font-medium text-gray-700">Type</label>
-                <p className="text-sm text-gray-900 font-semibold">{task?.type}</p>
-              </div>
+                <p className="text-sm text-gray-900 font-semibold">{taskWholeData?.type}</p>
+              </div> */}
+
+               <div className="w-40 grid gap-2 mt-4 mb-4">
+                    <Label htmlFor="type" className="flex items-center">
+                      Type
+                    </Label>
+                    <Select
+                      id="type"
+                      value={taskWholeData?.type}
+                      onValueChange={(value) => {
+                      updateTaskSingleValue({place:"type",value})
+                    }}
+                    >
+                      <SelectTrigger id="type" className="overflow-hidden text-ellipsis whitespace-nowrap">
+                        <SelectValue placeholder={taskWholeData?.type? taskWholeData?.type : "Select Task Type "} className="overflow-hidden text-ellipsis whitespace-nowrap"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object?.keys?.(TASK_TYPE)?.map(( key ) => (
+                          <SelectItem key={key} value={key}>
+                            {TASK_TYPE[key]}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700">Due Date</label>
-                <p className="text-sm text-gray-900 font-semibold">{task.dueDate ? format(new Date(task.dueDate), 'dd MMMM yyyy') : "N/A"}</p>
+                <p className="text-sm text-gray-900 font-semibold">{taskWholeData.dueDate ? format(new Date(taskWholeData.dueDate), 'dd MMMM yyyy') : "N/A"}</p>
               </div>
 
               <div className="mb-4">
@@ -480,7 +658,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
                     }}
                     >
                       <SelectTrigger id="assignee" className="overflow-hidden text-ellipsis whitespace-nowrap">
-                        <SelectValue placeholder={task?.assignee?.username? task?.assignee?.username : "Assign task to"} className="overflow-hidden text-ellipsis whitespace-nowrap"/>
+                        <SelectValue placeholder={taskWholeData?.assignee?.username? taskWholeData?.assignee?.username : "Assign task to"} className="overflow-hidden text-ellipsis whitespace-nowrap"/>
                       </SelectTrigger>
                       <SelectContent>
                         {currentProject?.members?.map(({ user }) => (

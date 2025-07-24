@@ -46,7 +46,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     description: "",
     startDate: "",
     endDate: "",
-    category: "",
+    team: "",
     status: "",
     members: [],
     docs: [{ type: "", name: "", link: "" }],
@@ -146,8 +146,8 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
       newErrors.endDate = "End date cannot be before start date";
     }
 
-    if (!formData?.category?.trim()) {
-      newErrors.category = "Category is required";
+    if (!formData?.team?.trim()) {
+      newErrors.team = "Category is required";
     }
 
     if (!formData?.status?.trim()) {
@@ -206,7 +206,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
       priority: "Medium",
       tasks: 0,
       createdBy: "",
-      category: "Engineering",
+      team: "Engineering",
       status: "Active",
     });
     setErrors({});
@@ -419,10 +419,10 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="category" className="flex items-center">
+                <Label htmlFor="team" className="flex items-center">
                   Team *
                 </Label>
-                <Select value={formData?.category} onValueChange={(value) => handleSelectChange("category", value)}>
+                <Select value={formData?.team} onValueChange={(value) => handleSelectChange("team", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select team" />
                   </SelectTrigger>
@@ -434,7 +434,7 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                     <SelectItem value="Support">Support</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.category && <p className="text-red-500 text-sm">{errors.category}</p>}
+                {errors.team && <p className="text-red-500 text-sm">{errors.team}</p>}
               </div>
             </div>
             
