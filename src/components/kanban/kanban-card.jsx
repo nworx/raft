@@ -37,8 +37,6 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
   const [formattedDueDate, setFormattedDueDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
-  console.log(task, "taskkkkkkkk", projectName);
-
   const statusMap = {
     EPIC: { icon: Layers, label: "EPIC" },
     STORY: { icon: UserRoundCheck, label: "STORY" },

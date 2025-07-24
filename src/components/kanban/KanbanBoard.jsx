@@ -119,6 +119,13 @@ export default function KanbanBoard({taskData, isLoading, onTaskUpdate}) {
       return newColumns
     })
   }
+  else if(response.status===403){
+ toast({
+        title: "Error",
+        description: "Updating status is not permitted.",
+        variant: "destructive",
+      });
+  }
   else{
       toast({
         title: "Error",
