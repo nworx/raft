@@ -107,6 +107,7 @@ export default function KanbanBoard({taskData, isLoading, onTaskUpdate}) {
     const { itemId, sourceColumn } = JSON.parse(e.dataTransfer.getData("text"))
      console.log(itemId, targetColumn,"e, targetColumn onDrop")
     if (sourceColumn === targetColumn) return
+    try{
     const response= await updateTaskStatusFunc({taskId:itemId, status:targetColumn});
     if (response.status===200){
     
@@ -125,6 +126,15 @@ export default function KanbanBoard({taskData, isLoading, onTaskUpdate}) {
         variant: "destructive",
       });
   }
+}
+catch(message){
+  console.log(message);
+   toast({
+        title: "Error",
+        description: "Unable to update task status.",
+        variant: "destructive",
+      });
+}
   }
 
   const updateTaskStatusFunc=async({taskId, status})=>{
