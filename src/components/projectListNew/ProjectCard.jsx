@@ -3,8 +3,15 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import useProjectStore from "@/zustand/projectStore"
+import { useRouter } from "next/navigation"
 // Project type definition
 
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 
 // Priority color mapping
@@ -25,6 +32,10 @@ const statusColors= {
 
 
 export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFlip }) {
+
+  const setProject = useProjectStore.getState().setCurrentProject;
+  const router = useRouter();
+
   // Format date to readable string
   const formatDate = (date) => {
     return new Intl.DateTimeFormat("en-US", {
@@ -66,6 +77,24 @@ export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFli
     member.user?.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     member.user?.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const slugify = (text) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-') // replace spaces/special chars with "-"
+      .replace(/^-+|-+$/g, ''); // remove leading/trailing "-"
+  }
+
+  const handleViewAllTasks = () => {
+
+    setProject(project);
+
+    const projectName = slugify(project.name);
+    const id = project.id;
+
+    router.push(`/raft/project-dashboard?project=${projectName}&id=${id}`);
+  };
 
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow min-h-72 flex flex-col justify-between">
@@ -125,6 +154,15 @@ export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFli
         </>
       ) : (
         <>
+        <div
+          role="button"
+          onClick={handleViewAllTasks}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") handleViewAllTasks();
+          }}
+          className="focus:outline-none"
+        >
           <CardHeader className="pb-2">
             <div className="flex justify-between items-start">
               <CardTitle className="text-xl font-bold line-clamp-1">
@@ -137,9 +175,37 @@ export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFli
           </CardHeader>
 
           <CardContent className="pb-2 flex-1 min-h-40 space-x-1">
-            <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
+            <p className="text-muted-foreground text-sm line-clamp-2 mb-1 min-h-12 ">
               {project.description ?? "No description provided"}
             </p>
+
+            <div className="w-full flex overflow-x-auto gap-1 hide-scrollbar">
+
+              {project?.docs?.map((doc, index) => (
+                <Tooltip key={index}>
+                  <TooltipTrigger asChild>
+                    <a
+                      href={doc.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="max-w-[80%]"
+                    >
+                      <Badge
+                        className="cursor-pointer px-3 py-1 max-w-full line-clamp-1 text-xs rounded-full bg-muted text-foreground transition-colors truncate text-center overflow-hidden text-ellipsis whitespace-nowrap"
+                      >
+                        {doc.name}
+                      </Badge>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-[15em] whitespace-normal break-words text-sm">
+                    {doc.name}
+                  </TooltipContent>
+                </Tooltip>
+              ))
+              }
+
+            </div>
 
             <div className="grid grid-cols-2 gap-3 text-sm space-y-2 ">
               <div className="flex items-end">
@@ -157,7 +223,10 @@ export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFli
               <div className="flex items-center">
                 <button
                   className="px-3 py-1 text-xs rounded-full bg-muted text-foreground hover:bg-accent transition-colors"
-                  onClick={toggleFlip}
+                  onClick={(e) => {
+                    e.stopPropagation(); // prevent event from bubbling to the parent
+                    toggleFlip();
+                  }}
                 >
                   {project?.members?.length} Members
                 </button>
@@ -174,7 +243,7 @@ export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFli
               </div>
             </div>
           </CardContent>
-
+        </div>
           <CardFooter className="flex justify-between pt-2 border-t">
             <div className="text-sm text-muted-foreground" title={project.createdBy}>
               Created By: {project.createdBy?.username?.split("@")[0] ?? "Unknown"}

@@ -366,6 +366,7 @@ export default function ProjectsMain() {
                     isFlipped={flippedCardId === project.id}
                     toggleFlip={() => toggleFlip(project.id)}
                     handleUpdateProject={handleUpdateProject}
+                    projectData={projectData}
                   />
                 ))
               ) : (

@@ -28,7 +28,7 @@ export default function KanbanColumn({
 
   return (
     <>
-      <Card className="flex flex-col min-w-24 flex-1 " onDragOver={onDragOver} onDrop={onDrop}>
+      <Card className="flex flex-col min-w-24 max-w-[22vw] flex-1 " onDragOver={onDragOver} onDrop={onDrop}>
         <CardHeader>
           <CardTitle>{title}</CardTitle>
         </CardHeader>

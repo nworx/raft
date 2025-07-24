@@ -49,7 +49,30 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     category: "",
     status: "",
     members: [],
+    docs: [{ type: "", name: "", link: "" }],
   });
+
+
+  const handleDocChange = (index, field, value) => {
+    const updatedDocs = [...formData.docs];
+    updatedDocs[index][field] = value;
+    setFormData({ ...formData, docs: updatedDocs });
+  };
+
+  const addNewDocRow = () => {
+    setFormData((prev) => ({
+      ...prev,
+      docs: [...(prev.docs || []), { type: "", name: "", link: "" }],
+    }));
+  };
+
+  const removeDocRow = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      docs: prev?.docs.filter((_, i) => i !== index),
+    }));
+  };
+
 
 
   const [errors, setErrors] = useState({})
@@ -434,6 +457,73 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                 {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
               </div>
             </div>
+
+            <div className="grid grid-cols-1 gap-2">
+              <Label className="flex items-center">
+                Project Documents
+              </Label>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border border-gray-300 rounded-md">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="w-[10%] text-left px-2 py-2">Type</th>
+                      <th className="w-[60%] text-left px-2 py-2">Name</th>
+                      <th className="w-[30%] text-left px-2 py-2">Link</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {formData.docs?.map((doc, index) => (
+                      <tr key={index} className="border-t">
+                        <td className="px-2 py-2">
+                          <input
+                            type="text"
+                            value={doc.type}
+                            onChange={(e) => handleDocChange(index, "type", e.target.value)}
+                            className="w-full border px-2 py-1 rounded-md"
+                          />
+                        </td>
+                        <td className="px-2 py-2">
+                          <input
+                            type="text"
+                            value={doc.name}
+                            onChange={(e) => handleDocChange(index, "name", e.target.value)}
+                            className="w-full border px-2 py-1 rounded-md"
+                          />
+                        </td>
+                        <td className="px-2 py-2 flex gap-2 items-center">
+                          <input
+                            type="url"
+                            value={doc.link}
+                            onChange={(e) => handleDocChange(index, "link", e.target.value)}
+                            className="w-full border px-2 py-1 rounded-md"
+                          />
+                          {formData.docs.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeDocRow(index)}
+                              className="text-red-500 hover:text-red-700"
+                              title="Remove"
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <button
+                type="button"
+                onClick={addNewDocRow}
+                className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 border rounded hover:bg-gray-200"
+              >
+                ➕ Add Document
+              </button>
+            </div>
+
 
           </div>
           </ScrollArea>

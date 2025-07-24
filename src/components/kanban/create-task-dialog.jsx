@@ -21,7 +21,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
       console.log("currentProject,", currentProject);
   }, [currentProject])
 
-
+  const [errors, setErrors] = useState({})
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -33,13 +33,38 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
+
+    const validateForm = () => {
+    const newErrors = {};
+
+    if (!title.trim()) {
+      newErrors.title = "Title is required";
+    }
+
+    if (!description?.trim()) {
+      newErrors.description = "Description is required";
+    }
+
+    if (!priority?.trim()) {
+      newErrors.priority = "Priority is required";
+    }
+
+    if (!taskType?.trim()) {
+      newErrors.taskType = "Type is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!title.trim()) {
+    if (!validateForm()) {
+      console.log("Please fill form properly" , errors);
       toast({
-        title: "Error",
-        description: "Title is required",
+        title: "Form Incomplete",
+        description: "Please fill out all required fields correctly.",
         variant: "destructive",
       });
       return;
@@ -132,6 +157,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                   className="w-full border border-gray-300 p-2 rounded"
                   autoFocus
                 />
+                {/* {errors?.title && <p className="text-red-500 text-sm">{errors.title}</p>} */}
               </div>
 
               <div className="flex justify-around gap-4">
@@ -156,6 +182,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                         <SelectItem value="CRITICAL">Critical</SelectItem>
                       </SelectContent>
                     </Select>
+                    {/* {errors?.priority && <p className="text-red-500 text-sm">{errors.priority}</p>} */}
                   </div>
 
                   <div className="w-40 grid gap-2">
@@ -174,6 +201,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                         <SelectItem value="ISSUE">Issue</SelectItem>
                       </SelectContent>
                     </Select>
+                    {/* {errors?.taskType && <p className="text-red-500 text-sm">{errors.taskType}</p>} */}
                   </div>
 
                   <div className="w-40 grid gap-2">
@@ -221,6 +249,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                   Description
                 </label>
                 <Tiptap text={description} setText={setDescription} height='300px'/>
+                {/* {errors?.description && <p className="text-red-500 text-sm">{errors.description}</p>} */}
               </div>
 
               <div className="flex justify-end gap-2 mt-4">
@@ -233,9 +262,9 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onCreat
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting || !title.trim()}
+                  disabled={isSubmitting || !title.trim() || !priority.trim() || !taskType.trim()}
                   className={`px-4 py-2 rounded ${
-                    isSubmitting || !title.trim() ? "bg-gray-400" : "bg-blue-500"
+                    isSubmitting || !title.trim() || !priority.trim() || !taskType.trim() ? "bg-gray-400" : "bg-blue-500"
                   } text-white`}
                 >
                   {isSubmitting? (<Spinner/>) : "Create Task"}

@@ -37,7 +37,8 @@ function transformBackendDataToFrontendFormat(backendTasks) {
       dueDate: task?.dueDate,
       type: task?.type,
       project: task?.project?.name,
-      assignee: task?.assignee
+      assignee: task?.assignee,
+      reporter: task?.reporter
     };
 
     formattedData[statusKey].push(formattedTask);

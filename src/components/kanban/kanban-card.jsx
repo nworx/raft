@@ -50,8 +50,6 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
   useEffect(() => {
     if (task?.dueDate) {
       setFormattedDueDate(format(new Date(task.dueDate), 'dd-MM'));
-    } else {
-      setFormattedDueDate("N/A");
     }
   }, [task]);
   
@@ -64,6 +62,24 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
         className="cursor-pointer hover:bg-accent"
       >
         <CardContent className="relative flex-row p-3">
+
+          <TooltipProvider>
+            {task?.reporter && <div className="absolute top-4 left-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    {/* <Avatar className="h-6 w-6 bg-sky-100 text-sky-900">
+                      <AvatarFallback className="font-bold text-xs">{task?.assignee?.username.charAt(0).toUpperCase()}</AvatarFallback>
+                    </Avatar> */}
+                    <div className="h-6 w-6 rounded-full bg-sky-100 text-sky-900 flex items-center justify-center text-xs font-bold">
+                      {task?.reporter?.username.charAt(0).toUpperCase()}
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{`Created By: ${task?.reporter?.username}`}</p>
+                  </TooltipContent>
+                </Tooltip>
+            </div>}
+          </TooltipProvider>
 
           <TooltipProvider>
             <div className="absolute top-1 right-3">
@@ -83,24 +99,23 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
             </div>
           </TooltipProvider>
 
-          <div className="font-medium h-12 max-h-12 line-clamp-2 mt-1">{task?.title}</div>
+          <div className="font-medium h-12 max-h-12 line-clamp-2 mt-1 mb-2 [text-indent:1.5rem]">{task?.title}</div>
 
-          <div className="flex justify-start gap-1 overflow-hidden mt-1">
-               
-                {/* <div className="text-sm text-muted-foreground mt-1">
-                  {task.comments.length > 0 ? (
-                    <span>
-                      {task.comments.length} comment{task.comments.length !== 1 ? "s" : ""}
-                    </span>
-                  ): (
-                    <span>
-                      0 comment
-                    </span>
-                  )}
-                </div> */}
+          {/* <div className="text-sm text-muted-foreground mt-1">
+            {task.comments.length > 0 ? (
+              <span>
+                {task.comments.length} comment{task.comments.length !== 1 ? "s" : ""}
+              </span>
+            ): (
+              <span>
+                0 comment
+              </span>
+            )}
+          </div> */}
 
+          {/* <div className="flex justify-start gap-1 overflow-hidden mt-1">
                   <Badge
-                    className={`line-clamp-1 ${
+                    className={`line-clamp-1 max-w-16 ${
                       projectName === null
                         ? "bg-black text-white dark:bg-blue-900"
                         : "bg-yellow-500 text-black dark:bg-yellow-700"
@@ -114,6 +129,25 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
                     {task?.priority ?? "No Priority"}
                   </Badge>
 
+          </div> */}
+
+          <div className="flex overflow-x-auto gap-1 mt-1 hide-scrollbar w-[90%]">
+
+            {!projectName && <Badge
+              className={`line-clamp-1 shrink-0 max-w-16 bg-black text-white dark:bg-blue-900`}
+              title={task?.project}
+            >
+              {task?.project}
+            </Badge>}
+
+            {formattedDueDate && <Badge className={`line-clamp-1 shrink-0 bg-yellow-500 text-black dark:bg-yellow-700`}>
+              {formattedDueDate}
+            </Badge>}
+
+            <Badge className={`line-clamp-1 shrink-0 ${priorityColors[task?.priority]}`}>
+              {task?.priority ?? "No Priority"}
+            </Badge>
+
           </div>
 
           <TooltipProvider>
@@ -122,11 +156,11 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
                   <TooltipTrigger asChild>
                     <Avatar className="h-6 w-6 data-[slot=avatar]:ring-2 data-[slot=avatar]:ring-background data-[slot=avatar]:grayscale">
                       {/* <AvatarImage src={user.src} alt={user.alt} /> */}
-                      <AvatarFallback className="font-medium text-xs ">{task?.assignee?.username.charAt(0).toUpperCase()}</AvatarFallback>
+                      <AvatarFallback className="font-bold text-xs ">{task?.assignee?.username.charAt(0).toUpperCase()}</AvatarFallback>
                     </Avatar>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>{task?.assignee?.username}</p>
+                    <p>{`Assigned To: ${task?.assignee?.username}`}</p>
                   </TooltipContent>
                 </Tooltip>
             </div>}

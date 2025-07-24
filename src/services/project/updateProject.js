@@ -25,6 +25,7 @@ export const updateProject = async (formData) => {
         category: formData?.category,
         status: formData?.status,
         members: formData?.members?.map((email) => ({ email })),
+        docs: formData?.docs
       };
 
       const response = await api.post("/updateProject", requestBody, {
