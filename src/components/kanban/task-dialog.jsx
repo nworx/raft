@@ -83,9 +83,10 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
 
     try {
       setAddCommentLoader(true);
+      const safeContentInComment = newComment.replace(/"/g, "'");
       const response = await createComment({
         taskId: taskWholeData?.id,
-        content: newComment,
+        content: safeContentInComment,
       });
       if (response) {
         onAddComment(newComment.trim());

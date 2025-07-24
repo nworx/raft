@@ -40,6 +40,7 @@ import {
   PiListNumbers,
   PiCheckSquare,
 } from 'react-icons/pi';
+import { uploadImage } from '@/services/gCloud/uploadImage';
 
 
 export default function Tiptap({ text, setText, height='100px' }) {
@@ -115,6 +116,55 @@ export default function Tiptap({ text, setText, height='100px' }) {
         class: 'tiptap-editor relative text-white',
         style: `height: ${height}; overflow-y: auto;`,
       },
+      handleDrop(view, event) {
+        const hasFiles = event.dataTransfer?.files?.length;
+        if (!hasFiles) return false;
+
+        const images = Array.from(event.dataTransfer.files).filter(file =>
+          file.type.startsWith('image/')
+        );
+
+        if (images.length === 0) return false;
+
+        event.stopPropagation();
+        event.preventDefault();
+        images.forEach(file => {
+          const reader = new FileReader();
+          reader.onload = () => {
+            const base64 = reader.result;
+            const uploadImageHandler = async () => {
+              try {
+                const uri = await uploadImage({ image: file });
+                return uri;
+              } catch (err) {
+                console.error("Failed to upload image", err);
+                return '';
+              }
+            };
+
+            editor.chain()
+              .focus()
+              .insertContent([
+                {
+                  type: 'customImage',
+                  attrs: {
+                    src: base64,
+                    caption: '',
+                    uploadImageHandler,
+                  },
+                },
+                {
+                  type: 'paragraph',
+                },
+              ])
+              .run();
+          };
+
+          reader.readAsDataURL(file);
+        });
+
+        return true;
+      }
     },    
     onSelectionUpdate: () => {
       setShowTextDropdown(false);
