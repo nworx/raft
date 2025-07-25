@@ -230,8 +230,12 @@ catch(message){
   },[taskDataProp])
 
   return (
-    <ScrollArea className="container  py-2 m-auto mt-1">
-      <div className="flex justify-center items-center mb-4">
+    <ScrollArea className="container  py-2 m-auto mt-4">
+      <div className="flex justify-center items-center mb-3 "
+      style={{
+        boxShadow:"rgba(27, 31, 35, 0.04) 0px 1px 0px, rgba(255, 255, 255, 0.25) 0px 1px 0px inset"
+      }}
+      >
           <h1 className="text-3xl font-bold">{unslugify(projectName)}</h1>
       </div>
 
