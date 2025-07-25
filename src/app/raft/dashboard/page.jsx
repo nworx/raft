@@ -47,7 +47,7 @@ const Dashboard = () => {
       </button>
       {toggleView? 
         <Suspense fallback={<div>Loading...</div>}>
-          <KanbanBoard taskData={data} isLoading={isLoading} onTaskUpdate={getAllUserTaskFunc}/> 
+          <KanbanBoard taskDataProp={data} isLoading={isLoading} onTaskUpdate={getAllUserTaskFunc}/> 
         </Suspense>
       : <ListView taskData={data} isLoading={isLoading} />}
     </LeftNavbar>

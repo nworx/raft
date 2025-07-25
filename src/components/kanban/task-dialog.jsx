@@ -414,7 +414,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
                   className="bg-[#27272a] text-white rounded-md text-base  h-auto px-4 py-1 border-transparent hover:border-input focus:border-input transition-colors w-full"
                   defaultValue={task.title}
                 /> */}
-                <Tiptap text={taskTitle} setText={setTaskTitle} height="25px" />
+                <Tiptap text={taskTitle} setText={setTaskTitle} height="55px" />
               </div>
 
               <div className="grid gap-4" title="Task Description">
@@ -422,7 +422,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
                   <Tiptap
                     text={newDescription}
                     setText={setNewDescription}
-                    height="100px"
+                    height="125px"
                   />
                 </div>
 

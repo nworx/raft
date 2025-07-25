@@ -14,6 +14,7 @@ import { useToast } from "../ui/use-toast"
 
 import useUserStore from "@/zustand/userStore";
 import getAllUsers from "@/services/profile/getAllUsers";
+import SearchFilter from "./SearchFilter"
 
 function transformBackendDataToFrontendFormat(backendTasks) {
   const formattedData = {
@@ -53,7 +54,10 @@ const currentUser = {
   avatar: "/placeholder.svg?height=40&width=40",
 }
 
-export default function KanbanBoard({taskData, isLoading, onTaskUpdate}) {
+export default function KanbanBoard({taskDataProp, isLoading, onTaskUpdate}) {
+  
+  const [taskData,setTaskData]=useState([]);
+ 
   const router=useRouter();
   const [columns, setColumns] = useState({});
   // const [isLoading, setIsLoading] = useState(false);
@@ -198,7 +202,7 @@ catch(message){
     } else {
       console.warn("No data returned for taskId:", id);
     }
-  }, [taskData, id]);
+  }, [taskData,id]);
 
   useEffect(() => {
     const getAllUsersFunc = async () => {
@@ -221,13 +225,19 @@ catch(message){
     }
   }, [user?.email]);
 
+   useEffect(()=>{
+    setTaskData(taskDataProp||[]);
+  },[taskDataProp])
+
   return (
-    <ScrollArea className="container  py-2 m-auto mt-6">
-      <div className="flex justify-center items-center">
+    <ScrollArea className="container  py-2 m-auto mt-1">
+      <div className="flex justify-center items-center mb-4">
           <h1 className="text-3xl font-bold">{unslugify(projectName)}</h1>
       </div>
 
-      <div className="flex  gap-4 h-[80vh] mt-4 m-auto">
+     <SearchFilter rawData={taskDataProp} setProcessedData={setTaskData}/>
+
+      <div className="flex  gap-4 h-[80vh] mt-4  m-auto">
       <KanbanColumn
           title="On Hold"
           columnId="ON_HOLD"
