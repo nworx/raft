@@ -16,7 +16,8 @@ export const LABEL_TO_TASK_STATUS={
     "ON HOLD": "ON_HOLD",
     "TO DO":"TO_DO",
     "IN PROGRESS":"IN_PROGRESS",
-    "DONE":"DONE"
+    "DONE":"DONE",
+    "DELETED":"DELETED"
 }
 
 export const TASK_TYPE ={

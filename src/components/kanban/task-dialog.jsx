@@ -33,6 +33,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import updateTask from "@/services/task/updateTask";
 import {TASK_STATUS_LABEL,TASK_PRIORITY,TASK_TYPE} from "@/constant/task"
 import useUserStore from "@/zustand/userStore";
+import { TrashIcon } from "lucide-react";
+import TaskDeletePopup from "./TaskDeletePopup";
 // import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 
@@ -61,6 +63,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
   const [isLoading, setIsLoading] = useState(false);
   const [assignedToId, setAssignedToId] = useState("");
   const [localAssignee, setLocalAssignee] = useState(null);
+  const [isDeleteTaskPopUp,setIsDeleteTaskPopUp]=useState(false);
 
   const [isUpdated, setIsUpdated] = useState(false);
 
@@ -168,6 +171,8 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
           title: "Success",
           description: "Task updated successfully",
         });
+      setIsLoading(false);
+      
     }
     else{
       toast({
@@ -175,6 +180,8 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
         description: "Unable to update.",
         variant: "destructive",
       });
+      setIsLoading(false);
+     
     }
     }
     catch{
@@ -184,8 +191,9 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
         description: "Unable to update.",
         variant: "destructive",
       });
+      
     }
-    setIsLoading(false);
+    
   }
 
   const handleUpdateComment = async () => {
@@ -332,14 +340,14 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
 
   return (
     <>
-      {open && (
-        <div
-          className="fixed inset-0 z-50 bg-black opacity-50"
-          onClick={() => onOpenChange(false)}
-        />
-      )}
-
-      {selectedImage && (
+    {
+      isDeleteTaskPopUp &&
+      <TaskDeletePopup setIsDeleteTaskPopUp={setIsDeleteTaskPopUp} task={task}
+        onTaskUpdate={onTaskUpdate}
+     onOpenChange={onOpenChange}
+      />
+    }
+     {selectedImage && (
         <div
           className="z-[9999] fixed inset-0 flex items-center justify-center bg-black bg-opacity-75"
           onClick={() => setSelectedImage(null)}
@@ -350,6 +358,14 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
             className="max-w-full max-h-full rounded shadow-lg"
           />
         </div>
+      )}
+
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 bg-black opacity-50"
+          onClick={() => onOpenChange(false)}
+        />
       )}
 
       {showUpdateTestPopup && (
@@ -387,7 +403,12 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
           <div className="bg-white rounded-lg shadow-lg w-[70vw] h-[90vh] p-6 flex flex-row gap-4">
 
             <div className="flex flex-col flex-grow overflow-scroll pr-4">
+              <div style={{display:"flex", justifyContent:"space-between"}}>
               <h1 className="text-xl font-bold">Task Details</h1>
+              <Button variant="destructive" onClick={()=>setIsDeleteTaskPopUp(true)} >
+                 Delete <TrashIcon/> 
+              </Button>
+              </div>
               <div className="my-2" title="Task Title">
                 {/* <input
                   className="bg-[#27272a] text-white rounded-md text-base  h-auto px-4 py-1 border-transparent hover:border-input focus:border-input transition-colors w-full"
