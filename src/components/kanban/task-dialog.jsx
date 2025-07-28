@@ -296,12 +296,22 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
   const assignTaskHandler = async (assigneeId) => {
     setIsLoading(true);
     try {
-      const response = await assignTask({ taskId: taskWholeData?.id, assigneeId });
+      const response = await assignTask({ 
+        taskId: taskWholeData?.id,
+        assigneeId,
+        preAssigneeId:taskWholeData?.assignee?.id
+      });
+
       console.log("assignTask Response:", response);
       setIsUpdated(true)
       // await onTaskUpdate();
     } catch (error) {
       console.log("Error in assign task handler:", error);
+      toast({
+        title: "Error",
+        description: error?.response?.data,
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

@@ -1,11 +1,11 @@
 import api from "@/lib/axiosInstance";
 
-const assignTask = async ({ taskId, assigneeId }) => {
+const assignTask = async ({ taskId, assigneeId,preAssigneeId }) => {
     
   return new Promise(async (resolve, reject) => {
     try {
       const response = await api.patch(
-        `/taskId/${taskId}/assigneeId/${assigneeId}/assignTask`
+        `/taskId/${taskId}/preAssigneeId/${preAssigneeId}/assigneeId/${assigneeId}/assignTask`
       );
       const parsedResponse = response?.data;
       resolve(parsedResponse);
