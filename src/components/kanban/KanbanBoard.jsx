@@ -115,6 +115,9 @@ export default function KanbanBoard({taskData, isLoading, onTaskUpdate}) {
     setColumns((prev) => {
       const newColumns = { ...prev }
       const item = newColumns[sourceColumn].find((item) => item.id === itemId)
+      if (item) {
+        item.status = targetColumn
+      }
       newColumns[sourceColumn] = newColumns[sourceColumn].filter((item) => item.id !== itemId)
       newColumns[targetColumn].push(item)
       return newColumns
