@@ -58,13 +58,7 @@ const ShareTaskView = () => {
     if(taskId){
       getTasksByIdFunc();
     }
-    else{
-       toast({
-        title: "Error",
-        description: "Something went wrong.",
-        variant: "destructive",
-      });
-    }
+   
   },[ taskId])
 
   return (

@@ -86,7 +86,7 @@ export default function ListView({taskData}) {
           <h1 className="text-xl font-semibold px-4 py-3">
             {filteredTasks?.length} Task{filteredTasks?.length !== 1 ? "s" : ""}{" "}
             {projectName ? (
-              <>for <span className="italic">"{projectName}"</span></>
+              <>for <span className="italic"> {projectName} </span></>
             ) : (
               "Assigned"
             )}
