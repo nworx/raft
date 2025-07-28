@@ -21,10 +21,9 @@ import {
 } from '@/components/ui/tooltip'
 
 import { Badge } from "@/components/ui/badge"
+import { useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 
-const dummyData = [
-  { src: 'https://github.com/shadcn.png', alt: '@shadcn', fallback: 'CN' },
-]
 
 const priorityColors = {
   LOW: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
@@ -36,6 +35,9 @@ const priorityColors = {
 export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment, projectName, reporterId, onTaskUpdate }) {
   const [formattedDueDate, setFormattedDueDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const router=useRouter();
+  const searchParams = useSearchParams();
+  const taskId = searchParams.get('taskId');
 
   const statusMap = {
     EPIC: { icon: Layers, label: "EPIC" },
@@ -45,11 +47,20 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
     ISSUE: { icon: TriangleAlert , label: "ISSUE" },
   };
 
+  
+
   useEffect(() => {
     if (task?.dueDate) {
       setFormattedDueDate(format(new Date(task.dueDate), 'dd-MM'));
     }
+
   }, [task]);
+
+  useEffect(()=>{
+    if(taskId){
+      setIsDialogOpen(true);
+    }
+  },[taskId])
   
   return (
     <>

@@ -52,24 +52,6 @@ export function ProjectCard({ project, handleUpdateProject, isFlipped, toggleFli
     // setIsDialogOpen(true);
   }
 
-  const dummyMembers = [
-    { name: "Alice Johnson", email: "alice@example.com" },
-    { name: "Bob Smith", email: "bob@example.com" },
-    { name: "Charlie Lee", email: "charlie@example.com" },
-    { name: "Diana Wells", email: "diana@example.com" },
-    { name: "Alice Johnson", email: "alice@example.com" },
-    { name: "Bob Smith", email: "bob@example.com" },
-    { name: "Charlie Lee", email: "charlie@example.com" },
-    { name: "Diana Wells", email: "diana@example.com" },
-    { name: "Alice Johnson", email: "alice@example.com" },
-    { name: "Bob Smith", email: "bob@example.com" },
-    { name: "Charlie Lee", email: "charlie@example.com" },
-    { name: "Diana Wells", email: "diana@example.com" },
-    { name: "Alice Johnson", email: "alice@example.com" },
-    { name: "Bob Smith", email: "bob@example.com" },
-    { name: "Charlie Lee", email: "charlie@example.com" },
-    { name: "Diana Wells", email: "diana@example.com" },
-  ];
 
   const [searchTerm, setSearchTerm] = useState("");
 
