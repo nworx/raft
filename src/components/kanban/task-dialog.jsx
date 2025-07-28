@@ -67,7 +67,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
   const [isDeleteTaskPopUp,setIsDeleteTaskPopUp]=useState(false);
   const [isUpdated, setIsUpdated] = useState(false);
   const [copied, setCopied] = useState(false);
-  const baseUrl = window.location.origin;
+  const [baseUrl,setBaseUrl] =useState("");
   
 
   const getTextFromHTML = (html) => {
@@ -341,13 +341,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
     setTaskWholeData(task)
     getCommentByTaskFunc({task});
     }
-    else{
-       toast({
-        title: "Error",
-        description: "Something went wrong.",
-        variant: "destructive",
-      });
-    }
+   
   }
   ,[task])
 
@@ -378,6 +372,12 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
   useEffect(() => {
     console.log(updateCommentText, "updateCommentTextupdateCommentText");
   }, [updateCommentText]);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setBaseUrl(window.location.origin);
+    }
+  }, []);
 
   return (
     <>
@@ -598,6 +598,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
                                   }
                                 )}
                               </span>
+                            { user?.email === comment?.authorName &&
                               <div
                                 style={{ cursor: "pointer" }}
                                 onClick={() =>
@@ -606,6 +607,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
                               >
                                 <Pencil className="w-4 h-4" />
                               </div>
+                              }
                             </div>
                             {/* <p className="text-sm">{comment.content}</p> */}
                             <div

@@ -40,7 +40,7 @@ export function AppSidebar({setTabType}) {
       state: Tab_Type.ALL_PROJECTS
     },
     {
-      title: "My tasks",
+      title: "Assigned to Me",
       url: "/raft/dashboard",
       icon: SprayCanIcon,
       state: Tab_Type.MY_TASK

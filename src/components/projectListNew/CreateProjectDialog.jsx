@@ -134,13 +134,13 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
       newErrors.priority = "Priority is required";
     }
 
-    if (!formData?.startDate) {
-      newErrors.startDate = "Start date is required";
-    }
+    // if (!formData?.startDate) {
+    //   newErrors.startDate = "Start date is required";
+    // }
 
-    if (!formData?.endDate) {
-      newErrors.endDate = "End date is required";
-    }
+    // if (!formData?.endDate) {
+    //   newErrors.endDate = "End date is required";
+    // }
 
     if (formData.startDate && formData.endDate && new Date(formData.endDate) < new Date(formData.startDate)) {
       newErrors.endDate = "End date cannot be before start date";
