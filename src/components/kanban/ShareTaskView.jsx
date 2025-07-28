@@ -68,10 +68,9 @@ const ShareTaskView = () => {
   },[ taskId])
 
   return (
-    <></>
-    // <div>
-    //   <TaskDialog task={task} open={true} onOpenChange={()=>{router.back()}} onAddComment={addComment } projectName={task?.project?.name} onTaskUpdate={()=>{}} taskView={"View"}/>
-    // </div>
+    <div>
+      <TaskDialog task={task} open={true} onOpenChange={()=>{router.back()}} onAddComment={addComment } projectName={task?.project?.name} onTaskUpdate={()=>{}} taskView={"View"}/>
+    </div>
   )
 }
 

@@ -318,7 +318,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
 
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(`${baseUrl}/raft/task-view/?taskId=${taskWholeData?.id}`);
+    await navigator.clipboard.writeText(`${baseUrl}/raft/task-view?taskId=${taskWholeData?.id}`);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000); // reset after 2s
   };
