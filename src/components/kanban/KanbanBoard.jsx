@@ -68,6 +68,7 @@ export default function KanbanBoard({taskDataProp, isLoading, onTaskUpdate}) {
 
   const user = useUserStore((state) => state.user);
   const [reporterId, setReporterId] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
   
   const searchParams = useSearchParams();
   const projectName = searchParams.get('project');
@@ -212,6 +213,7 @@ catch(message){
       try {
         const response = await getAllUsers();
         if (Array.isArray(response)) {
+          setAllUsers(response);
           const matchedUser = response.find(u => u.email === user?.email);
           if (matchedUser) {
             console.log(matchedUser.id, "matchedUser.id");
@@ -258,6 +260,7 @@ catch(message){
           noOfSkeleton={5}
           projectName={projectName}
           reporterId={reporterId}
+          allUsers={allUsers}
         />
         <KanbanColumn
           title="To Do"
@@ -272,6 +275,7 @@ catch(message){
           noOfSkeleton={6}
           projectName={projectName}
           reporterId={reporterId}
+          allUsers={allUsers}
         />
         <KanbanColumn
           title="In Progress"
@@ -286,6 +290,7 @@ catch(message){
           noOfSkeleton={3}
           projectName={projectName}
           reporterId={reporterId}
+          allUsers={allUsers}
         />
         <KanbanColumn
           title="Done"
@@ -300,6 +305,7 @@ catch(message){
           noOfSkeleton={5}
           projectName={projectName}
           reporterId={reporterId}
+          allUsers={allUsers}
         />
       </div>
     </ScrollArea>

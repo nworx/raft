@@ -33,7 +33,8 @@ export default function KanbanColumn({
   isLoading,
   noOfSkeleton,
   projectName,
-  reporterId
+  reporterId,
+  allUsers
 }) {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
 
@@ -161,6 +162,7 @@ export default function KanbanColumn({
                   projectName={projectName}
                   reporterId={reporterId}
                   onTaskUpdate={onTaskUpdate}
+                  allUsers={allUsers}
                 />
               ))
           }
@@ -183,6 +185,7 @@ export default function KanbanColumn({
         onOpenChange={setIsCreateDialogOpen}
         onTaskUpdate={onTaskUpdate}
         reporterId={reporterId}
+        allUsers={allUsers}
       />
     </>
   )

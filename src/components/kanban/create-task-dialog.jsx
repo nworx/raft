@@ -13,7 +13,7 @@ const Tiptap = dynamic(() => import("@/components/common/text-editor/TipTap"), {
   loading: () => <div className="shimmer-loader"></div>,
 });
 
-export default function CreateTaskDialog({ open, columnId, onOpenChange, onTaskUpdate, reporterId }) {
+export default function CreateTaskDialog({ open, columnId, onOpenChange, onTaskUpdate, reporterId, allUsers }) {
 
   const currentProject = useProjectStore((state) => state.currentProject)
 
@@ -218,7 +218,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onTaskU
                     />
                   </div>
 
-                  {currentProject ? <div className="w-60 grid gap-2">
+                  {allUsers ? <div className="w-60 grid gap-2">
                     <Label htmlFor="assignee" className="flex items-center">
                       Assign To 
                     </Label>
@@ -231,7 +231,7 @@ export default function CreateTaskDialog({ open, columnId, onOpenChange, onTaskU
                         <SelectValue placeholder="Select User" className="overflow-hidden text-ellipsis whitespace-nowrap"/>
                       </SelectTrigger>
                       <SelectContent>
-                        {currentProject?.members?.map(({ user }) => (
+                        {allUsers?.map((user) => (
                           <SelectItem key={user.id} value={String(user.id)}>
                             {user?.username}
                           </SelectItem>

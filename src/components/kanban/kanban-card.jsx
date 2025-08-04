@@ -32,7 +32,7 @@ const priorityColors = {
   CRITICAL: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
 }
 
-export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment, projectName, reporterId, onTaskUpdate }) {
+export default function KanbanCard({ id, columnId, task, onDragStart, onAddComment, projectName, reporterId, onTaskUpdate, allUsers }) {
   const [formattedDueDate, setFormattedDueDate] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const router=useRouter();
@@ -185,6 +185,7 @@ export default function KanbanCard({ id, columnId, task, onDragStart, onAddComme
           projectName={projectName}
           reporterId={reporterId}
           onTaskUpdate={onTaskUpdate}
+          allUsers={allUsers}
         />
       </div>
       }

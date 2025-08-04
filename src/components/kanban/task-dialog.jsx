@@ -42,7 +42,7 @@ import { Share } from 'lucide-react';
 
 
 
-export default function TaskDialog({ task, open, onOpenChange, onAddComment, projectName, reporterId, onTaskUpdate, taskView }) {
+export default function TaskDialog({ task, open, onOpenChange, onAddComment, projectName, reporterId, onTaskUpdate, taskView, allUsers }) {
  
   const user = useUserStore((state) => state.user);
   const [taskWholeData,setTaskWholeData]=useState({})
@@ -799,7 +799,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
               <div className="mb-4">
                 {/* <label className="block text-sm font-medium text-gray-700" htmlFor="assignee">Assign</label> */}
                 {/* <p className="text-sm text-gray-900">{task?.assignee?.username}</p> */}
-                {projectName && currentProject && (
+                {projectName && allUsers && (
                   <div className="w-40 grid gap-2">
                     <Label htmlFor="assignee" className="flex items-center">
                       Assign To
@@ -830,7 +830,7 @@ export default function TaskDialog({ task, open, onOpenChange, onAddComment, pro
                         />
                       </SelectTrigger>
                       <SelectContent>
-                        {currentProject?.members?.map(({ user }) => (
+                        {allUsers?.map((user) => (
                           <SelectItem key={user.id} value={String(user.id)}>
                             {user?.username}
                           </SelectItem>
