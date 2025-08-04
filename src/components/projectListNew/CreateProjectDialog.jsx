@@ -299,6 +299,28 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
     }
    },[open])
 
+   useEffect(() => {
+     
+    if (!formData?.team) return;
+
+    const filtered = users?.filter(
+      (user) => user.userTeam === formData.team
+    );
+
+    const usernames = filtered.map((user) => user.username);
+
+    setSelectedUsernames((prev) => {
+      const merged = Array.from(new Set([...prev, ...usernames]));
+      setFormData((formPrev) => ({
+        ...formPrev,
+        members: merged,
+      }));
+
+      return merged;
+    });
+    
+   }, [formData?.team])
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="w-[90vw] max-w-4xl h-[90vh] overflow-hidden items-center">
@@ -311,18 +333,41 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
           </DialogHeader>
           <ScrollArea className="h-[calc(100%-6rem)] pr-2 py-2">
           <div className="grid gap-4 py-4 p-1">
-            <div className="grid grid-cols-1 gap-2">
-              <Label htmlFor="name" className="flex items-center">
-                Project Name *
-              </Label>
-              <Input
-                id="name"
-                name="name"
-                value={formData?.name}
-                onChange={handleChange}
-                className={errors.name ? "border-red-500" : ""}
-              />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+            <div className="grid grid-cols-1 md:grid-cols-[70%_28%] gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name" className="flex items-center">
+                  Project Name *
+                </Label>
+                <Input
+                  id="name"
+                  name="name"
+                  value={formData?.name}
+                  onChange={handleChange}
+                  className={errors.name ? "border-red-500" : ""}
+                />
+                {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="team" className="flex items-center">
+                  Team *
+                </Label>
+                <Select
+                  value={formData?.team}
+                  onValueChange={(value) => handleSelectChange("team", value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Engineering">Engineering</SelectItem>
+                    <SelectItem value="Design">Design</SelectItem>
+                    <SelectItem value="Marketing">Marketing</SelectItem>
+                    <SelectItem value="Sales">Sales</SelectItem>
+                    <SelectItem value="Support">Support</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.team && <p className="text-red-500 text-sm">{errors.team}</p>}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 gap-2">
@@ -419,28 +464,6 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="team" className="flex items-center">
-                  Team *
-                </Label>
-                <Select value={formData?.team} onValueChange={(value) => handleSelectChange("team", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select team" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Engineering">Engineering</SelectItem>
-                    <SelectItem value="Design">Design</SelectItem>
-                    <SelectItem value="Marketing">Marketing</SelectItem>
-                    <SelectItem value="Sales">Sales</SelectItem>
-                    <SelectItem value="Support">Support</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.team && <p className="text-red-500 text-sm">{errors.team}</p>}
-              </div>
-            </div>
-            
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
                 <Label htmlFor="status" className="flex items-center">
                   Status *
                 </Label>
@@ -457,6 +480,26 @@ export function CreateProjectDialog({ open, onOpenChange,projectData,process, on
                 {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
               </div>
             </div>
+            
+
+            {/* <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="status" className="flex items-center">
+                  Status *
+                </Label>
+                <Select value={formData?.status} onValueChange={(value) => handleSelectChange("status", value )}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="ACTIVE">Active</SelectItem>
+                    <SelectItem value="ON_HOLD">On Hold</SelectItem>
+                    <SelectItem value="COMPLETED">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+                {errors.status && <p className="text-red-500 text-sm">{errors.status}</p>}
+              </div>
+            </div> */}
 
             <div className="grid grid-cols-1 gap-2">
               <Label className="flex items-center">
