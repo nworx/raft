@@ -13,21 +13,23 @@ import Link from "next/link"
 import { toast } from "../ui/use-toast"
 import signIn from "@/services/auth/signIn"
 import signUp from "@/services/auth/signUp"
+import { Eye, EyeIcon, EyeOff, EyeOffIcon } from "lucide-react"
 
 // import { Label } from "@/registry/new-york/ui/label"
 
 // interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
-export function UserAuthForm({ className, ...props }) {
+export function UserAuthForm( {currentState} ) {
   const router =useRouter();
   const [isLoading, setIsLoading] = useState(false)
   const [formData,setFormData]=useState({});
+   const [showPassword, setShowPassword] = useState(false);
 
   async function onSubmit(event) {
     event.preventDefault()
     setIsLoading(true)
     let response;
-    if(props?.currentState==="login"){
+    if(currentState==="login"){
       response=await signIn(formData);
       console.log("looks like",response);
       if(response){
@@ -55,7 +57,7 @@ export function UserAuthForm({ className, ...props }) {
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("grid gap-6")} >
       <form onSubmit={onSubmit}>
         <div className="grid gap-2">
           <div className="grid gap-1">
@@ -75,29 +77,56 @@ export function UserAuthForm({ className, ...props }) {
               onChange={handleChangeForm}
             />
           </div>
-          <div className="grid gap-1">
+          {/* <div className="grid gap-1 flex">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Password</Label>
-                {/* <Link href="/forgot-password" className="text-sm text-primary hover:underline">
-                  Forgot password?
-                </Link> */}
+                
               </div>
               <Input
                 id="password"
                 name="password"
-                type="password"
-                placeholder="••••••"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="•••"
                 value={formData?.password}
                 onChange={handleChangeForm}
                 required
               />
-            </div>
+              {showPassword ? <EyeOffIcon className="w-4 h-4" onClick={()=>setShowPassword(!showPassword)} /> : <EyeIcon className="w-4 h-4" onClick={()=>setShowPassword(!showPassword)} />}
+            </div> */}
+
+             <div className="grid gap-1">
+      <div className="flex items-center justify-between">
+        <Label htmlFor="password">Password</Label>
+        {/* <Link href="/forgot-password" className="text-sm text-primary hover:underline">
+          Forgot password?
+        </Link> */}
+      </div>
+
+      <div className="relative">
+        <Input
+          id="password"
+          name="password"
+          type={showPassword ? 'text' : 'password'}
+          placeholder="•••"
+          value={formData?.password}
+          onChange={handleChangeForm}
+          required
+          className="pr-10" // ensures text doesn't go under the icon
+        />
+        <div
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground cursor-pointer"
+          onClick={() => setShowPassword((prev) => !prev)}
+        >
+          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+        </div>
+      </div>
+    </div>
           <Button disabled={isLoading}>
             {isLoading && (
                 <></>
             //   <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
             )}
-            {props?.currentState==="login"? "Sign In with Email":props?.currentState==="signUp"?" Create your account":""}
+            {currentState==="login"? "Sign In with Email":currentState==="signUp"?" Create your account":""}
 
            
           </Button>

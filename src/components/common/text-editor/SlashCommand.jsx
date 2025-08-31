@@ -17,6 +17,7 @@ import {
   handleFileAttach,
   handleGIFInsert,
 } from "../../../utilities/mediaHandlers";
+import { uploadImage } from '@/services/gCloud/uploadImage';
 
 export const SlashCommand = Extension.create({
   name: 'slash-command',
@@ -78,40 +79,42 @@ export const SlashCommand = Extension.create({
                 const file = await editor.extensionManager.extensions
                   .find(e => e.name === 'slash-command')
                   ?.options.uploadHandlers.onImageInsert();
-            
-                console.log("Aman: ", file);
-            
+
                 if (!(file instanceof Blob)) {
                   console.error('Invalid file');
                   return;
                 }
-            
+
                 const reader = new FileReader();
-            
+
                 reader.onload = () => {
                   const uploadImageHandler = () => async () => {
                     console.log("Simulated upload in progress...");
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    return `https://picsum.photos/seed/${Date.now()}/600/400`;
+                    const uri = await uploadImage({ image: file });
+                    return uri;
                   };
-            
+
                   editor.chain()
-                    .focus()
-                    .deleteRange(range)
-                    .insertContent({
-                      type: 'customImage',
-                      attrs: {
-                        src: reader.result,
-                        caption: '',
-                        uploadImageHandler: uploadImageHandler(),
-                      },
-                    })
-                    .run();
+  .focus()
+  .deleteRange(range) 
+  .insertContent([
+    {
+      type: 'customImage',
+      attrs: {
+        src: reader.result,
+        caption: '',
+        uploadImageHandler: uploadImageHandler(),
+      },
+    },
+    {
+      type: 'paragraph',
+    },
+  ])
+  .run();
                 };
-            
                 reader.readAsDataURL(file);
               },
-            },                  
+            },
             {
               label: 'Insert GIF',
               icon: <HiOutlineGif size={16} color="#fff" />,

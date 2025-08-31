@@ -34,13 +34,13 @@ export function AppSidebar({setTabType}) {
 
   const items = [
     {
-      title: "Projects",
+      title: "Home",
       url: "/raft/projects",
       icon: SquareActivityIcon,
       state: Tab_Type.ALL_PROJECTS
     },
     {
-      title: "My tasks",
+      title: "Assigned to Me",
       url: "/raft/dashboard",
       icon: SprayCanIcon,
       state: Tab_Type.MY_TASK

@@ -5,7 +5,7 @@ import React from "react";
 
 const signUp = async({ email, password }) => {
   try {
-    const response = await api.post(`${BASE_URL}/api/signup`, {
+    const response = await api.post(`/api/signup`, {
       email,
       password,
     });

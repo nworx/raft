@@ -24,6 +24,20 @@ export const CustomImage = Node.create({
     return [
       {
         tag: 'figure',
+        getAttrs: (node) => {
+        if (!(node instanceof HTMLElement)) return false;
+
+        const img = node.querySelector('img');
+        const figcaption = node.querySelector('figcaption');
+
+        if (!img) return false;
+
+        return {
+          src: img.getAttribute('src'),
+          alt: img.getAttribute('alt'),
+          caption: figcaption?.innerHTML || '',
+        };
+      },
       },
     ];
   },
@@ -32,9 +46,21 @@ export const CustomImage = Node.create({
     const attrs = { ...HTMLAttributes };
     delete attrs.uploadImageHandler;
 
+    const defaultWidth = "100px";
+    const defaultHeight = "100px";
+
+     const imageAttrs = {
+    ...attrs,
+    maxWidth:"100px",
+    maxHeight:"100px"
+    // width: attrs.width || defaultWidth,
+    // height: attrs.height || defaultHeight,
+    // style: `${attrs.style || ""} max-width: ${defaultWidth}px; max-height: ${defaultHeight}px; object-fit: cover; border-radius: 8px; cursor: pointer;`,
+  };
+
     return [
       'figure',
-      ['img', mergeAttributes(attrs)],
+      ['img', mergeAttributes(imageAttrs)],
       ['figcaption', HTMLAttributes.caption],
     ];
   },

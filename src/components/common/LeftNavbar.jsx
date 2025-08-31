@@ -37,9 +37,11 @@ const LeftNavbar = ({children}) => {
   return (
     <SidebarProvider>
       <AppSidebar  />
-      <main style={{width:"100%"}}>
+      <main style={{width:"100%", position: "relative"}}>
         <SidebarTrigger style={{position:"absolute",}}/>
-        <div style={{marginTop:"13px",zIndex:"4"}}>
+        <div 
+          style={{marginTop:"0px",zIndex:"4", border: "5px solid transparent"}}
+        >
         {
           children
         }

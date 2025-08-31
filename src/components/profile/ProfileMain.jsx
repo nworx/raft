@@ -24,11 +24,22 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "@/components/ui/use-toast";
+import { toast, useToast } from "@/components/ui/use-toast";
+import getUser from "@/services/profile/getUser";
+import useUserStore from "@/zustand/userStore";
+import { updateUser } from "@/services/profile/updateUser";
+import Spinner from "../ui/spinner";
+
 
 export default function ProfilePage() {
+  const {clearUser} = useUserStore.getState();
   const router = useRouter();
   const { theme, setTheme } = useTheme();
+  const { toast } = useToast();
+  const [imageError, setImageError] = useState(false);
+  const [updateProfileLoader,setUpdateProfileLoader]=useState(false);
+  const [profileLoader,setprofileLoader]=useState(false);
+
 
   const [formData, setFormData] = useState({
     name: "",
@@ -36,6 +47,7 @@ export default function ProfilePage() {
     team: "",
     designation: "",
     avatar: "",
+    bio: ""
   });
 
   const handleChange = (e) => {
@@ -47,25 +59,79 @@ export default function ProfilePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // Here you would typically send the data to your API
+    setUpdateProfileLoader(true);
+    const response =await updateUser(formData);
+    if(response){
     toast({
       title: "Profile Updated",
       description: "Your profile has been updated successfully.",
     });
-  };
+  }
+  else{
+      toast({
+      title: "Unable to update profile.",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive",
+    });
+  }
+  setUpdateProfileLoader(false);
+}
 
-  const handleLogout = () => {
-    // Implement your logout logic here
+  const handleLogout = async() => {
+    clearUser();
+    // Clear localStorage
+    localStorage.clear();
+    
+
+    // Clear sessionStorage if needed
+    sessionStorage.clear();
+
+    // Clear cookies (basic approach)
+    document.cookie.split(";").forEach((cookie) => {
+      const name = cookie.split("=")[0].trim();
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/`;
+    });
+
+    // Show toast
     toast({
       title: "Logged Out",
       description: "You have been logged out successfully.",
     });
-    router.push("/auth");
+
+    // Redirect to login page
+    router.push("/");
   };
 
-  useEffect(() => {}, []);
+
+  const getUserFunc=async()=>{
+    setprofileLoader(true);
+      const user=await getUser();
+      if(user){
+      setFormData((prev)=>({
+        ...prev,
+         name: user?.username,
+         email: user.email,
+         team:user.userTeam,
+         bio: user.bio,
+         
+       }));
+      }
+      else{
+        toast({
+      title: "Unable to get profile.",
+      description: "Something went wrong. Please try again.",
+      variant: "destructive",
+    });
+      }
+      setprofileLoader(false);
+   
+  }
+
+  useEffect(()=>{
+    getUserFunc();
+  },[])
 
   return (
     <div className="container max-w-6xl pt-6 m-auto">
@@ -91,6 +157,10 @@ export default function ProfilePage() {
         </div>
       </div>
 
+     { 
+      profileLoader?
+      <Spinner/>
+      :
       <Card>
         <CardHeader>
           <CardTitle>Profile Information</CardTitle>
@@ -116,6 +186,7 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email *</Label>
                   <Input
+                  disabled
                     id="email"
                     name="email"
                     type="email"
@@ -172,16 +243,21 @@ export default function ProfilePage() {
                 <div className="space-y-2">
                   <Label>Profile Picture</Label>
                   <div className="flex flex-col items-center justify-center gap-4">
-                    <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-muted">
-                      <img
-                        src={formData.avatar || "https://github.com/shadcn.png"}
-                        alt="Profile"
-                        className="object-cover w-full h-full"
-                      />
+                    <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-muted bg-gray-200 flex items-center justify-center text-4xl font-semibold text-white">
+                      {!imageError && formData.avatar ? (
+                        <img
+                          src={formData.avatar || "https://github.com/shadcn.png"}
+                          alt="Profile"
+                          onError={() => setImageError(true)}
+                          className="object-cover w-full h-full"
+                        />
+                      ) : (
+                        <span>{formData.name?.charAt(0).toUpperCase() || "U"}</span>
+                      )}
                     </div>
-                    <Button type="button" variant="outline" size="sm">
+                    {/* <Button type="button" variant="outline" size="sm">
                       Change Photo
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
 
@@ -223,17 +299,26 @@ export default function ProfilePage() {
               <Label htmlFor="bio">Bio</Label>
               <textarea
                 id="bio"
+                name="bio"
                 className="w-full min-h-[100px] p-3 rounded-md border border-input bg-background"
                 placeholder="Tell us about yourself"
+                value={formData.bio}
+                onChange={handleChange}
               />
             </div>
 
             <div className="flex justify-end">
+             { 
+             updateProfileLoader?
+             <Spinner/>
+             :
               <Button type="submit">Save Changes</Button>
+              }
             </div>
           </form>
         </CardContent>
       </Card>
+      }
     </div>
   );
 }

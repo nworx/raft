@@ -15,7 +15,6 @@ upprod:
 
 
 devDeploy:
-	git checkout R1dev
 	git pull
 	git merge -
 	git push
@@ -25,7 +24,7 @@ devDeploy:
 	npm run build
 	firebase deploy --only hosting --project n-raft-dev
 	cp firebase.copy.json firebase.json
-	git checkout -
+
 
 # stageDeploy:
 # 	git checkout N4staging

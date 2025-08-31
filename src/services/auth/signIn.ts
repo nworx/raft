@@ -4,14 +4,38 @@ import api from "@/lib/axiosInstance";
 import axios from "axios";
 import React from "react";
 
+import useUserStore from "@/zustand/userStore";
+
 
 const signIn = async({ email, password }) => {
+
+  const { setUser, setUt, clearUser, user, ut } = useUserStore.getState();
+
+
   try {
-    const response = await api.post(`${BASE_URL}/api/signIn`, {
+    const response = await api.post(`/api/signIn`, {
       email,
       password,
     });
     if(response.status === 200){
+
+     
+
+      
+        setUt(response?.data);
+      
+      
+
+      // const userData = response?.config?.data;
+      // console.log(response?.config?.data,"response123", response);
+      // setUser(response?.config?.data);
+
+      const rawData = response?.config?.data;
+      console.log(response?.config?.data,"response123", response, rawData);
+
+      const parsedData = JSON.parse(rawData);
+      setUser({ email: parsedData.email }); 
+
       return response
     }
     

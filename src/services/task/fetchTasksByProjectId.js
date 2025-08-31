@@ -1,30 +1,29 @@
-"use client"
-import axios from "axios";
+import axios from 'axios';
+import { BASE_URL } from "@/constant/allEnv";
+import api from '@/lib/axiosInstance';
 
- const fetchTasksByProjectId = async ({projectId}) => {
-    // console.log(name,description,"name,description")
-//   const taskData = {
-//     name: name,
-//     description_text: description,
-//     description_fileLink: [
-     
-//     ],
-//     createAt: new Date().toISOString(),
-//     createdBy: "Raju",
-//     status: "Pending"
-//   };
+const fetchTasksByProjectId  = async ({ projectId }) => {
 
-  try {
-    const response = await axios.get(`http://localhost:8080/fetchTaskByProjectId/${projectId}`, {
-      headers: {
-        "Content-Type": "application/json"
+    let allTasks = null;
+
+    return new Promise(async (resolve, reject) => {
+   
+      try {
+
+        const response  = await api.get(`/projectId/${projectId}/getAllProjectTasks `);
+       
+        const parsedResponse = response?.data;
+        allTasks = parsedResponse;
+        console.log("get all projects", parsedResponse);
+        resolve(allTasks);
+      } catch (error) {
+        console.log(error, "fetchEventSlots error");
+        reject(error);
       }
-    });
+    
+    return { allTasks: allTasks };
+  });
 
-    console.log("fetchTaskByProjectId successfully:", response.data);
-  } catch (error) {
-    console.error("Error fetchTaskByProjectId:", error.response ? error.response.data : error.message);
-  }
-};
+}
 
-export default  fetchTasksByProjectId;
+export default fetchTasksByProjectId ;
